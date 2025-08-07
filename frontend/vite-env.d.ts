@@ -1,0 +1,12 @@
+/// <reference types="vite/client" />
+
+interface ImportMetaEnv {
+  readonly VITE_API_URL: string
+  readonly VITE_ENABLE_ANALYTICS: string
+  readonly VITE_ENABLE_CONTACT_FORM: string
+  readonly VITE_GA_TRACKING_ID?: string
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
+}

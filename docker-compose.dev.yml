@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  frontend-dev:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://localhost:5000/api
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend-dev
+    restart: unless-stopped
+    networks:
+      - portfolio-dev-network
+
+  backend-dev:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - PORT=5000
+      - FRONTEND_URL=http://localhost:3000
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    restart: unless-stopped
+    networks:
+      - portfolio-dev-network
+
+networks:
+  portfolio-dev-network:
+    driver: bridge
