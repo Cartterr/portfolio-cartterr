@@ -57,7 +57,7 @@ const Experience = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const base = (import.meta.env as any).VITE_API_URL || '/api'
+        const base = '/api'
         const res = await fetch(`${base}/images`)
         const data = await res.json()
         const list: { name: string; url: string }[] = data.images || []

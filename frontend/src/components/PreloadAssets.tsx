@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 
 const PreloadAssets = () => {
   useEffect(() => {
-    const base = (import.meta.env as any).VITE_API_URL || '/api'
+    const base = '/api'
     const preload = async (url: string) => {
       try {
         const res = await fetch(url, { cache: 'default' })
