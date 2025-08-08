@@ -93,6 +93,8 @@ public
 # Temporary folders
 tmp/
 temp/
+.history/
+.history
 
 # Editor directories and files
 .vscode/
