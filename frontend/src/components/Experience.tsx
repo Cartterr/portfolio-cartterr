@@ -1,9 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import React, { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { getImages } from '../imageManifest'
-import { ImageOptimizer, ProgressiveImageLoader } from '../utils/imageOptimizer'
 
 const Experience = () => {
   const experiences = [
@@ -27,7 +25,7 @@ const Experience = () => {
       period: 'Jul 2023 - Present',
       title: 'Data Science Researcher',
       company: 'Pontificia Universidad Católica de Chile',
-      description: 'Leading Politiktok research project backed by Fondecyt funding, processing datasets of 100,000+ records using Python, PyTorch, and advanced NLP techniques. Implemented GPU-accelerated ML pipelines achieving 10x performance improvements. Visit politiktok.cl for more.',
+      description: 'Leading Politiktok research project backed by Fondecyt funding, processing datasets of 100,000+ records using Python, PyTorch, and advanced NLP techniques. Implemented GPU-accelerated ML pipelines achieving 10x performance improvements.',
       technologies: ['Python', 'PyTorch', 'CUDA', 'NLP', 'Big Data', 'ML'],
       pattern: /(politiktok)/i,
       links: [{ href: 'https://politiktok.cl/', label: 'politiktok.cl' }]
@@ -48,334 +46,82 @@ const Experience = () => {
       period: '2023 - 2024',
       title: 'Geoscience Researcher',
       company: 'Pontificia Universidad Católica de Chile — Seismology',
-      description: '3D geometric analysis and seismic interaction of the Marga‑Marga fault in Viña del Mar, Chile. Built high‑fidelity models and simulated 1000‑year seismic cycles to study slip accumulation and coupling dynamics.',
-      technologies: ['Python', 'Matplotlib', '3D Modeling', 'Simulation'],
+      description: 'Built GPU-accelerated geological simulation pipeline and co-authored geoscience publications. Developed tools to process large seismic datasets and visualize tectonic dynamics.',
+      technologies: ['Python', 'CUDA', 'NumPy', 'Visualization', 'Research'],
       pattern: /(geoscience)/i,
-      links: [{ href: 'https://meetings.seismosoc.org/wp-content/uploads/2023/03/SSA-Program-2023.pdf', label: 'SSA Program 2023 (publication)' }]
+      links: [
+        { href: 'https://eartharxiv.org/repository/view/7166/', label: 'Geoscience Publication' }
+      ]
     }
   ]
 
-  const getShuffled = (pattern: RegExp) => {
-    // Get all images and filter by pattern
-    const categories = ['profile', 'flair', 'nd', 'politiktok', 'ayudante', 'geoscience'] as const
-    const allImages = categories.flatMap(cat => getImages(cat))
-    const matched = allImages.filter(i => pattern.test(i.name))
+  const [imagesByKey, setImagesByKey] = useState<Record<string, { name: string; url: string }[]>>({})
+  const [currentByKey, setCurrentByKey] = useState<Record<string, number>>({})
+  const [previousByKey, setPreviousByKey] = useState<Record<string, number | null>>({})
+  const [loadedByKey, setLoadedByKey] = useState<Record<string, Set<number>>>({})
+  const [failedByKey, setFailedByKey] = useState<Record<string, Set<number>>>({})
+  const [transitioning, setTransitioning] = useState(false)
+  const [paused, setPaused] = useState(false)
+  const [activeByKey, setActiveByKey] = useState<Record<string, number | null>>({})
 
-    // Shuffle array
-    for (let i = matched.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      const tmp = matched[i]
-      matched[i] = matched[j]
-      matched[j] = tmp
-    }
-    return matched
-  }
+  useEffect(() => {
+    const grouped: Record<string, { name: string; url: string }[]> = {}
+    experiences.forEach(exp => {
+      const key = exp.title
+      grouped[key] = getImages('flair')
+        .concat(getImages('nd'))
+        .concat(getImages('politiktok'))
+        .concat(getImages('ayudante'))
+        .concat(getImages('geoscience'))
+        .filter(img => exp.pattern.test(img.name.replace(/\s+|\(|\)/g, '')))
+    })
+    setImagesByKey(grouped)
+    const initCurrent: Record<string, number> = {}
+    const initPrev: Record<string, number | null> = {}
+    const initLoaded: Record<string, Set<number>> = {}
+    const initFailed: Record<string, Set<number>> = {}
+    const initActive: Record<string, number | null> = {}
+    Object.keys(grouped).forEach(key => {
+      initCurrent[key] = 0
+      initPrev[key] = null
+      initLoaded[key] = new Set()
+      initFailed[key] = new Set()
+      initActive[key] = null
+    })
+    setCurrentByKey(initCurrent)
+    setPreviousByKey(initPrev)
+    setLoadedByKey(initLoaded)
+    setFailedByKey(initFailed)
+    setActiveByKey(initActive)
+  }, [])
 
-  const Gallery: React.FC<{ images: { name: string; url: string }[] }> = ({ images }) => {
-    const [current, setCurrent] = useState(0)
-    const [previous, setPrevious] = useState<number | null>(null)
-    const [transitioning, setTransitioning] = useState(false)
-    const [paused, setPaused] = useState(false)
-    const [activeIdx, setActiveIdx] = useState<number | null>(null)
-    const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
-    const [failedImages, setFailedImages] = useState<Set<number>>(new Set())
-    const [retryCount, setRetryCount] = useState<Map<number, number>>(new Map())
-    const [optimizedUrls, setOptimizedUrls] = useState<Map<number, string>>(new Map())
-    const [lowQualityUrls, setLowQualityUrls] = useState<Map<number, string>>(new Map())
+  useEffect(() => {
+    const keys = Object.keys(imagesByKey)
+    if (!keys.length || paused) return
+    const SLIDE_INTERVAL_MS = 5000
+    const CROSSFADE_MS = 1200
+    const id = window.setInterval(() => {
+      setPreviousByKey(prev => {
+        const next: Record<string, number | null> = { ...prev }
+        keys.forEach(k => { next[k] = currentByKey[k] ?? 0 })
+        return next
+      })
+      setCurrentByKey(prev => {
+        const next: Record<string, number> = { ...prev }
+        keys.forEach(k => {
+          const len = imagesByKey[k]?.length || 0
+          if (len > 0) next[k] = ((prev[k] ?? 0) + 1) % len
+          else next[k] = 0
+        })
+        return next
+      })
+      setTransitioning(true)
+      window.setTimeout(() => setTransitioning(false), CROSSFADE_MS)
+    }, SLIDE_INTERVAL_MS)
+    return () => clearInterval(id)
+  }, [imagesByKey, paused, currentByKey])
 
-    useEffect(() => {
-      if (images.length <= 1 || paused) return
-      const SLIDE_INTERVAL_MS = 5000
-      const CROSSFADE_MS = 1200
-      const id = window.setInterval(() => {
-        setPrevious(current)
-        setCurrent((s) => (s + 1) % images.length)
-        setTransitioning(true)
-        window.setTimeout(() => setTransitioning(false), CROSSFADE_MS)
-      }, SLIDE_INTERVAL_MS)
-      return () => clearInterval(id)
-    }, [images.length, paused, current])
 
-        // Smooth preloading with requestIdleCallback to avoid blocking
-    useEffect(() => {
-      if (!images.length) return
-
-      const loadImage = (idx: number) => {
-        if (loadedImages.has(idx) || failedImages.has(idx)) return
-
-        // Use requestIdleCallback to avoid blocking main thread
-        const scheduleLoad = () => {
-          if ('requestIdleCallback' in window) {
-            requestIdleCallback(() => performLoad(), { timeout: 1000 })
-          } else {
-            // Fallback for browsers without requestIdleCallback
-            setTimeout(performLoad, 16) // Next frame
-          }
-        }
-
-                const performLoad = () => {
-          // Use progressive loading with image optimization
-          ProgressiveImageLoader.loadProgressive(
-            images[idx].url,
-            // Low quality loaded first (fast)
-            (lowQualityUrl) => {
-              requestAnimationFrame(() => {
-                setLowQualityUrls(prev => new Map(prev).set(idx, lowQualityUrl))
-              })
-            },
-            // High quality loaded second (slower)
-            (highQualityUrl) => {
-              requestAnimationFrame(() => {
-                setOptimizedUrls(prev => new Map(prev).set(idx, highQualityUrl))
-                setLoadedImages(prev => new Set(prev).add(idx))
-                setRetryCount(prev => {
-                  const newMap = new Map(prev)
-                  newMap.delete(idx)
-                  return newMap
-                })
-              })
-            }
-          ).catch(() => {
-            const currentRetries = retryCount.get(idx) || 0
-            if (currentRetries < 3) {
-              // Retry with exponential backoff, but don't block
-              setTimeout(() => {
-                requestAnimationFrame(() => {
-                  setRetryCount(prev => new Map(prev).set(idx, currentRetries + 1))
-                  scheduleLoad()
-                })
-              }, Math.pow(2, currentRetries) * 1000)
-            } else {
-              requestAnimationFrame(() => {
-                setFailedImages(prev => new Set(prev).add(idx))
-              })
-            }
-          })
-        }
-
-        scheduleLoad()
-      }
-
-      // Load current first (priority), then next/previous
-      const currentIdx = current
-      const nextIdx = (current + 1) % images.length
-      const prevIdx = (current - 1 + images.length) % images.length
-
-      // Load current immediately
-      loadImage(currentIdx)
-
-      // Load next/previous with slight delay to prioritize current
-      setTimeout(() => {
-        loadImage(nextIdx)
-        loadImage(prevIdx)
-      }, 50)
-
-    }, [current, images, loadedImages, failedImages, retryCount])
-
-    return (
-      <div
-        className="group relative w-full aspect-[5/4] bg-primary-secondary rounded-3xl flex items-center justify-center overflow-hidden glass-effect hover:scale-[1.01] transition-transform duration-300 cursor-pointer image-container"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-      >
-        <div className="absolute inset-0">
-          <div className="h-full w-full">
-            <div className="h-full w-full">
-              {images.length === 0 && (
-                <div className="absolute inset-0 grid place-items-center skeleton">
-                  <div className="spinner"></div>
-                </div>
-              )}
-              {images.length > 0 && (
-                <div className="h-full w-full relative">
-                  {images.map((img, idx) => {
-                    const isActive = idx === current
-                    const isPrev = idx === (previous ?? (current - 1 + images.length) % images.length)
-                    const isLoaded = loadedImages.has(idx)
-                    const hasFailed = failedImages.has(idx)
-                    const isRetrying = retryCount.has(idx)
-
-                    return (
-                      <div key={img.name} className="absolute top-0 left-0 h-full w-full">
-                        {/* Show low quality first, then high quality */}
-                        {(lowQualityUrls.has(idx) || isLoaded) && !hasFailed && (
-                          <>
-                            {/* Low quality placeholder */}
-                            {lowQualityUrls.has(idx) && !isLoaded && (
-                              <img
-                                src={lowQualityUrls.get(idx)}
-                                alt={img.name}
-                                className={`absolute top-0 left-0 h-full w-full object-cover ${isActive ? 'kenburns' : isPrev ? 'kenburns-out' : ''}`}
-                                style={{
-                                  opacity: isActive ? 0.8 : (transitioning && isPrev ? 0.8 : 0),
-                                  transform: isActive ? 'translateZ(0)' : (transitioning && isPrev ? 'translate3d(-8px,0,0) scale(1.06)' : 'translateZ(0)'),
-                                  filter: 'blur(1px)',
-                                  transition: transitioning
-                                    ? (isActive
-                                        ? 'opacity 800ms cubic-bezier(0.22,0.61,0.36,1)'
-                                        : (isPrev ? 'opacity 800ms cubic-bezier(0.22,0.61,0.36,1), transform 800ms cubic-bezier(0.22,0.61,0.36,1)' : 'none'))
-                                    : 'none',
-                                  zIndex: isActive ? 1 : (transitioning && isPrev ? 1 : 0),
-                                  willChange: 'opacity, transform'
-                                }}
-                                onClick={() => setActiveIdx(current)}
-                                decoding="async"
-                              />
-                            )}
-
-                            {/* High quality final image */}
-                            {isLoaded && optimizedUrls.has(idx) && (
-                              <img
-                                src={optimizedUrls.get(idx)}
-                                alt={img.name}
-                                className={`absolute top-0 left-0 h-full w-full object-cover ${isActive ? 'kenburns' : isPrev ? 'kenburns-out' : ''}`}
-                                style={{
-                                  opacity: isActive ? 1 : (transitioning && isPrev ? 1 : 0),
-                                  transform: isActive ? 'translateZ(0)' : (transitioning && isPrev ? 'translate3d(-8px,0,0) scale(1.06)' : 'translateZ(0)'),
-                                  transition: transitioning
-                                    ? (isActive
-                                        ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1)'
-                                        : (isPrev ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1), transform 1200ms cubic-bezier(0.22,0.61,0.36,1)' : 'none'))
-                                    : 'none',
-                                  zIndex: isActive ? 2 : (transitioning && isPrev ? 1 : 0),
-                                  willChange: 'opacity, transform'
-                                }}
-                                onClick={() => setActiveIdx(current)}
-                                decoding="async"
-                              />
-                            )}
-                          </>
-                        )}
-
-                        {/* Beautiful loading state for current active image */}
-                        {isActive && !isLoaded && !hasFailed && !lowQualityUrls.has(idx) && (
-                          <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/20 via-accent-purple/20 to-accent-green/20 rounded-3xl overflow-hidden">
-                            {/* Animated gradient background */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse"></div>
-
-                            {/* Shimmer effect */}
-                            <div className="absolute inset-0 skeleton"></div>
-
-                            {/* Center content */}
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
-                              <div className="relative">
-                                {/* Large beautiful spinner */}
-                                <div className="w-12 h-12 border-3 border-white/10 border-t-accent-blue border-r-accent-purple rounded-full animate-spin"></div>
-
-                                {/* Inner glow */}
-                                <div className="absolute inset-1 w-10 h-10 border-2 border-white/5 border-b-accent-green rounded-full animate-spin animation-delay-150"></div>
-                              </div>
-
-                              <div className="mt-4 space-y-1">
-                                <p className="text-white/80 text-sm font-medium">Loading</p>
-                                <div className="flex space-x-1">
-                                  <div className="w-1.5 h-1.5 bg-accent-blue rounded-full animate-bounce"></div>
-                                  <div className="w-1.5 h-1.5 bg-accent-purple rounded-full animate-bounce animation-delay-75"></div>
-                                  <div className="w-1.5 h-1.5 bg-accent-green rounded-full animate-bounce animation-delay-150"></div>
-                                </div>
-                                {isRetrying && (
-                                  <p className="text-white/50 text-xs mt-1">
-                                    Retrying... ({retryCount.get(idx) || 0}/3)
-                                  </p>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Beautiful failed state */}
-                        {isActive && hasFailed && (
-                          <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 via-orange-500/20 to-red-600/20 rounded-3xl overflow-hidden">
-                            {/* Subtle pattern background */}
-                            <div className="absolute inset-0 opacity-5" style={{
-                              backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/g%3E%3C/svg%3E")`
-                            }}></div>
-
-                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
-                              <div className="relative mb-3">
-                                {/* Beautiful error icon */}
-                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-400/30 to-orange-500/30 backdrop-blur-sm border border-red-400/20 flex items-center justify-center">
-                                  <X className="w-6 h-6 text-red-300" />
-                                </div>
-                                {/* Pulse effect */}
-                                <div className="absolute inset-0 w-12 h-12 rounded-full bg-red-400/20 animate-ping"></div>
-                              </div>
-
-                              <div className="space-y-1">
-                                <p className="text-white/90 text-sm font-medium">Failed to Load</p>
-                                <p className="text-white/50 text-xs">Image unavailable</p>
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        {images.length > 0 && (
-          <button onClick={() => setActiveIdx(current)} className="absolute inset-0 z-20 cursor-pointer" aria-label="Open gallery" />
-        )}
-
-        {createPortal(
-          <AnimatePresence>
-            {activeIdx !== null && (
-              <motion.div
-                className="fixed inset-0 z-[999] flex items-center justify-center bg-black/80 backdrop-blur-sm"
-                onClick={() => setActiveIdx(null)}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
-              >
-                <motion.div
-                  className="relative max-w-7xl w-[98vw]"
-                  onClick={(e) => e.stopPropagation()}
-                  initial={{ scale: 0.98, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.98, opacity: 0 }}
-                  transition={{ duration: 0.2, ease: 'easeOut' }}
-                >
-                  <button aria-label="Close" className="absolute top-3 right-3 md:top-4 md:right-4 text-white/90 hover:text-white bg-black/60 hover:bg-black/70 rounded-full p-1 z-10" onClick={() => setActiveIdx(null)}>
-                    <X className="w-8 h-8" />
-                  </button>
-                  <div className="w-full max-h-[85vh] overflow-hidden rounded-xl bg-black/40 flex items-center justify-center p-2">
-                    <AnimatePresence mode="wait">
-                      <motion.img
-                        key={activeIdx}
-                        src={images[activeIdx].url}
-                        alt={images[activeIdx].name}
-                        className="max-w-full max-h-[82vh] w-auto h-auto"
-                        loading="eager"
-                        decoding="async"
-                        initial={{ opacity: 0, scale: 0.995 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 1.005 }}
-                        transition={{ duration: 0.25, ease: 'easeOut' }}
-                      />
-                    </AnimatePresence>
-                  </div>
-                  {images.length > 1 && (
-                    <div className="mt-4 grid grid-cols-4 sm:grid-cols-6 md:grid-cols-10 gap-2">
-                      {images.map((img, idx) => (
-                        <button key={img.name} onClick={() => setActiveIdx(idx)} className={`relative rounded-lg overflow-hidden border ${idx === activeIdx ? 'border-accent-blue' : 'border-white/10'}`}>
-                          <img src={img.url} alt={img.name} className="w-full h-20 object-cover" />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </motion.div>
-              </motion.div>
-            )}
-          </AnimatePresence>,
-          document.body
-        )}
-      </div>
-    )
-  }
 
   return (
     <section id="experience" className="py-20 sm:py-32 bg-gradient-to-b from-transparent to-primary-secondary/20">
@@ -392,68 +138,167 @@ const Experience = () => {
 
         <div className="max-w-4xl mx-auto">
           {experiences.map((exp, index) => {
-            const imgs = useMemo(() => exp.pattern ? getShuffled(exp.pattern) : [], [exp.pattern])
+            const key = exp.title
+            const group = imagesByKey[key] || []
+            const cur = currentByKey[key] ?? 0
+            const prev = previousByKey[key] ?? (group.length ? (cur - 1 + group.length) % group.length : 0)
+            const loaded = loadedByKey[key] || new Set<number>()
+            const failed = failedByKey[key] || new Set<number>()
             return (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className={`flex flex-col lg:flex-row mb-12 ${
-                index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-              }`}
-            >
-              <div className="lg:w-1/2 lg:px-8">
-                <div className="glass-effect p-8 rounded-2xl relative hover:scale-105 transition-transform duration-300">
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-accent-blue via-accent-purple to-accent-green rounded-t-2xl"></div>
-
-                  <div className="text-accent-blue font-semibold mb-2 text-sm">
-                    {exp.period}
-                  </div>
-
-                  <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">
-                    {exp.title}
-                  </h3>
-
-                  <div className="text-accent-green font-semibold mb-4">
-                    {exp.company}
-                  </div>
-
-                  <p className="text-gray-300 leading-relaxed mb-6">
-                    {exp.description}
-                    {exp.links && exp.links.map((l: any) => (
-                      <React.Fragment key={l.href}>
-                        {' '}
-                        <a href={l.href} target="_blank" rel="noreferrer" className={`${l.href.includes('seismosoc') ? 'text-accent-purple' : 'text-accent-blue'} underline font-semibold`}>
-                          {l.label}
-                        </a>
-                      </React.Fragment>
-                    ))}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2">
-                    {exp.technologies.map((tech, techIndex) => (
-                      <span
-                        key={techIndex}
-                        className="px-3 py-1 bg-accent-blue/20 border border-accent-blue/30 rounded-full text-accent-blue text-sm"
-                      >
-                        {tech}
-                      </span>
-                    ))}
+              <motion.div
+                key={key}
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className={`flex flex-col lg:flex-row mb-12 ${index % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}
+              >
+                <div className="lg:w-1/2 lg:px-8">
+                  <div className="glass-effect p-8 rounded-2xl relative hover:scale-105 transition-transform duration-300">
+                    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-accent-blue via-accent-purple to-accent-green rounded-t-2xl"></div>
+                    <div className="text-accent-blue font-semibold mb-2 text-sm">{exp.period}</div>
+                    <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">{exp.title}</h3>
+                    <div className="text-accent-green font-semibold mb-4">{exp.company}</div>
+                    <p className="text-gray-300 leading-relaxed mb-6">
+                      {exp.description}
+                      {Array.isArray((exp as any).links) && (exp as any).links.map((l: any) => (
+                        <React.Fragment key={l.href}> <a href={l.href} target="_blank" rel="noreferrer" className={`${l.href.includes('eartharxiv') ? 'text-accent-purple' : 'text-accent-blue'} underline font-semibold`}>{l.label}</a></React.Fragment>
+                      ))}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {exp.technologies.map((tech, techIndex) => (
+                        <span key={techIndex} className="px-3 py-1 bg-accent-blue/20 border border-accent-blue/30 rounded-full text-accent-blue text-sm">{tech}</span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="lg:w-1/2 flex items-center justify-center py-8">
-                {imgs.length > 0 ? (
-                  <Gallery images={imgs} />
-                ) : (
-                <div className="w-4 h-4 bg-accent-blue rounded-full shadow-lg shadow-accent-blue/50"></div>
+                <div className="lg:w-1/2 flex items-center justify-center py-8">
+                  <div
+                    className="group relative w-full aspect-[5/4] bg-primary-secondary rounded-3xl flex items-center justify-center overflow-hidden glass-effect hover:scale-[1.01] transition-transform duration-300 cursor-pointer image-container"
+                    style={{ contentVisibility: 'auto', contain: 'layout paint style', willChange: 'transform, opacity' }}
+                    onMouseEnter={() => setPaused(true)}
+                    onMouseLeave={() => setPaused(false)}
+                  >
+                    <div className="absolute inset-0">
+                      <div className="h-full w-full">
+                        <div className="h-full w-full relative">
+                          {group.map((img, idx) => {
+                            const len = group.length || 1
+                            const isActive = idx === (cur % len)
+                            const isPrev = idx === (prev as number % len)
+                            const isLoaded = loaded.has(idx)
+                            const hasFailed = failed.has(idx)
+                            const isLoading = false
+                            return (
+                              <div key={img.name} className="absolute top-0 left-0 h-full w-full">
+                                <img
+                                  src={img.url}
+                                  alt={img.name}
+                                  className={`absolute top-0 left-0 h-full w-full object-cover ${isActive ? 'kenburns' : isPrev ? 'kenburns-out' : ''}`}
+                                  style={{
+                                    opacity: isActive ? 1 : (transitioning && isPrev ? 1 : 0),
+                                    transform: isActive ? 'translateZ(0)' : (transitioning && isPrev ? 'translate3d(-8px,0,0) scale(1.06)' : 'translateZ(0)'),
+                                    transition: transitioning
+                                      ? (isActive
+                                          ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1)'
+                                          : (isPrev ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1), transform 1200ms cubic-bezier(0.22,0.61,0.36,1)' : 'none'))
+                                      : 'none',
+                                    zIndex: isActive ? 2 : (transitioning && isPrev ? 1 : 0),
+                                    willChange: 'opacity, transform'
+                                  }}
+                                  decoding="async"
+                                  loading="eager"
+                                  onLoad={() => {
+                                    setLoadedByKey(prev => {
+                                      const next = { ...prev }
+                                      const s = new Set(next[key] || new Set<number>())
+                                      s.add(idx)
+                                      next[key] = s
+                                      return next
+                                    })
+                                  }}
+                                  onError={() => {
+                                    setFailedByKey(prev => {
+                                      const next = { ...prev }
+                                      const s = new Set(next[key] || new Set<number>())
+                                      s.add(idx)
+                                      next[key] = s
+                                      return next
+                                    })
+                                  }}
+                                />
+
+                                {isActive && !isLoaded && !hasFailed && (
+                                  <div className="absolute inset-0 grid place-items-center rounded-3xl bg-black/20">
+                                    <div className="w-12 h-12 border-4 border-white/10 border-t-accent-blue rounded-full animate-spin"></div>
+                                  </div>
+                                )}
+
+                                {isActive && hasFailed && (
+                                  <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 via-orange-500/20 to-red-600/20 rounded-3xl overflow-hidden"></div>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                      {group.length > 0 && (
+                        <button
+                          onClick={() => setActiveByKey(prev => ({ ...prev, [key]: cur }))}
+                          className="absolute inset-0 z-20 cursor-pointer"
+                          aria-label="Open gallery"
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {activeByKey[key] !== null && (group.length > 0) && (
+                  <div
+                    className="fixed inset-0 z-[999] flex items-center justify-center bg-black/80"
+                    onClick={() => setActiveByKey(prev => ({ ...prev, [key]: null }))}
+                  >
+                    <div
+                      className="relative max-w-7xl w-[98vw]"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <button
+                        aria-label="Close"
+                        className="absolute -top-10 right-0 text-white/80 hover:text-white"
+                        onClick={() => setActiveByKey(prev => ({ ...prev, [key]: null }))}
+                      >
+                        <X className="w-8 h-8" />
+                      </button>
+                      <div className="w-full max-h-[90vh] overflow-hidden rounded-xl bg-black/40 flex items-center justify-center p-2">
+                        {activeByKey[key] !== null && (
+                          <img
+                            src={group[(activeByKey[key] as number) % group.length].url}
+                            alt={group[(activeByKey[key] as number) % group.length].name}
+                            className="max-w-full max-h-[88vh] w-auto h-auto object-contain"
+                            loading="eager"
+                            decoding="async"
+                          />
+                        )}
+                      </div>
+                      {group.length > 1 && (
+                        <div className="mt-4 grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
+                          {group.map((g, idx) => (
+                            <button
+                              key={g.name}
+                              onClick={() => setActiveByKey(prev => ({ ...prev, [key]: idx }))}
+                              className={`relative rounded-lg overflow-hidden border ${idx === activeByKey[key] ? 'border-accent-blue' : 'border-white/10'}`}
+                            >
+                              <img src={g.url} alt={g.name} className="w-full h-20 object-cover" />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 )}
-              </div>
-            </motion.div>
-          )})}
+              </motion.div>
+            )
+          })}
         </div>
       </div>
     </section>

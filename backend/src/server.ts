@@ -43,7 +43,23 @@ const apiRouter = express.Router()
 apiRouter.use(limiter as any)
 app.use('/api', apiRouter)
 
-
+apiRouter.get('/proxy-image', async (req, res) => {
+  const src = String(req.query.src || '')
+  if (!src) return res.status(400).send('src required')
+  try {
+    const direct = new URL(src)
+    const response = await fetch(direct.toString())
+    if (!response.ok) return res.status(response.status).send('upstream error')
+    res.setHeader('Access-Control-Allow-Origin', '*')
+    res.setHeader('Cache-Control', 'public, max-age=3600')
+    res.setHeader('Content-Type', response.headers.get('content-type') || 'image/jpeg')
+    const body = await response.arrayBuffer()
+    res.end(Buffer.from(body))
+  } catch (e) {
+    console.error('proxy-image error', e)
+    res.status(500).send('proxy failed')
+  }
+})
 
 app.get('/api/health', (_req, res) => {
   res.json({
@@ -53,8 +69,6 @@ app.get('/api/health', (_req, res) => {
     environment: process.env.NODE_ENV || 'development'
   })
 })
-
-
 
 app.get('/api/portfolio-data', (_req, res) => {
   res.json({
