@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
+import { imageManifest } from '../imageManifest'
 
 const Experience = () => {
   const experiences = [
@@ -53,19 +54,11 @@ const Experience = () => {
     }
   ]
 
-  const [allImages, setAllImages] = useState<{ name: string; url: string }[]>([])
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const base = '/api'
-        const res = await fetch(`${base}/images`)
-        const data = await res.json()
-        const list: { name: string; url: string }[] = data.images || []
-        setAllImages(list)
-      } catch {}
-    }
-    load()
-  }, [])
+    const [allImages] = useState<{ name: string; url: string }[]>(() => {
+    // Combine all images from the manifest
+    const all = Object.values(imageManifest).flat()
+    return all.map(name => ({ name, url: `/images/${name}` }))
+  })
 
   const getShuffled = (pattern: RegExp) => {
     const matched = allImages.filter(i => pattern.test(i.name))

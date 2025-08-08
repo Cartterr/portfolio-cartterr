@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
+import { getShuffledImages } from '../imageManifest'
 
 const About = () => {
   const stats = [
@@ -21,26 +22,17 @@ const About = () => {
   const [firstLoaded, setFirstLoaded] = useState(false)
 
   useEffect(() => {
-    const fetchImages = async () => {
+    const loadImages = () => {
       try {
-        const base = '/api'
-        const res = await fetch(`${base}/images?q=profile`)
-        const data = await res.json()
-        const list: { name: string; url: string }[] = data.images || []
-        const rest = list.filter(i => i.name.toLowerCase() !== 'profile1.jpg')
-        for (let i = rest.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1))
-          ;[rest[i], rest[j]] = [rest[j], rest[i]]
-        }
-        const ordered = [list.find(i => i.name.toLowerCase() === 'profile1.jpg')!, ...rest].filter(Boolean)
-        setImages(ordered)
+        const profileImages = getShuffledImages('profile')
+        setImages(profileImages)
+        setLoading(false)
       } catch (e: any) {
         setError('Failed to load images')
-      } finally {
         setLoading(false)
       }
     }
-    fetchImages()
+    loadImages()
   }, [])
 
   useEffect(() => {
