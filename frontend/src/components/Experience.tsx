@@ -291,7 +291,7 @@ const Experience = () => {
 
         <div className="max-w-4xl mx-auto">
           {experiences.map((exp, index) => {
-            const imgs = useMemo(() => exp.pattern ? getShuffled(exp.pattern) : [], [allImages])
+            const imgs = useMemo(() => exp.pattern ? getShuffled(exp.pattern) : [], [exp.pattern])
             return (
             <motion.div
               key={index}
