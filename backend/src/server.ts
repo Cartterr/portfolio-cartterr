@@ -40,8 +40,9 @@ app.use(compression())
 app.use(morgan('combined'))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
-const apiRateLimiterMw: express.RequestHandler = (req, res, next) => limiter(req, res, next)
-app.use('/api', apiRateLimiterMw)
+const apiRouter = express.Router()
+apiRouter.use((req, res, next) => limiter(req, res, next))
+app.use('/api', apiRouter)
 
 app.use('/images', express.static(path.join(__dirname, '../public/images'), {
   maxAge: '30d',
