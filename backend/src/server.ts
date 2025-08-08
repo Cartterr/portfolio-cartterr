@@ -26,28 +26,29 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.'
 } as RateLimitOptions)
 
-app.use(helmet({
+app.use('/', helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false
 }))
 
-app.use(cors({
+app.use('/', cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
 }))
 
-app.use(compression())
-app.use(morgan('combined'))
-app.use(express.json({ limit: '10mb' }))
-app.use(express.urlencoded({ extended: true, limit: '10mb' }))
+app.use('/', compression())
+app.use('/', morgan('combined'))
+app.use('/', express.json({ limit: '10mb' }))
+app.use('/', express.urlencoded({ extended: true, limit: '10mb' }))
 const apiRouter = express.Router()
-apiRouter.use((req, res, next) => limiter(req, res, next))
+apiRouter.use(limiter)
 app.use('/api', apiRouter)
 
 app.use('/images', express.static(path.join(__dirname, '../public/images'), {
   maxAge: '30d',
   etag: true,
-  setHeaders: (res, _filePath) => {
+  setHeaders: (res, filePath) => {
+    void filePath
     res.setHeader('Cache-Control', 'public, max-age=2592000, immutable')
   }
 }))
@@ -269,7 +270,9 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  void req
+  void next
   console.error('❌ Error:', err.stack)
   res.status(500).json({
     error: 'Something went wrong!',
