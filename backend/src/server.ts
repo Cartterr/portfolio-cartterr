@@ -44,7 +44,30 @@ const apiRouter = express.Router()
 apiRouter.use(limiter as any)
 app.use('/api', apiRouter)
 
-app.use('/images', express.static(path.join(__dirname, '../public/images'), {
+const findImagesDir = () => {
+  const possibleDirs = [
+    path.join(__dirname, '../public/images'),
+    path.join(__dirname, '../../frontend/public/images'),
+    path.join(__dirname, '../../backend/public/images'),
+    path.join(process.cwd(), 'backend/public/images'),
+    path.join(process.cwd(), 'frontend/public/images')
+  ]
+
+  for (const dir of possibleDirs) {
+    try {
+      require('fs').accessSync(dir)
+      console.log('📁 Using images directory:', dir)
+      return dir
+    } catch {
+      continue
+    }
+  }
+
+  console.log('⚠️ No images directory found, using default')
+  return path.join(__dirname, '../public/images')
+}
+
+app.use('/images', express.static(findImagesDir(), {
   maxAge: '30d',
   etag: true,
   setHeaders: (res, filePath) => {
@@ -64,8 +87,33 @@ app.get('/api/health', (_req, res) => {
 
 app.get('/api/images', async (req, res) => {
   try {
-    const imagesDir = path.join(__dirname, '../public/images')
-    const entries = await fs.readdir(imagesDir)
+    const possibleDirs = [
+      path.join(__dirname, '../public/images'),
+      path.join(__dirname, '../../frontend/public/images'),
+      path.join(__dirname, '../../backend/public/images'),
+      path.join(process.cwd(), 'backend/public/images'),
+      path.join(process.cwd(), 'frontend/public/images')
+    ]
+
+    let imagesDir = ''
+    let entries: string[] = []
+
+    for (const dir of possibleDirs) {
+      try {
+        console.log('🔍 Checking directory:', dir)
+        entries = await fs.readdir(dir)
+        imagesDir = dir
+        console.log('✅ Found images directory:', dir, 'with', entries.length, 'entries')
+        break
+      } catch {
+        console.log('❌ Directory not found:', dir)
+      }
+    }
+
+    if (!imagesDir) {
+      throw new Error('No images directory found in any of the expected locations')
+    }
+
     const allowed = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp'])
     const q = (req.query.q as string | undefined)?.toLowerCase()
     const files = entries
@@ -77,9 +125,13 @@ app.get('/api/images', async (req, res) => {
       return 0
     })
     const images = sorted.map(name => ({ name, url: `/images/${name}` }))
+    console.log('✅ Returning', images.length, 'images from', imagesDir)
     res.json({ images })
   } catch (err) {
-    res.status(500).json({ error: 'Failed to list images' })
+    console.error('❌ Images API error:', err)
+    console.error('🔍 __dirname:', __dirname)
+    console.error('🔍 process.cwd():', process.cwd())
+    res.status(500).json({ error: 'Failed to list images', details: err instanceof Error ? err.message : String(err) })
   }
 })
 
