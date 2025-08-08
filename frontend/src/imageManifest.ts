@@ -1,6 +1,7 @@
-import { imageUrls } from './assets/imageImports'
+// Build-time constant to bust cache
+const BUILD_ID = Math.random().toString(36).substring(7)
 
-// Static image manifest - images imported as modules with unique URLs
+// Static image manifest - images served from public directory with cache busting
 export const imageManifest = {
   profile: [
     'profile1.jpg',
@@ -64,7 +65,7 @@ export const getImages = (category: keyof typeof imageManifest) => {
   const images = imageManifest[category] || []
   return images.map(name => ({
     name,
-    url: imageUrls[name] || `/images/${name}` // Use imported URL or fallback
+    url: `/images/${name}?build=${BUILD_ID}` // Force fresh URLs per build
   }))
 }
 
