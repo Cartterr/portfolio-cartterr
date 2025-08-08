@@ -3,7 +3,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import compression from 'compression'
-import rateLimit from 'express-rate-limit'
+import rateLimit, { type Options as RateLimitOptions } from 'express-rate-limit'
 import dotenv from 'dotenv'
 import path from 'path'
 import { promises as fs } from 'fs'
@@ -24,7 +24,7 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   message: 'Too many requests from this IP, please try again later.'
-})
+} as RateLimitOptions)
 
 app.use(helmet({
   contentSecurityPolicy: false,
