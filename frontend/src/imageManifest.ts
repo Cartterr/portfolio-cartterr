@@ -1,4 +1,6 @@
-// Static image manifest - images served from public directory
+import { imageUrls } from './assets/imageImports'
+
+// Static image manifest - images imported as modules with unique URLs
 export const imageManifest = {
   profile: [
     'profile1.jpg',
@@ -62,7 +64,7 @@ export const getImages = (category: keyof typeof imageManifest) => {
   const images = imageManifest[category] || []
   return images.map(name => ({
     name,
-    url: `/images/${name}?v=${Date.now()}` // Add cache busting
+    url: imageUrls[name] || `/images/${name}` // Use imported URL or fallback
   }))
 }
 
