@@ -236,19 +236,6 @@ app.post('/api/contact', async (req, res) => {
 })
 
 if (process.env.NODE_ENV === 'production') {
-  // Serve images with no-cache headers to prevent 304 issues
-  app.use('/images', express.static(path.join(__dirname, '../../frontend/dist/images'), {
-    etag: false,
-    maxAge: 0,
-    setHeaders: (res, filePath) => {
-      void filePath
-      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate')
-      res.setHeader('Pragma', 'no-cache')
-      res.setHeader('Expires', '0')
-    }
-  }) as any)
-
-  // Serve other static files normally
   app.use(express.static(path.join(__dirname, '../../frontend/dist')))
 
   app.get('*', (_req, res) => {
