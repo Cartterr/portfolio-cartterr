@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { type RequestHandler } from 'express'
 import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
@@ -40,17 +40,18 @@ app.use(compression())
 app.use(morgan('combined'))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true, limit: '10mb' }))
-app.use('/api/', limiter)
+const apiRateLimiter = limiter as unknown as RequestHandler
+app.use('/api/', apiRateLimiter)
 
 app.use('/images', express.static(path.join(__dirname, '../public/images'), {
   maxAge: '30d',
   etag: true,
-  setHeaders: (res, filePath) => {
+  setHeaders: (res, _filePath) => {
     res.setHeader('Cache-Control', 'public, max-age=2592000, immutable')
   }
 }))
 
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (_req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
@@ -80,7 +81,7 @@ app.get('/api/images', async (req, res) => {
   }
 })
 
-app.get('/api/portfolio-data', (req, res) => {
+app.get('/api/portfolio-data', (_req, res) => {
   res.json({
     name: 'José Carter Arriagada',
     title: 'Software Engineer | Full-Stack Developer | AI & Data Science Researcher',
@@ -267,7 +268,7 @@ if (process.env.NODE_ENV === 'production') {
   })
 }
 
-app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
+app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   console.error('❌ Error:', err.stack)
   res.status(500).json({
     error: 'Something went wrong!',
