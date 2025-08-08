@@ -1,0 +1,236 @@
+PONTIFICIA UNIVERSIDAD CATOLICA DE CHILE
+ESCUELA DE INGENIERÍA
+Dirección de Investigación e Innovación
+Programa IPre de Investigación en Pregrado
+Análisis geométrico e interacción sísmica de la FALLA
+Marga-Marga en Viña del Mar, Chile
+José Carter, Major en Ing. En Software, Facultad de Ingenieria, Pontificia Universidad
+Católica. 4to Año, jrcarter@uc.cl
+Jorge Crempien, Departamento de Estructuras y Geotecnica, Facultad de Ingenieria,
+Pontificia Universidad Católica, Profesor Asistente, jocrempiend@uc.cl
+Figura 1. Renderizado de la topografía junto a las capas tectónicas de la falla marga-marga.
+PONTIFICIA UNIVERSIDAD CATOLICA DE CHILE
+ESCUELA DE INGENIERÍA
+Dirección de Investigación e Innovación
+Programa IPre de Investigación en Pregrado
+Resumen
+En este estudio se indaga en el análisis geométrico de la falla Marga-Marga que se sitúa en Viña del
+Mar, Chile. El objetivo es comprender las actividades sísmicas y la deformación a lo largo de la falla,
+investigando específicamente el impacto del CICLO SÍSMICO de la falla Marga-Marga. Para ello, se
+desarrolla un modelo 3D completo de la línea de la falla y la región que la rodea utilizando la función
+Tri-Surface Plot de la biblioteca matplotlib dentro de Python. Además del uso de programas de
+modelamiento y simulación de modelos en 3D cómo Houdini, Blender y Trelis. La simulación fue
+principalmente compuesta por el repositorio “tectosaur” [Thompson and Meade, 2017].
+Para realizar la investigación, se considera un lapso de tiempo simulado de 1000 años, y se analiza la
+acumulación de desplazamiento que se produce durante los terremotos. Cada vez que ocurre un
+terremoto se muestra lentamente el transcurso del movimiento en las coordenadas x, y y z. Los
+resultados obtenidos de este estudio demuestra la significativa actividad entre la ZONA DE
+SUBDUCCIÓN chilena y la falla cortical de Marga-Marga. Estos además establecen las bases para
+futuras investigaciones acerca del comportamiento sísmico y contribuye al desarrollo de estrategias
+de predicción y prevención de eventuales amenazas sísmicas en zonas pobladas.
+En conclusión, la investigación aporta valiosos conocimientos sobre los procesos de deformación y la
+interacción sísmica en la falla Marga-Marga. Incluyendo diferente zonas importantes de la falla
+gracias a la representación que nos entrega la simulación. Al mejorar nuestra comprensión de estos
+fenómenos, podemos mejorar las estrategias de gestión de catástrofes y aumentar la eficacia de las
+medidas para mitigar el impacto de los terremotos, además de las consecuencias que podrían llegar
+a provocar.
+Palabras clave: Análisis geométrico, Falla Marga-Marga, Interacción sísmica, Acumulación de
+DESLIZAMIENTOS, Zona de subducción chilena.
+1. Introducción
+PONTIFICIA UNIVERSIDAD CATOLICA DE CHILE
+ESCUELA DE INGENIERÍA
+Dirección de Investigación e Innovación
+Programa IPre de Investigación en Pregrado
+
+Las actividades sísmicas, una de las catástrofes naturales más devastadoras, predominan en regiones
+con fallas geológicas activas. Su impacto sobre las poblaciones y las infraestructuras construidas,
+especialmente en zonas urbanas densamente pobladas, suelen afectar considerablemente año tras
+año. Estas actividades se ven influidas principalmente por los cambios tectónicos en estas fallas, sobre
+todo en regiones con zonas de subducción cómo en Chile. Este estudio investiga específicamente a
+la falla Marga-Marga en Viña del Mar, Chile, una de las regiones más propensas a los movimientos
+sísmicos. Siendo el principal objetivo el obtener una comprensión más profunda de la geometría de
+la falla, su desplazamiento y su interacción con la zona de subducción chilena. Que contribuye al
+análisis de las consecuencias que podría llegar a causar incluyendo los daños estructurales, las
+pérdidas humanas y los desplazamientos masivos de la población en caso de evacuación.
+1.1 Justificación del problema e hipótesis
+La geología de Chile, específicamente en la falla de Marga-Marga y sus alrededores, es compleja y
+bien activa. Esta complejidad contribuye a la ocurrencia de frecuentes actividades sísmicas. El
+problema que se investiga es la interacción entre la falla cortical de Marga-Marga y la zona de
+subducción chilena que rodea a esta falla. La hipótesis de trabajo de este estudio es que las
+condiciones geométricas y cinemáticas de estas fallas pueden influir en la recurrencia de los
+terremotos corticales. Si se demuestra, esto podría tener implicaciones significativas para la
+contribución de los esfuerzos de poder mitigar los riesgos de los desastre que podrían llegar a ocurrir
+en esta región.
+1.2 Estudios previos y antecedentes
+Estudios previos han realizado investigaciones sobre la interacción de las fallas y las reacciones que
+tiene en frente de sismos. En este análisis se busca ampliar esta base de conocimiento creado por
+estos autores anteriores. Uno de estos estudios realizados fue por Aron F. [Aron et al., 2013] quien
+exploró la segmentación de los ciclos sísmicos debido a anomalías geométricas en las líneas de falla.
+Otro estudio realizado por Herrera M. [Herrera et al., 2021] se centró principalmente en la
+comprensión de los comportamientos sísmicos dentro de las zonas de subducción. Ambos estudios
+han contribuido significativamente a la comprensión actual acerca del tema. En esta investigación se
+PONTIFICIA UNIVERSIDAD CATOLICA DE CHILE
+ESCUELA DE INGENIERÍA
+Dirección de Investigación e Innovación
+Programa IPre de Investigación en Pregrado
+da un avance utilizando estos estudios cómo base para producir un análisis detallado de la falla
+Marga-Marga y los efectos provocados por los movimientos sísmicos.
+1.3 Objetivos y enfoque
+En este estudio se aborda el tema mediante la creación y el análisis de las geometrías realistas en 3D
+de la falla de Marga-Marga y su región circundante. Los modelos 3D proporcionan una comprensión
+precisa y realista de las condiciones geométricas y cinemáticas de la falla. Los objetivos principales
+de este estudio son examinar las deformaciones causadas por el ciclo sísmico, comprender la
+correlación entre estas deformaciones y la falla, y además analizar la acumulación de deslizamiento
+de la falla a lo largo del tiempo. El objetivo a largo plazo es construir una comprensión global del
+comportamiento sísmico de la falla, lo que podría ayudar a poder predecir y mitigar futuras amenazas
+sísmicas cómo los terremotos de gran magnitud.
+2. Metodología
+La metodología principal de esta investigación implica la utilización de la biblioteca matplotlib de
+Python, para extraer los polígonos de las visualizaciones 2D de la falla con la función Tri-Surface Plot.
+La que es capaz de crear modelos en 3D, que proporciona el modelo y su complejidad geométrica
+con alto detalle. La metodología consiste en crear el modelo 3D de esta falla y combinar la falla con
+la topología de la zona y las distintas capaz tectónicas que rodean a esta. A continuación, este modelo
+se utiliza para simular y analizar la ocurrencia de sismos durante un periodo de 1000 años utilizando
+el repositorio “tectosaur”. El estudio además examina la cantidad de desplazamiento acumulado en
+intervalos de 10 años en las coordenadas x,y y z a una velocidad menor en caso de la existencia de
+un terremoto de mayor escala.
+PONTIFICIA UNIVERSIDAD CATOLICA DE CHILE
+ESCUELA DE INGENIERÍA
+Dirección de Investigación e Innovación
+Programa IPre de Investigación en Pregrado
+
+Figura 2. Representación de la geometría de la falla marga-marga a simular.
+Figura 3. Geometría mallada resultante de zona de estudio, vista aérea.
+Para garantizar la precisión de los resultados, esta metodología también implica validar el modelo 3D
+con los datos del mundo real. Esto incluye la utilización de datos de estudios anteriores y extraídos
+de coordenadas reales utilizados para el estudio de fallas. Mediante este proceso, se asegura que
+este modelo representa con exactitud a la falla real. A se adjuntan figuras de esta falla.
+Luego de tener el modelo listo, procedemos a simular durante 1000 años la ocurrencia de actividad
+sísmica dentro de esta falla, en donde los resultados son mostrados mediante una serie de paneles
+que muestran la acumulación de deslizamiento total entre la falla y la superficie libre en tramos de
+latitudes y longitudes en centímetros, estas van de -200000 a 200000 y de -150000 a 150000
+respectivamente. Los colores rojizos de estos paneles muestran la acumulación del deslizamiento y
+PONTIFICIA UNIVERSIDAD CATOLICA DE CHILE
+ESCUELA DE INGENIERÍA
+Dirección de Investigación e Innovación
+Programa IPre de Investigación en Pregrado
+los azules las relajaciones. Mientras que la leyenda muestra el exponente de los metros por 10 que
+indica la acumulación de deslizamiento o relajación en la zona representada por un color.
+3. Resultados y discusión
+3.1 Observaciones
+El objetivo principal de la investigación era examinar con profundidad las interacciones entre la zona
+de subducción chilena y la falla cortical Marga- Marga. Mediante el modelo 3D se pudo llevar un
+análisis acerca las características de la falla, principalmente durante la fase intersísmica. Este modelo
+refleja una mejora significativa respecto al modelo 2D anteriormente usado para las simulaciones. La
+precisión de este modelo demostró una significativa acumulación y liberación de energía durante los
+periodos intersísmicos dentro de la falla. Se observó que la línea de la falla acumulaba energía dentro
+de estos periodos, pero cuando se producía un deslizamiento superficial, se producía una transmisión
+de tensiones entre la superficie y la falla. Lo que provoca un deslizamiento adicional en la región
+afectada.
+Estas observaciones validan la hipótesis del estudio que las condiciones geométricas de la falla
+influyen significativamente en la recurrencia de los terremotos corticales. Debido a que dentro de la
+simulación de 1000 años se logra observar la ocurrencia de más de 1 evento de movimientos sísmicos
+a gran escala. Los cuales ocurren en lugares específicos de la falla con mayor recurrencia a medida
+que avanzan los años, puesto a que se acumula más energía y tensión sobre la capa de subducción y
+por consecuencia también dentro de la falla cortical. A continuación se podrá ver los múltiples
+resultados de esta simulación.
+PONTIFICIA UNIVERSIDAD CATOLICA DE CHILE
+ESCUELA DE INGENIERÍA
+Dirección de Investigación e Innovación
+Programa IPre de Investigación en Pregrado
+Figura 4. Las filas muestran la acumulación de deslizamiento total entre la falla y la superficie libre en
+tramos de latitudes y longitudes en centímetros (de -200000 a 200000 y de -150000 a 150000 en los
+positivos y negativos), panel 1 representa el eje x, panel 2 y 3 representan eje y y z respectivamente,
+así para todas las filas, colores rojos señalan la acumulación del deslizamiento y los azules las
+relajaciones.
+PONTIFICIA UNIVERSIDAD CATOLICA DE CHILE
+ESCUELA DE INGENIERÍA
+Dirección de Investigación e Innovación
+Programa IPre de Investigación en Pregrado
+Dentro del modelo, se puede observar un desplazamiento inicial cero, que se denota con el color
+azul, principalmente en los extremos de la capa. El centro de la geometría, representado por tonos
+rojos, sugiere un acoplamiento, mientras que las áreas más oscuras de los resultados resaltan un
+déficit energético más significativo. Esto demuestra un deslizamiento en la falla que cambia la
+distribución de estos colores a medida que avanza el tiempo. Además, se observa un proceso
+intersísmico desde el centro y una relajación en los extremos, junto con la deformación de la falla.
+3.2 Discusión
+Estas observaciones demuestran cómo la falla acumula energía durante el periodo intersísmico,
+respetando las condiciones de su contorno. Implicando que cuando la superficie libre se desliza, se
+produciría una transmisión de tensiones entre la superficie y la falla, lo que provocaría un
+deslizamiento considerable en la zona afectada. Además, al observar la superficie libre sin tener en
+cuenta la falla, se observa un deslizamiento acumulado representativo de los fenómenos sísmicos.
+Mientras que a menor profundidad, sobre todo en el borde superior derecho, se puede ver cómo la
+falla afecta la superficie libre, tomando valores negativos en un lado de la falla, y positivos en el otro
+extremo. Esto se debe a que la falla induce un déficit de deslizamiento en la superficie libre. Estos
+resultados proporcionan profundos conocimientos sobre la influencia de las condiciones
+geométricas y cinemáticas de la falla en la recurrencia de los terremotos corticales, mejorando así la
+comprensión de estas actividades sísmicas en la región.
+
+4. Conclusiones
+La investigación aporta conclusiones vitales sobre el comportamiento y la influencia de las
+condiciones geométricas y cinemáticas de las fallas debajo de los efectos de la actividad sísmica, en
+particular de la falla cortical de Marga-Marga. Se logró investigar meticulosamente sobre el
+deslizamiento acumulado de la falla en las direcciones x, y y z, empleando un ámbito temporal de
+1000 años y el análisis de los movimientos sísmicos ocurridos. Estas simulaciones permitieron
+describir el proceso del ciclo sísmico y la influencia sobre la superficie en correlación con la falla. De
+los resultados se observan principalmente que el desplazamiento inicial es cero en el modelo, que
+PONTIFICIA UNIVERSIDAD CATOLICA DE CHILE
+ESCUELA DE INGENIERÍA
+Dirección de Investigación e Innovación
+Programa IPre de Investigación en Pregrado
+eventualmente demostraron que el acoplamiento junto a su déficit energético cambiaba a medida
+que avanza el tiempo. Indicando un proceso intersísmico que comienza en el centro de la falla y se
+suaviza en los bordes. Una vez que la superficie se desliza, provoca una transmisión de tensiones
+entre esta y la falla, indicando un deslizamiento más pronunciado sobre la zona afectada. Estos
+resultados confirman la hipótesis inicial y contribuyen sustancialmente a la comprensión del
+comportamiento sísmico de la falla Marga-Marga. Estos conocimientos adquiridos pueden mejorar
+las predicciones de las actividades sísmicas y contribuyen a la mitigación de los riesgos de catástrofes
+en estas regiones propensas a terremotos.
+Agradecimientos
+Agradecimientos a el profesor Jorge Crempien, encargado de guiar la investigación y entregar una
+retroalimentación y ayuda en la búsqueda y realización de simulaciones, a Marcos Moreno,
+encargado de ayudar con la utilización de los repositorios utilizados para las simulaciones. Por último
+agradecer a Javiera Álvarez, encargada de ayudar en el modelamiento y simulación de las fallas
+corticales.
+
+Glosario
+ACUMULACIÓN DE DESLIZAMIENTOS: Se refiere al proceso de acumulación gradual de
+deslizamientos en una falla a lo largo del tiempo. Durante el ciclo sísmico, los deslizamientos se
+acumulan hasta que se libera la energía en forma de un terremoto.
+ANÁLISIS GEOMÉTRICO: Es un enfoque utilizado para examinar y estudiar la geometría de las
+características tectónicas, como las fallas y las zonas de subducción. El análisis geométrico
+involucra el estudio de la forma, tamaño, orientación y relaciones espaciales de estas estructuras.
+CICLO SÍSMICO: Patrón cíclico de acumulación y liberación de tensiones provocado por las fuerzas
+tectónicas. El ciclo sísmico es una de las causas principales de los terremotos.
+DESLIZAMIENTO: Desplazamiento que se produce a lo largo de la superficie de una falla durante
+un terremoto. En el contexto de esta investigación, el deslizamiento se refiere al desplazamiento
+que se produce a lo largo de la falla Marga-Marga durante las actividades sísmicas.
+PONTIFICIA UNIVERSIDAD CATOLICA DE CHILE
+ESCUELA DE INGENIERÍA
+Dirección de Investigación e Innovación
+Programa IPre de Investigación en Pregrado
+FALLA: Fractura o zona de fracturas entre dos bloques de roca, que permite que los bloques se
+muevan uno respecto al otro. Este movimiento puede dar lugar a actividades sísmicas como los
+terremotos.
+FALLA MARGA-MARGA: Es una falla específica ubicada en una región geográfica determinada
+(posiblemente en Chile, según el contexto) y que ha sido objeto de investigación. Esta falla puede
+estar involucrada en actividades sísmicas y en la interacción con la zona de subducción.
+INTERACCIÓN SÍSMICA: Se refiere a la relación y los efectos mutuos entre diferentes
+características sísmicas, como las fallas y las zonas de subducción. La interacción sísmica puede
+influir en la ocurrencia y el comportamiento de los terremotos en una región determinada.
+ZONA DE SUBDUCCIÓN: Región en la que una placa litosférica es empujada bajo otra hacia el
+manto. La interacción entre la falla Marga-Marga y la zona de subducción chilena es un tema clave
+de esta investigación.
+Referencias
+[Aron et al., 2013] Aron, F., Allmendinger, R. W., Cembrano, J., Gonz´alez, G., and Y´a˜nez, G. (2013).
+Permanent fore-arc extension and seismic segmentation: Insights from the 2010 maule earthquake,
+chile. Journal of Geophysical Research: Solid Earth, 118(2):724–739.
+[Herrera et al., 2021] Herrera, M., Crempien, J., Cembrano, J., and Moreno, M. (2021). Seismic cycle
+segmentation in central chile subduction zone due to fault geometry anomalies. In AGU Fall Meeting
+Abstracts, volume 2021, pages S55D–0181.
+[Thompson and Meade, 2017] Thompson, T. B. and Meade, B. J. (2017). The earth isn’t flat: The
+(large) influence of topography on geodetic fault slip imaging. In AGU Fall Meeting Abstracts, volume
+2017, pages G43C–07.
+
+
+
