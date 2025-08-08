@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { X } from 'lucide-react'
 
@@ -17,13 +17,13 @@ const About = () => {
   const [transitioning, setTransitioning] = useState(false)
   const [paused, setPaused] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
   const [firstLoaded, setFirstLoaded] = useState(false)
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
-        const base = (import.meta.env.VITE_API_URL as string) || '/api'
+        const base = import.meta.env.VITE_API_URL || '/api'
         const res = await fetch(`${base}/images?q=profile`)
         const data = await res.json()
         const list: { name: string; url: string }[] = data.images || []

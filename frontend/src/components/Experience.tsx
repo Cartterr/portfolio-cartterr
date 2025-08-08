@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
@@ -57,7 +57,7 @@ const Experience = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const base = (import.meta.env.VITE_API_URL as string) || '/api'
+        const base = import.meta.env.VITE_API_URL || '/api'
         const res = await fetch(`${base}/images`)
         const data = await res.json()
         const list: { name: string; url: string }[] = data.images || []

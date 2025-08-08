@@ -1,4 +1,4 @@
-import React from 'react'
+
 import { motion } from 'framer-motion'
 import { Code, Layers, Database, Cloud, Brain } from 'lucide-react'
 
@@ -31,8 +31,7 @@ const Skills = () => {
     }
   ]
 
-  const colorPool = ['accent-blue', 'accent-green', 'accent-purple'] as const
-  const getColor = (i: number) => colorPool[i % colorPool.length]
+
 
   return (
     <section id="skills" className="py-20 sm:py-32 bg-gradient-to-b from-transparent to-primary-secondary/20">
