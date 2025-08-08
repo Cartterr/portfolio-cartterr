@@ -236,17 +236,6 @@ app.post('/api/contact', async (req, res) => {
 })
 
 if (process.env.NODE_ENV === 'production') {
-  // Serve images first (more specific route)
-  app.use('/images', express.static(path.join(__dirname, '../../frontend/dist/images'), {
-    maxAge: '1d',
-    etag: false,
-    setHeaders: (res, filePath) => {
-      void filePath
-      res.setHeader('Cache-Control', 'no-cache')
-    }
-  }) as any)
-
-  // Serve other static files
   app.use(express.static(path.join(__dirname, '../../frontend/dist')))
 
   app.get('*', (_req, res) => {

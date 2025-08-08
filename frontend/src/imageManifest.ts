@@ -1,3 +1,13 @@
+// Import all images as modules so Vite bundles them properly
+const imageModules = import.meta.glob('../public/images/*', { eager: true, as: 'url' })
+
+// Extract filename from path and create lookup
+const imageUrls: Record<string, string> = {}
+Object.entries(imageModules).forEach(([path, url]) => {
+  const filename = path.split('/').pop() || ''
+  imageUrls[filename] = url as string
+})
+
 // Static image manifest - no API calls needed
 export const imageManifest = {
   profile: [
@@ -62,7 +72,7 @@ export const getImages = (category: keyof typeof imageManifest) => {
   const images = imageManifest[category] || []
   return images.map(name => ({
     name,
-    url: `/images/${name}`
+    url: imageUrls[name] || `/images/${name}` // fallback to public path
   }))
 }
 
