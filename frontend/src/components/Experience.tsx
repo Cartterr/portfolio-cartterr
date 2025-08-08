@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { getImages } from '../imageManifest'
+import { ImageOptimizer, ProgressiveImageLoader } from '../utils/imageOptimizer'
 
 const Experience = () => {
   const experiences = [
@@ -79,6 +80,8 @@ const Experience = () => {
     const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
     const [failedImages, setFailedImages] = useState<Set<number>>(new Set())
     const [retryCount, setRetryCount] = useState<Map<number, number>>(new Map())
+    const [optimizedUrls, setOptimizedUrls] = useState<Map<number, string>>(new Map())
+    const [lowQualityUrls, setLowQualityUrls] = useState<Map<number, string>>(new Map())
 
     useEffect(() => {
       if (images.length <= 1 || paused) return
@@ -93,54 +96,85 @@ const Experience = () => {
       return () => clearInterval(id)
     }, [images.length, paused, current])
 
-    // Lazy load images only when needed (current + next + previous)
+        // Smooth preloading with requestIdleCallback to avoid blocking
     useEffect(() => {
       if (!images.length) return
 
       const loadImage = (idx: number) => {
         if (loadedImages.has(idx) || failedImages.has(idx)) return
 
-        const img = new Image()
-        img.decoding = 'async'
-
-        img.onload = () => {
-          setLoadedImages(prev => new Set(prev).add(idx))
-          setRetryCount(prev => {
-            const newMap = new Map(prev)
-            newMap.delete(idx)
-            return newMap
-          })
-        }
-
-        img.onerror = () => {
-          const currentRetries = retryCount.get(idx) || 0
-          if (currentRetries < 3) {
-            // Retry with exponential backoff
-            setTimeout(() => {
-              setRetryCount(prev => new Map(prev).set(idx, currentRetries + 1))
-              loadImage(idx)
-            }, Math.pow(2, currentRetries) * 1000)
+        // Use requestIdleCallback to avoid blocking main thread
+        const scheduleLoad = () => {
+          if ('requestIdleCallback' in window) {
+            requestIdleCallback(() => performLoad(), { timeout: 1000 })
           } else {
-            setFailedImages(prev => new Set(prev).add(idx))
+            // Fallback for browsers without requestIdleCallback
+            setTimeout(performLoad, 16) // Next frame
           }
         }
 
-        img.src = images[idx].url
+                const performLoad = () => {
+          // Use progressive loading with image optimization
+          ProgressiveImageLoader.loadProgressive(
+            images[idx].url,
+            // Low quality loaded first (fast)
+            (lowQualityUrl) => {
+              requestAnimationFrame(() => {
+                setLowQualityUrls(prev => new Map(prev).set(idx, lowQualityUrl))
+              })
+            },
+            // High quality loaded second (slower)
+            (highQualityUrl) => {
+              requestAnimationFrame(() => {
+                setOptimizedUrls(prev => new Map(prev).set(idx, highQualityUrl))
+                setLoadedImages(prev => new Set(prev).add(idx))
+                setRetryCount(prev => {
+                  const newMap = new Map(prev)
+                  newMap.delete(idx)
+                  return newMap
+                })
+              })
+            }
+          ).catch(() => {
+            const currentRetries = retryCount.get(idx) || 0
+            if (currentRetries < 3) {
+              // Retry with exponential backoff, but don't block
+              setTimeout(() => {
+                requestAnimationFrame(() => {
+                  setRetryCount(prev => new Map(prev).set(idx, currentRetries + 1))
+                  scheduleLoad()
+                })
+              }, Math.pow(2, currentRetries) * 1000)
+            } else {
+              requestAnimationFrame(() => {
+                setFailedImages(prev => new Set(prev).add(idx))
+              })
+            }
+          })
+        }
+
+        scheduleLoad()
       }
 
-      // Load current, next, and previous images
-      const indicesToLoad = [
-        current,
-        (current + 1) % images.length,
-        (current - 1 + images.length) % images.length
-      ]
+      // Load current first (priority), then next/previous
+      const currentIdx = current
+      const nextIdx = (current + 1) % images.length
+      const prevIdx = (current - 1 + images.length) % images.length
 
-      indicesToLoad.forEach(loadImage)
+      // Load current immediately
+      loadImage(currentIdx)
+
+      // Load next/previous with slight delay to prioritize current
+      setTimeout(() => {
+        loadImage(nextIdx)
+        loadImage(prevIdx)
+      }, 50)
+
     }, [current, images, loadedImages, failedImages, retryCount])
 
     return (
       <div
-        className="group relative w-full aspect-[5/4] bg-primary-secondary rounded-3xl flex items-center justify-center overflow-hidden glass-effect hover:scale-[1.01] transition-transform duration-300 cursor-pointer"
+        className="group relative w-full aspect-[5/4] bg-primary-secondary rounded-3xl flex items-center justify-center overflow-hidden glass-effect hover:scale-[1.01] transition-transform duration-300 cursor-pointer image-container"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
@@ -163,47 +197,114 @@ const Experience = () => {
 
                     return (
                       <div key={img.name} className="absolute top-0 left-0 h-full w-full">
-                        {isLoaded && !hasFailed && (
-                          <img
-                            src={img.url}
-                            alt={img.name}
-                            className={`absolute top-0 left-0 h-full w-full object-cover ${isActive ? 'kenburns' : isPrev ? 'kenburns-out' : ''}`}
-                            style={{
-                              opacity: isActive ? 1 : (transitioning && isPrev ? 1 : 0),
-                              transform: isActive ? 'translateZ(0)' : (transitioning && isPrev ? 'translate3d(-8px,0,0) scale(1.06)' : 'translateZ(0)'),
-                              transition: transitioning
-                                ? (isActive
-                                    ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1)'
-                                    : (isPrev ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1), transform 1200ms cubic-bezier(0.22,0.61,0.36,1)' : 'none'))
-                                : 'none',
-                              zIndex: isActive ? 2 : (transitioning && isPrev ? 1 : 0),
-                              willChange: 'opacity, transform'
-                            }}
-                            onClick={() => setActiveIdx(current)}
-                            decoding="async"
-                          />
+                        {/* Show low quality first, then high quality */}
+                        {(lowQualityUrls.has(idx) || isLoaded) && !hasFailed && (
+                          <>
+                            {/* Low quality placeholder */}
+                            {lowQualityUrls.has(idx) && !isLoaded && (
+                              <img
+                                src={lowQualityUrls.get(idx)}
+                                alt={img.name}
+                                className={`absolute top-0 left-0 h-full w-full object-cover ${isActive ? 'kenburns' : isPrev ? 'kenburns-out' : ''}`}
+                                style={{
+                                  opacity: isActive ? 0.8 : (transitioning && isPrev ? 0.8 : 0),
+                                  transform: isActive ? 'translateZ(0)' : (transitioning && isPrev ? 'translate3d(-8px,0,0) scale(1.06)' : 'translateZ(0)'),
+                                  filter: 'blur(1px)',
+                                  transition: transitioning
+                                    ? (isActive
+                                        ? 'opacity 800ms cubic-bezier(0.22,0.61,0.36,1)'
+                                        : (isPrev ? 'opacity 800ms cubic-bezier(0.22,0.61,0.36,1), transform 800ms cubic-bezier(0.22,0.61,0.36,1)' : 'none'))
+                                    : 'none',
+                                  zIndex: isActive ? 1 : (transitioning && isPrev ? 1 : 0),
+                                  willChange: 'opacity, transform'
+                                }}
+                                onClick={() => setActiveIdx(current)}
+                                decoding="async"
+                              />
+                            )}
+
+                            {/* High quality final image */}
+                            {isLoaded && optimizedUrls.has(idx) && (
+                              <img
+                                src={optimizedUrls.get(idx)}
+                                alt={img.name}
+                                className={`absolute top-0 left-0 h-full w-full object-cover ${isActive ? 'kenburns' : isPrev ? 'kenburns-out' : ''}`}
+                                style={{
+                                  opacity: isActive ? 1 : (transitioning && isPrev ? 1 : 0),
+                                  transform: isActive ? 'translateZ(0)' : (transitioning && isPrev ? 'translate3d(-8px,0,0) scale(1.06)' : 'translateZ(0)'),
+                                  transition: transitioning
+                                    ? (isActive
+                                        ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1)'
+                                        : (isPrev ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1), transform 1200ms cubic-bezier(0.22,0.61,0.36,1)' : 'none'))
+                                    : 'none',
+                                  zIndex: isActive ? 2 : (transitioning && isPrev ? 1 : 0),
+                                  willChange: 'opacity, transform'
+                                }}
+                                onClick={() => setActiveIdx(current)}
+                                decoding="async"
+                              />
+                            )}
+                          </>
                         )}
 
-                        {/* Loading state for current active image */}
-                        {isActive && !isLoaded && !hasFailed && (
-                          <div className="absolute inset-0 grid place-items-center skeleton">
-                            <div className="spinner"></div>
-                            {isRetrying && (
-                              <p className="text-white/60 text-xs mt-2">
-                                Retrying... ({retryCount.get(idx) || 0}/3)
-                              </p>
-                            )}
+                        {/* Beautiful loading state for current active image */}
+                        {isActive && !isLoaded && !hasFailed && !lowQualityUrls.has(idx) && (
+                          <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/20 via-accent-purple/20 to-accent-green/20 rounded-3xl overflow-hidden">
+                            {/* Animated gradient background */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent animate-pulse"></div>
+
+                            {/* Shimmer effect */}
+                            <div className="absolute inset-0 skeleton"></div>
+
+                            {/* Center content */}
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-6">
+                              <div className="relative">
+                                {/* Large beautiful spinner */}
+                                <div className="w-12 h-12 border-3 border-white/10 border-t-accent-blue border-r-accent-purple rounded-full animate-spin"></div>
+
+                                {/* Inner glow */}
+                                <div className="absolute inset-1 w-10 h-10 border-2 border-white/5 border-b-accent-green rounded-full animate-spin animation-delay-150"></div>
+                              </div>
+
+                              <div className="mt-4 space-y-1">
+                                <p className="text-white/80 text-sm font-medium">Loading</p>
+                                <div className="flex space-x-1">
+                                  <div className="w-1.5 h-1.5 bg-accent-blue rounded-full animate-bounce"></div>
+                                  <div className="w-1.5 h-1.5 bg-accent-purple rounded-full animate-bounce animation-delay-75"></div>
+                                  <div className="w-1.5 h-1.5 bg-accent-green rounded-full animate-bounce animation-delay-150"></div>
+                                </div>
+                                {isRetrying && (
+                                  <p className="text-white/50 text-xs mt-1">
+                                    Retrying... ({retryCount.get(idx) || 0}/3)
+                                  </p>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         )}
 
-                        {/* Failed state */}
+                        {/* Beautiful failed state */}
                         {isActive && hasFailed && (
-                          <div className="absolute inset-0 grid place-items-center bg-primary-secondary/50">
-                            <div className="text-center text-white/60">
-                              <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-white/10 grid place-items-center">
-                                <X className="w-6 h-6" />
+                          <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 via-orange-500/20 to-red-600/20 rounded-3xl overflow-hidden">
+                            {/* Subtle pattern background */}
+                            <div className="absolute inset-0 opacity-5" style={{
+                              backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3C/g%3E%3C/svg%3E")`
+                            }}></div>
+
+                            <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-4">
+                              <div className="relative mb-3">
+                                {/* Beautiful error icon */}
+                                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-red-400/30 to-orange-500/30 backdrop-blur-sm border border-red-400/20 flex items-center justify-center">
+                                  <X className="w-6 h-6 text-red-300" />
+                                </div>
+                                {/* Pulse effect */}
+                                <div className="absolute inset-0 w-12 h-12 rounded-full bg-red-400/20 animate-ping"></div>
                               </div>
-                              <p className="text-xs">Failed to load</p>
+
+                              <div className="space-y-1">
+                                <p className="text-white/90 text-sm font-medium">Failed to Load</p>
+                                <p className="text-white/50 text-xs">Image unavailable</p>
+                              </div>
                             </div>
                           </div>
                         )}
