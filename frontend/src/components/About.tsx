@@ -19,7 +19,9 @@ const About = () => {
   const [paused, setPaused] = useState(false)
   const [loading, setLoading] = useState(true)
   const [, setError] = useState<string | null>(null)
-  const [firstLoaded, setFirstLoaded] = useState(false)
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set())
+  const [retryCount, setRetryCount] = useState<Map<number, number>>(new Map())
 
   useEffect(() => {
     const loadImages = () => {
@@ -49,15 +51,50 @@ const About = () => {
     return () => clearInterval(id)
   }, [images.length, paused, currentSlide])
 
+  // Lazy load images only when needed (current + next + previous)
   useEffect(() => {
     if (!images.length) return
-    images.forEach(({ url }) => {
+
+    const loadImage = (idx: number) => {
+      if (loadedImages.has(idx) || failedImages.has(idx)) return
+
       const img = new Image()
       img.decoding = 'async'
-      img.loading = 'eager'
-      img.src = url
-    })
-  }, [currentSlide, images])
+
+      img.onload = () => {
+        setLoadedImages(prev => new Set(prev).add(idx))
+        setRetryCount(prev => {
+          const newMap = new Map(prev)
+          newMap.delete(idx)
+          return newMap
+        })
+      }
+
+      img.onerror = () => {
+        const currentRetries = retryCount.get(idx) || 0
+        if (currentRetries < 3) {
+          // Retry with exponential backoff
+          setTimeout(() => {
+            setRetryCount(prev => new Map(prev).set(idx, currentRetries + 1))
+            loadImage(idx)
+          }, Math.pow(2, currentRetries) * 1000)
+        } else {
+          setFailedImages(prev => new Set(prev).add(idx))
+        }
+      }
+
+      img.src = images[idx].url
+    }
+
+    // Load current, next, and previous images
+    const indicesToLoad = [
+      currentSlide,
+      (currentSlide + 1) % images.length,
+      (currentSlide - 1 + images.length) % images.length
+    ]
+
+    indicesToLoad.forEach(loadImage)
+  }, [currentSlide, images, loadedImages, failedImages, retryCount])
 
   const openLightbox = (idx: number) => setActiveIdx(idx)
 
@@ -101,39 +138,59 @@ const About = () => {
                         {images.map((img, idx) => {
                           const isActive = idx === currentSlide
                           const isPrev = idx === (previousSlide ?? (currentSlide - 1 + images.length) % images.length)
+                          const isLoaded = loadedImages.has(idx)
+                          const hasFailed = failedImages.has(idx)
+                          const isRetrying = retryCount.has(idx)
+
                           return (
-                            <img
-                              key={img.name}
-                              src={img.url}
-                              alt={img.name}
-                              className={`absolute top-0 left-0 h-full w-full object-cover ${isActive ? 'kenburns' : isPrev ? 'kenburns-out' : ''} cursor-pointer`}
-                              style={{
-                                opacity: isActive ? 1 : (transitioning && isPrev ? 1 : 0),
-                                transform: isActive ? 'translateZ(0)' : (transitioning && isPrev ? 'translate3d(-8px,0,0) scale(1.06)' : 'translateZ(0)'),
-                                transition: transitioning
-                                  ? (isActive
-                                      ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1)'
-                                      : (isPrev ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1), transform 1200ms cubic-bezier(0.22,0.61,0.36,1)' : 'none'))
-                                  : 'none',
-                                zIndex: isActive ? 2 : (transitioning && isPrev ? 1 : 0),
-                                willChange: 'opacity, transform'
-                              }}
-                              onClick={() => openLightbox(currentSlide)}
-                              decoding="async"
-                              onError={(e) => {
-                                (e.currentTarget as HTMLImageElement).style.opacity = '0'
-                              }}
-                              onLoad={() => {
-                                if (isActive && !firstLoaded) setFirstLoaded(true)
-                              }}
-                            />
+                            <div key={img.name} className="absolute top-0 left-0 h-full w-full">
+                              {isLoaded && !hasFailed && (
+                                <img
+                                  src={img.url}
+                                  alt={img.name}
+                                  className={`absolute top-0 left-0 h-full w-full object-cover ${isActive ? 'kenburns' : isPrev ? 'kenburns-out' : ''} cursor-pointer`}
+                                  style={{
+                                    opacity: isActive ? 1 : (transitioning && isPrev ? 1 : 0),
+                                    transform: isActive ? 'translateZ(0)' : (transitioning && isPrev ? 'translate3d(-8px,0,0) scale(1.06)' : 'translateZ(0)'),
+                                    transition: transitioning
+                                      ? (isActive
+                                          ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1)'
+                                          : (isPrev ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1), transform 1200ms cubic-bezier(0.22,0.61,0.36,1)' : 'none'))
+                                      : 'none',
+                                    zIndex: isActive ? 2 : (transitioning && isPrev ? 1 : 0),
+                                    willChange: 'opacity, transform'
+                                  }}
+                                  onClick={() => openLightbox(currentSlide)}
+                                  decoding="async"
+                                />
+                              )}
+
+                              {/* Loading state for current active image */}
+                              {isActive && !isLoaded && !hasFailed && (
+                                <div className="absolute inset-0 grid place-items-center skeleton">
+                                  <div className="spinner"></div>
+                                  {isRetrying && (
+                                    <p className="text-white/60 text-sm mt-4">
+                                      Retrying... ({retryCount.get(idx) || 0}/3)
+                                    </p>
+                                  )}
+                                </div>
+                              )}
+
+                              {/* Failed state */}
+                              {isActive && hasFailed && (
+                                <div className="absolute inset-0 grid place-items-center bg-primary-secondary/50">
+                                  <div className="text-center text-white/60">
+                                    <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-white/10 grid place-items-center">
+                                      <X className="w-8 h-8" />
+                                    </div>
+                                    <p className="text-sm">Image failed to load</p>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                           )
                         })}
-                        {!firstLoaded && (
-                          <div className="absolute inset-0 grid place-items-center skeleton">
-                            <div className="spinner"></div>
-                          </div>
-                        )}
                       </div>
                     )}
                   </div>

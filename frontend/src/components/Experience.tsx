@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
-import { imageManifest } from '../imageManifest'
+import { getImages } from '../imageManifest'
 
 const Experience = () => {
   const experiences = [
@@ -54,14 +54,13 @@ const Experience = () => {
     }
   ]
 
-    const [allImages] = useState<{ name: string; url: string }[]>(() => {
-    // Combine all images from the manifest
-    const all = Object.values(imageManifest).flat()
-    return all.map(name => ({ name, url: `/images/${name}` }))
-  })
-
   const getShuffled = (pattern: RegExp) => {
+    // Get all images and filter by pattern
+    const categories = ['profile', 'flair', 'nd', 'politiktok', 'ayudante', 'geoscience'] as const
+    const allImages = categories.flatMap(cat => getImages(cat))
     const matched = allImages.filter(i => pattern.test(i.name))
+
+    // Shuffle array
     for (let i = matched.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1))
       const tmp = matched[i]
@@ -76,8 +75,10 @@ const Experience = () => {
     const [previous, setPrevious] = useState<number | null>(null)
     const [transitioning, setTransitioning] = useState(false)
     const [paused, setPaused] = useState(false)
-    const [firstLoaded, setFirstLoaded] = useState(false)
     const [activeIdx, setActiveIdx] = useState<number | null>(null)
+    const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set())
+    const [failedImages, setFailedImages] = useState<Set<number>>(new Set())
+    const [retryCount, setRetryCount] = useState<Map<number, number>>(new Map())
 
     useEffect(() => {
       if (images.length <= 1 || paused) return
@@ -92,14 +93,50 @@ const Experience = () => {
       return () => clearInterval(id)
     }, [images.length, paused, current])
 
+    // Lazy load images only when needed (current + next + previous)
     useEffect(() => {
-      images.forEach(({ url }) => {
+      if (!images.length) return
+
+      const loadImage = (idx: number) => {
+        if (loadedImages.has(idx) || failedImages.has(idx)) return
+
         const img = new Image()
         img.decoding = 'async'
-        img.loading = 'eager'
-        img.src = url
-      })
-    }, [images])
+
+        img.onload = () => {
+          setLoadedImages(prev => new Set(prev).add(idx))
+          setRetryCount(prev => {
+            const newMap = new Map(prev)
+            newMap.delete(idx)
+            return newMap
+          })
+        }
+
+        img.onerror = () => {
+          const currentRetries = retryCount.get(idx) || 0
+          if (currentRetries < 3) {
+            // Retry with exponential backoff
+            setTimeout(() => {
+              setRetryCount(prev => new Map(prev).set(idx, currentRetries + 1))
+              loadImage(idx)
+            }, Math.pow(2, currentRetries) * 1000)
+          } else {
+            setFailedImages(prev => new Set(prev).add(idx))
+          }
+        }
+
+        img.src = images[idx].url
+      }
+
+      // Load current, next, and previous images
+      const indicesToLoad = [
+        current,
+        (current + 1) % images.length,
+        (current - 1 + images.length) % images.length
+      ]
+
+      indicesToLoad.forEach(loadImage)
+    }, [current, images, loadedImages, failedImages, retryCount])
 
     return (
       <div
@@ -120,39 +157,59 @@ const Experience = () => {
                   {images.map((img, idx) => {
                     const isActive = idx === current
                     const isPrev = idx === (previous ?? (current - 1 + images.length) % images.length)
+                    const isLoaded = loadedImages.has(idx)
+                    const hasFailed = failedImages.has(idx)
+                    const isRetrying = retryCount.has(idx)
+
                     return (
-                      <img
-                        key={img.name}
-                        src={img.url}
-                        alt={img.name}
-                        className={`absolute top-0 left-0 h-full w-full object-cover ${isActive ? 'kenburns' : isPrev ? 'kenburns-out' : ''}`}
-                        style={{
-                          opacity: isActive ? 1 : (transitioning && isPrev ? 1 : 0),
-                          transform: isActive ? 'translateZ(0)' : (transitioning && isPrev ? 'translate3d(-8px,0,0) scale(1.06)' : 'translateZ(0)'),
-                          transition: transitioning
-                            ? (isActive
-                                ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1)'
-                                : (isPrev ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1), transform 1200ms cubic-bezier(0.22,0.61,0.36,1)' : 'none'))
-                            : 'none',
-                          zIndex: isActive ? 2 : (transitioning && isPrev ? 1 : 0),
-                          willChange: 'opacity, transform'
-                        }}
-                        onClick={() => setActiveIdx(current)}
-                        decoding="async"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).style.opacity = '0'
-                        }}
-                        onLoad={() => {
-                          if (isActive && !firstLoaded) setFirstLoaded(true)
-                        }}
-                      />
+                      <div key={img.name} className="absolute top-0 left-0 h-full w-full">
+                        {isLoaded && !hasFailed && (
+                          <img
+                            src={img.url}
+                            alt={img.name}
+                            className={`absolute top-0 left-0 h-full w-full object-cover ${isActive ? 'kenburns' : isPrev ? 'kenburns-out' : ''}`}
+                            style={{
+                              opacity: isActive ? 1 : (transitioning && isPrev ? 1 : 0),
+                              transform: isActive ? 'translateZ(0)' : (transitioning && isPrev ? 'translate3d(-8px,0,0) scale(1.06)' : 'translateZ(0)'),
+                              transition: transitioning
+                                ? (isActive
+                                    ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1)'
+                                    : (isPrev ? 'opacity 1200ms cubic-bezier(0.22,0.61,0.36,1), transform 1200ms cubic-bezier(0.22,0.61,0.36,1)' : 'none'))
+                                : 'none',
+                              zIndex: isActive ? 2 : (transitioning && isPrev ? 1 : 0),
+                              willChange: 'opacity, transform'
+                            }}
+                            onClick={() => setActiveIdx(current)}
+                            decoding="async"
+                          />
+                        )}
+
+                        {/* Loading state for current active image */}
+                        {isActive && !isLoaded && !hasFailed && (
+                          <div className="absolute inset-0 grid place-items-center skeleton">
+                            <div className="spinner"></div>
+                            {isRetrying && (
+                              <p className="text-white/60 text-xs mt-2">
+                                Retrying... ({retryCount.get(idx) || 0}/3)
+                              </p>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Failed state */}
+                        {isActive && hasFailed && (
+                          <div className="absolute inset-0 grid place-items-center bg-primary-secondary/50">
+                            <div className="text-center text-white/60">
+                              <div className="w-12 h-12 mx-auto mb-2 rounded-full bg-white/10 grid place-items-center">
+                                <X className="w-6 h-6" />
+                              </div>
+                              <p className="text-xs">Failed to load</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     )
                   })}
-                  {!firstLoaded && (
-                    <div className="absolute inset-0 grid place-items-center skeleton">
-                      <div className="spinner"></div>
-                    </div>
-                  )}
                 </div>
               )}
             </div>
@@ -291,7 +348,7 @@ const Experience = () => {
                 {imgs.length > 0 ? (
                   <Gallery images={imgs} />
                 ) : (
-                  <div className="w-4 h-4 bg-accent-blue rounded-full shadow-lg shadow-accent-blue/50"></div>
+                <div className="w-4 h-4 bg-accent-blue rounded-full shadow-lg shadow-accent-blue/50"></div>
                 )}
               </div>
             </motion.div>

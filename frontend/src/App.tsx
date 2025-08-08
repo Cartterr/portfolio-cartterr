@@ -7,12 +7,12 @@ import Skills from './components/Skills'
 import Contact from './components/Contact'
 import Navigation from './components/Navigation'
 import ScrollProgress from './components/ScrollProgress'
-import PreloadAssets from './components/PreloadAssets'
+
 
 function App() {
   return (
     <div className="min-h-screen">
-      <PreloadAssets />
+
       <ScrollProgress />
       <Navigation />
       <Hero />
