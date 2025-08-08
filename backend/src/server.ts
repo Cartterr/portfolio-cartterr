@@ -26,22 +26,22 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.'
 } as RateLimitOptions)
 
-app.use('/', helmet({
+app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false
-}))
+}) as any)
 
-app.use('/', cors({
+app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true
-}))
+}) as any)
 
-app.use('/', compression())
-app.use('/', morgan('combined'))
-app.use('/', express.json({ limit: '10mb' }))
-app.use('/', express.urlencoded({ extended: true, limit: '10mb' }))
+app.use(compression() as any)
+app.use(morgan('combined') as any)
+app.use(express.json({ limit: '10mb' }) as any)
+app.use(express.urlencoded({ extended: true, limit: '10mb' }) as any)
 const apiRouter = express.Router()
-apiRouter.use(limiter)
+apiRouter.use(limiter as any)
 app.use('/api', apiRouter)
 
 app.use('/images', express.static(path.join(__dirname, '../public/images'), {
@@ -51,7 +51,7 @@ app.use('/images', express.static(path.join(__dirname, '../public/images'), {
     void filePath
     res.setHeader('Cache-Control', 'public, max-age=2592000, immutable')
   }
-}))
+}) as any)
 
 app.get('/api/health', (_req, res) => {
   res.json({
