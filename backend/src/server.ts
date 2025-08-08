@@ -43,21 +43,29 @@ const apiRouter = express.Router()
 apiRouter.use(limiter as any)
 app.use('/api', apiRouter)
 
-apiRouter.get('/proxy-image', async (req, res) => {
+apiRouter.get('/proxy-image', async (req, res): Promise<void> => {
   const src = String(req.query.src || '')
-  if (!src) return res.status(400).send('src required')
+  if (!src) {
+    res.status(400).send('src required')
+    return
+  }
   try {
     const direct = new URL(src)
     const response = await fetch(direct.toString())
-    if (!response.ok) return res.status(response.status).send('upstream error')
+    if (!response.ok) {
+      res.status(response.status).send('upstream error')
+      return
+    }
     res.setHeader('Access-Control-Allow-Origin', '*')
     res.setHeader('Cache-Control', 'public, max-age=3600')
     res.setHeader('Content-Type', response.headers.get('content-type') || 'image/jpeg')
     const body = await response.arrayBuffer()
     res.end(Buffer.from(body))
+    return
   } catch (e) {
     console.error('proxy-image error', e)
     res.status(500).send('proxy failed')
+    return
   }
 })
 
