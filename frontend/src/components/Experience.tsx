@@ -189,7 +189,6 @@ const Experience = () => {
                             const isPrev = idx === (prev as number % len)
                             const isLoaded = loaded.has(idx)
                             const hasFailed = failed.has(idx)
-                            // const isLoading = false
                             return (
                               <div key={img.name} className="absolute top-0 left-0 h-full w-full">
                                 <img
