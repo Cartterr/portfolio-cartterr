@@ -1,96 +1,51 @@
-
 import { motion } from 'framer-motion'
-import { Code, Layers, Database, Cloud, Brain } from 'lucide-react'
+import { skillBuckets } from '../content'
+import ResponsivePretext from './ResponsivePretext'
 
-const Skills = () => {
-  const skillCategories = [
-    {
-      title: 'Programming Languages',
-      icon: Code,
-      skills: ['Python', 'JavaScript', 'TypeScript', 'C++', 'Java', 'SQL', 'CUDA']
-    },
-    {
-      title: 'Frameworks & Libraries',
-      icon: Layers,
-      skills: ['React', 'Vue.js', 'Angular', 'Django', 'Flask', 'FastAPI', 'Node.js', 'PyTorch']
-    },
-    {
-      title: 'Databases & Systems',
-      icon: Database,
-      skills: ['PostgreSQL', 'MySQL', 'MongoDB', 'InfluxDB', 'DynamoDB', 'Redis', 'MQTT']
-    },
-    {
-      title: 'Cloud & DevOps',
-      icon: Cloud,
-      skills: ['AWS EC2', 'AWS S3', 'AWS Lambda', 'Docker', 'Git', 'CI/CD', 'Linux']
-    },
-    {
-      title: 'Specializations',
-      icon: Brain,
-      skills: ['Machine Learning', 'AI Integration', 'IoT Development', 'GPU Computing', 'System Integration', 'API Development']
-    }
-  ]
-
-
-
-  return (
-    <section id="skills" className="py-20 sm:py-32 bg-gradient-to-b from-transparent to-primary-secondary/20">
-      <div className="container mx-auto px-6">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-4xl sm:text-5xl md:text-6xl font-bold text-center mb-16 gradient-text"
-        >
-          Technical Skills
-        </motion.h2>
-
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {skillCategories.map((category, index) => {
-            const IconComponent = category.icon
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="glass-effect p-8 rounded-2xl hover:scale-105 transition-transform duration-300"
-              >
-                <div className="flex items-center gap-4 mb-6">
-                  <IconComponent className="w-8 h-8 text-accent-blue" />
-                  <h3 className="text-xl font-bold text-accent-blue">
-                    {category.title}
-                  </h3>
-                </div>
-
-                <div className="flex flex-wrap gap-3">
-                  {category.skills.map((skill, skillIndex) => (
-                    <motion.span
-                      key={skillIndex}
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3, delay: skillIndex * 0.05 }}
-                      viewport={{ once: true }}
-                      whileHover={{ scale: 1.05 }}
-                      className="px-4 py-2 bg-primary-secondary border border-primary-accent rounded-full text-white text-sm font-medium cursor-default transition-all duration-300 hover:shadow-lg"
-                      style={{
-                        boxShadow: '0 0 0 0 rgba(0,0,0,0)',
-                        borderColor: 'rgba(255,255,255,0.12)'
-                      }}
-                    >
-                      {skill}
-                    </motion.span>
-                  ))}
-                </div>
-              </motion.div>
-            )
-          })}
-        </div>
+const Skills = () => (
+  <section id="skills" className="px-6 py-20 sm:py-28">
+    <div className="mx-auto max-w-6xl">
+      <div className="mb-14 max-w-3xl">
+        <p className="section-kicker">Capabilities</p>
+        <ResponsivePretext
+          as="h2"
+          text="The stack changes, but these are the tools and patterns I keep returning to."
+          className="section-title"
+          lineClassName="pretext-line block"
+        />
       </div>
-    </section>
-  )
-}
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {skillBuckets.map((bucket, index) => (
+          <motion.div
+            key={bucket.title}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.5, delay: index * 0.05 }}
+            className="rounded-[2rem] border border-white/10 bg-white/5 p-7"
+          >
+            <ResponsivePretext
+              as="h3"
+              text={bucket.title}
+              className="text-2xl font-semibold text-[#f8f5ec]"
+              lineClassName="pretext-line block"
+            />
+            <div className="mt-5 flex flex-wrap gap-3">
+              {bucket.items.map((item) => (
+                <span
+                  key={item}
+                  className="rounded-full border border-white/10 bg-[#161616] px-4 py-3 text-sm text-zinc-200"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  </section>
+)
 
 export default Skills

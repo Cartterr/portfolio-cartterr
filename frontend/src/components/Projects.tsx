@@ -1,103 +1,85 @@
-
 import { motion } from 'framer-motion'
-import { ExternalLink } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
+import { projectEntries } from '../content'
+import ResponsivePretext from './ResponsivePretext'
 
-const Projects = () => {
-  const projects = [
-    {
-      title: 'Enterprise BMS Energy Optimization',
-      description: 'Contributed to an energy management platform for commercial buildings using Python microservices, Vue.js interfaces, and Docker with InfluxDB/DynamoDB for real‑time HVAC data processing.',
-      technologies: ['Python', 'Vue.js', 'Docker', 'AWS', 'InfluxDB', 'IoT'],
-      link: 'https://goflair.cl/'
-    },
-    {
-      title: 'Smart Mission Planner - Autonomous Drones',
-      description: 'AI-powered drone management system with Hamiltonian optimization algorithms and OpenAI integration for intelligent resource allocation in emergency response scenarios.',
-      technologies: ['Python', 'OpenAI API', 'MQTT', 'Angular', 'AI', 'Algorithms'],
-      link: 'https://droneresponse.ai/'
-    },
-    {
-      title: 'Politiktok - Big Data Analytics Platform',
-      description: 'Large-scale social media behavior analysis system processing 100,000+ datasets with PyTorch and CUDA acceleration, featuring 10x performance improvements in ML pipelines.',
-      technologies: ['Python', 'PyTorch', 'CUDA', 'NLP', 'Big Data', 'ML'],
-      link: 'https://politiktok.cl/'
-    },
-    {
-      title: 'Tectonic Plate Simulation Engine',
-      description: 'Advanced GPU-accelerated geological simulation system using CUDA and Python for earthquake prediction modeling with 15x performance improvements in parallel computing.',
-      technologies: ['Python', 'CUDA', 'GPU Computing', 'Simulation', 'Physics'],
-      link: 'https://meetings.seismosoc.org/wp-content/uploads/2023/03/SSA-Program-2023.pdf'
-    }
-  ]
+const Projects = () => (
+  <section id="projects" className="px-6 py-20 sm:py-28">
+    <div className="mx-auto max-w-6xl">
+      <div className="mb-14 max-w-3xl">
+        <p className="section-kicker">Selected Work</p>
+        <ResponsivePretext
+          as="h2"
+          text="Three projects that explain the direction better than a long list."
+          className="section-title"
+          lineClassName="pretext-line block"
+        />
+      </div>
 
-  return (
-    <section id="projects" className="py-20 sm:py-32">
-      <div className="container mx-auto px-6">
-        <motion.h2
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-4xl sm:text-5xl md:text-6xl font-bold text-center mb-16 gradient-text"
-        >
-          Featured Projects
-        </motion.h2>
+      <div className="grid gap-6 lg:grid-cols-3">
+        {projectEntries.map((project, index) => (
+          <motion.article
+            key={project.title}
+            initial={{ opacity: 0, y: 36 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.25 }}
+            transition={{ duration: 0.55, delay: index * 0.06 }}
+            className="flex h-full flex-col rounded-[2rem] border border-white/10 bg-white/5 p-7"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <ResponsivePretext
+                as="h3"
+                text={project.title}
+                className="text-2xl font-semibold leading-tight text-[#f8f5ec]"
+                lineClassName="pretext-line block"
+              />
+              <span className="rounded-full border border-[#f97316]/25 bg-[#f97316]/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-[#fbbf24]">
+                {project.status}
+              </span>
+            </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {projects.map((project, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: index * 0.1 }}
-              viewport={{ once: true }}
-              className="glass-effect p-8 rounded-2xl transition-transform duration-300 hover:shadow-2xl relative overflow-hidden group [transform-style:preserve-3d] will-change-transform"
-              whileHover={{ rotateX: -2, rotateY: 2, scale: 1.01 }}
-              onMouseMove={(e) => {
-                const target = e.currentTarget as HTMLElement
-                const rect = target.getBoundingClientRect()
-                const x = e.clientX - rect.left
-                const y = e.clientY - rect.top
-                target.style.setProperty('--x', `${x}px`)
-                target.style.setProperty('--y', `${y}px`)
-              }}
-              style={{}}
-            >
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-accent-blue via-accent-purple to-accent-green"></div>
+            <ResponsivePretext
+              as="p"
+              text={project.description}
+              className="mt-5 text-base leading-7 text-zinc-300"
+              lineClassName="pretext-line block"
+            />
+            <ResponsivePretext
+              as="p"
+              text={project.detail}
+              className="mt-4 text-sm leading-6 text-zinc-400"
+              lineClassName="pretext-line block"
+            />
 
-              <h3 className="text-xl sm:text-2xl font-bold mb-4 text-white group-hover:text-accent-blue transition-colors">
-                {project.title}
-              </h3>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {project.stack.map((item) => (
+                <span
+                  key={item}
+                  className="rounded-full border border-white/10 bg-[#181818] px-3 py-2 text-xs uppercase tracking-[0.18em] text-zinc-300"
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
 
-              <p className="text-gray-300 leading-relaxed mb-6">
-                {project.description}
-              </p>
-
-              <div className="flex flex-wrap gap-2 mb-6">
-                {project.technologies.map((tech, techIndex) => (
-                  <span
-                    key={techIndex}
-                    className="px-3 py-1 bg-accent-blue/20 border border-accent-blue/30 rounded-full text-accent-blue text-sm"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-
+            {project.link ? (
               <a
                 href={project.link}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-primary-accent hover:bg-accent-blue text-white rounded-lg transition-colors duration-300"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-auto pt-8 inline-flex items-center gap-2 text-sm font-medium text-[#fbbf24] transition hover:text-[#fb923c]"
               >
-                <span>Learn More</span>
-                <ExternalLink className="w-4 h-4" />
+                Open project
+                <ArrowUpRight className="h-4 w-4" />
               </a>
-              <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 will-change-[opacity]" style={{ background: 'radial-gradient(600px circle at var(--x,50%) var(--y,50%), rgba(0,212,255,0.08), transparent 40%)' }} />
-            </motion.div>
-          ))}
-        </div>
+            ) : (
+              <div className="mt-auto pt-8 text-sm text-zinc-500">Private or internal implementation.</div>
+            )}
+          </motion.article>
+        ))}
       </div>
-    </section>
-  )
-}
+    </div>
+  </section>
+)
 
 export default Projects

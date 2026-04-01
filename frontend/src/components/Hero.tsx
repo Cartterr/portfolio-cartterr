@@ -1,118 +1,113 @@
-import { useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Rocket, Mail } from 'lucide-react'
-import Typewriter from './Typewriter'
-import ParticleNetwork from './ParticleNetwork'
+import { ArrowUpRight, Download, Github, Linkedin } from 'lucide-react'
+import { focusAreas } from '../content'
+import LiquidAscii from './LiquidAscii'
+import ResponsivePretext from './ResponsivePretext'
 
-const Hero = () => {
-  const heroRef = useRef<HTMLElement>(null)
+const heroTitle = 'AI, software, and graphics-driven systems for real-world constraints.'
+const heroBody =
+  'I am a software engineer with experience across fintech, industrial alerting, energy systems, research infrastructure, and autonomous planning. I like the overlap between product engineering, machine learning, simulation, and graphics.'
+const heroInterestLine =
+  'Interested in applying AI to satellite data, simulation, and aerospace problems.'
 
-  useEffect(() => {
-    let raf = 0
-    let pending = false
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!heroRef.current || pending) return
-      pending = true
-      raf = window.requestAnimationFrame(() => {
-        pending = false
-        const rect = heroRef.current!.getBoundingClientRect()
-        const x = e.clientX - rect.left
-        const y = e.clientY - rect.top
-        const xPercent = x / rect.width
-        const yPercent = y / rect.height
-        heroRef.current!.style.background = `
-          radial-gradient(circle at ${xPercent * 100}% ${yPercent * 100}%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
-          radial-gradient(circle at ${(1 - xPercent) * 100}% ${(1 - yPercent) * 100}%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
-          linear-gradient(135deg, #0a0a0a 0%, #000 50%, #0a0a0a 100%)
-        `
-      })
-    }
-    document.addEventListener('mousemove', handleMouseMove, { passive: true })
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove)
-      if (raf) cancelAnimationFrame(raf)
-    }
-  }, [])
+const Hero = () => (
+  <section id="home" className="relative overflow-hidden px-6 pb-16 pt-28 sm:pb-24 sm:pt-36">
+    <div className="mx-auto max-w-6xl">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: 'easeOut' }}
+        className="grid gap-10 lg:grid-cols-[1.08fr_0.92fr] lg:items-start"
+      >
+        <div className="space-y-8">
+          <div className="inline-flex items-center rounded-full border border-[#f97316]/30 bg-[#f97316]/12 px-4 py-2 text-xs font-medium uppercase tracking-[0.22em] text-[#fbbf24]">
+            Santiago, Chile · AI systems · software engineering · graphics and simulation
+          </div>
 
-  const gridSvg = encodeURIComponent('<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none"><g fill="#ffffff" fill-opacity="0.02"><circle cx="30" cy="30" r="1"/></g></g></svg>')
+          <div className="space-y-5">
+            <p className="text-sm uppercase tracking-[0.4em] text-zinc-500">José Carter Arriagada</p>
+            <ResponsivePretext
+              as="h1"
+              text={heroTitle}
+              className="max-w-4xl text-5xl font-semibold leading-[0.92] text-[#f8f5ec] sm:text-6xl lg:text-[6.8rem]"
+              lineClassName="pretext-line block"
+            />
+            <ResponsivePretext
+              as="p"
+              text={heroBody}
+              className="max-w-2xl text-lg leading-8 text-zinc-300 sm:text-xl"
+              lineClassName="pretext-line block"
+            />
+            <div className="max-w-2xl rounded-[1.5rem] border border-[#f97316]/20 bg-[#f97316]/8 px-5 py-4">
+              <ResponsivePretext
+                as="p"
+                text={heroInterestLine}
+                className="text-sm font-medium uppercase tracking-[0.16em] text-[#f6c58e] sm:text-base"
+                lineClassName="pretext-line block"
+              />
+            </div>
+          </div>
 
-  return (
-    <section
-      id="home"
-      ref={heroRef}
-      className="min-h-screen flex items-center justify-center relative overflow-hidden"
-    >
-      <div className="absolute inset-0 opacity-20">
-        <div
-          className="absolute inset-0 floating-animation"
-          style={{ backgroundImage: `url("data:image/svg+xml,${gridSvg}")` }}
-        ></div>
-      </div>
-      <div className="absolute inset-0 opacity-40">
-        <ParticleNetwork />
-      </div>
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <a
+              href="#projects"
+              className="inline-flex items-center justify-center gap-3 rounded-full bg-[#f97316] px-7 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-[#1a120d] transition hover:-translate-y-0.5 hover:bg-[#fb923c]"
+            >
+              See selected work
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
+            <a
+              href="/Jose_Carter_CV_Spanish_FullStack.pdf"
+              className="inline-flex items-center justify-center gap-3 rounded-full border border-white/15 bg-white/5 px-7 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-white transition hover:-translate-y-0.5 hover:bg-white/10"
+            >
+              Download CV
+              <Download className="h-4 w-4" />
+            </a>
+          </div>
 
-      <div className="text-center z-10 max-w-5xl mx-auto px-6 will-change-transform">
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="text-4xl sm:text-6xl md:text-8xl font-bold mb-6 gradient-text py-3 sm:py-4"
-        >
-          José Carter Arriagada
-        </motion.h1>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {focusAreas.map((item) => (
+              <div key={item} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-zinc-100 backdrop-blur-sm">
+                <ResponsivePretext
+                  as="p"
+                  text={item}
+                  className="text-sm font-medium uppercase tracking-[0.18em] text-zinc-100"
+                  lineClassName="pretext-line block"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <motion.p
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
-          className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-12 max-w-4xl mx-auto"
-        >
-          <Typewriter
-            phrases={[
-              'Software Engineer',
-              'Full-Stack Developer',
-              'AI & Data Science Researcher',
-              'Systems Optimizer',
-              'Microservices Architect',
-              'Energy Optimization Engineer',
-              'Drone Systems Engineer',
-              'Seismology & Geoscience Researcher',
-              'GPU Computing Specialist',
-              'DevOps & Cloud Engineer',
-              'IoT Developer',
-              'Algorithm Designer',
-              'Data Visualization Engineer',
-              'Advanced Teaching Assistant',
-            ]}
-          />
-        </motion.p>
+        <div className="space-y-6">
+          <div className="rounded-[2rem] border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+            <LiquidAscii />
+          </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.4, ease: "easeOut" }}
-          className="flex flex-col sm:flex-row gap-6 justify-center items-center"
-        >
-          <a
-            href="#experience"
-            className="flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-accent-blue to-accent-purple rounded-full text-white font-semibold hover:scale-105 transition-all duration-300 hover:shadow-2xl hover:shadow-accent-blue/30"
-          >
-            <Rocket className="w-5 h-5" />
-            View My Work
-          </a>
-
-          <a
-            href="#contact"
-            className="flex items-center gap-3 px-8 py-4 glass-effect rounded-full text-white font-semibold hover:scale-105 transition-all duration-300"
-          >
-            <Mail className="w-5 h-5" />
-            Get In Touch
-          </a>
-        </motion.div>
-      </div>
-    </section>
-  )
-}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <a
+              href="https://github.com/Cartterr"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-sm text-zinc-100 transition hover:border-white/20 hover:bg-white/10"
+            >
+              GitHub
+              <Github className="h-4 w-4" />
+            </a>
+            <a
+              href="https://linkedin.com/in/jose-carter-arriagada"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-sm text-zinc-100 transition hover:border-white/20 hover:bg-white/10"
+            >
+              LinkedIn
+              <Linkedin className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  </section>
+)
 
 export default Hero

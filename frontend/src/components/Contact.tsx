@@ -1,218 +1,185 @@
-import React, { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Mail, Send, Linkedin, Github, GraduationCap } from 'lucide-react'
+import { Github, GraduationCap, Linkedin, Mail, Send } from 'lucide-react'
+import ResponsivePretext from './ResponsivePretext'
+
+const API_BASE = import.meta.env.VITE_API_URL || '/api'
+
+const contactCards = [
+  {
+    label: 'Primary email',
+    value: 'jose.carterx@gmail.com',
+    href: 'mailto:jose.carterx@gmail.com',
+    icon: Mail,
+  },
+  {
+    label: 'University',
+    value: 'jrcarter@uc.cl',
+    href: 'mailto:jrcarter@uc.cl',
+    icon: GraduationCap,
+  },
+  {
+    label: 'GitHub',
+    value: 'github.com/Cartterr',
+    href: 'https://github.com/Cartterr',
+    icon: Github,
+  },
+  {
+    label: 'LinkedIn',
+    value: 'linkedin.com/in/jose-carter-arriagada',
+    href: 'https://linkedin.com/in/jose-carter-arriagada',
+    icon: Linkedin,
+  },
+]
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  })
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  useEffect(() => {
+    if (submitStatus === 'idle') return
+
+    const timer = window.setTimeout(() => setSubmitStatus('idle'), 4000)
+    return () => window.clearTimeout(timer)
+  }, [submitStatus])
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = event.target
+    setFormData((current) => ({ ...current, [name]: value }))
+  }
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault()
     setIsSubmitting(true)
-    
+
     try {
-      const response = await fetch('/api/contact', {
+      const response = await fetch(`${API_BASE}/contact`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       })
-      
+
+      setSubmitStatus(response.ok ? 'success' : 'error')
       if (response.ok) {
-        setSubmitStatus('success')
         setFormData({ name: '', email: '', message: '' })
-      } else {
-        setSubmitStatus('error')
       }
-    } catch (error) {
+    } catch {
       setSubmitStatus('error')
     } finally {
       setIsSubmitting(false)
-      setTimeout(() => setSubmitStatus('idle'), 5000)
     }
   }
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }))
-  }
-
-  const contactLinks = [
-    {
-      icon: Mail,
-      label: 'jose.carterx@gmail.com',
-      href: 'mailto:jose.carterx@gmail.com',
-      color: 'accent-blue'
-    },
-    {
-      icon: GraduationCap,
-      label: 'jrcarter@uc.cl',
-      href: 'mailto:jrcarter@uc.cl',
-      color: 'accent-green'
-    },
-    {
-      icon: Linkedin,
-      label: 'LinkedIn',
-      href: 'https://linkedin.com/in/jose-carter-arriagada',
-      color: 'accent-blue'
-    },
-    {
-      icon: Github,
-      label: 'GitHub',
-      href: 'https://github.com/Cartterr',
-      color: 'accent-purple'
-    }
-  ]
 
   return (
-    <section id="contact" className="py-20 sm:py-32 bg-gradient-to-b from-transparent via-accent-purple/5 to-transparent">
-      <div className="container mx-auto px-6">
-        <motion.h2
+    <section id="contact" className="px-6 py-20 sm:py-28">
+      <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.8fr_1.2fr]">
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="text-4xl sm:text-5xl md:text-6xl font-bold text-center mb-8 gradient-text"
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.55 }}
+          className="rounded-[2rem] border border-white/10 bg-white/5 p-7"
         >
-          Let's Connect
-        </motion.h2>
-        
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          <p className="section-kicker">Contact</p>
+          <ResponsivePretext
+            as="h2"
+            text="If the work is serious, I am interested."
+            className="mt-4 text-4xl font-semibold leading-tight text-[#f8f5ec] sm:text-5xl"
+            lineClassName="pretext-line block"
+          />
+          <ResponsivePretext
+            as="p"
+            text="Best fit conversations are around product engineering, AI-backed systems, infrastructure cleanups, data-heavy research tooling, or hard debugging on messy production surfaces."
+            className="mt-5 text-base leading-7 text-zinc-300"
+            lineClassName="pretext-line block"
+          />
+
+          <div className="mt-8 grid gap-3">
+            {contactCards.map((card) => {
+              const Icon = card.icon
+              return (
+                <a
+                  key={card.value}
+                  href={card.href}
+                  target={card.href.startsWith('http') ? '_blank' : undefined}
+                  rel={card.href.startsWith('http') ? 'noreferrer' : undefined}
+                  className="flex items-center gap-4 rounded-2xl border border-white/10 bg-[#151515] px-5 py-4 transition hover:border-white/20 hover:bg-[#1a1a1a]"
+                >
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#f97316]/12 text-[#fbbf24]">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block text-xs uppercase tracking-[0.2em] text-zinc-500">{card.label}</span>
+                    <span className="block text-sm text-zinc-100">{card.value}</span>
+                  </span>
+                </a>
+              )
+            })}
+          </div>
+        </motion.div>
+
+        <motion.form
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          viewport={{ once: true }}
-          className="text-xl text-gray-300 text-center mb-16 max-w-3xl mx-auto"
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.55, delay: 0.05 }}
+          onSubmit={handleSubmit}
+          className="rounded-[2rem] border border-white/10 bg-white/5 p-7"
         >
-          Ready to collaborate on innovative projects or discuss cutting-edge technology solutions? Let's build something amazing together.
-        </motion.p>
-        
-        <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-            className="space-y-6"
-          >
-            <h3 className="text-2xl font-bold mb-8 text-accent-blue">Get In Touch</h3>
-            
-            <div className="grid gap-4">
-              {contactLinks.map((link, index) => {
-                const IconComponent = link.icon
-                return (
-                  <motion.a
-                    key={index}
-                    href={link.href}
-                    target={link.href.startsWith('http') ? '_blank' : undefined}
-                    rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    className={`flex items-center gap-4 p-4 glass-effect rounded-xl hover:scale-105 transition-all duration-300 hover:border-${link.color}/50`}
-                  >
-                    <IconComponent className={`w-6 h-6 text-${link.color}`} />
-                    <span className="text-white font-medium">{link.label}</span>
-                  </motion.a>
-                )
-              })}
-            </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <form onSubmit={handleSubmit} className="glass-effect p-8 rounded-2xl space-y-6">
-              <h3 className="text-2xl font-bold mb-6 text-accent-green">Send a Message</h3>
-              
-              <div>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Your Name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-4 bg-primary-secondary border border-glass-border rounded-xl text-white placeholder-gray-400 focus:border-accent-blue focus:outline-none transition-colors"
-                />
-              </div>
-              
-              <div>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Your Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full p-4 bg-primary-secondary border border-glass-border rounded-xl text-white placeholder-gray-400 focus:border-accent-blue focus:outline-none transition-colors"
-                />
-              </div>
-              
-              <div>
-                <textarea
-                  name="message"
-                  placeholder="Your Message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  required
-                  rows={5}
-                  className="w-full p-4 bg-primary-secondary border border-glass-border rounded-xl text-white placeholder-gray-400 focus:border-accent-blue focus:outline-none transition-colors resize-none"
-                />
-              </div>
-              
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-accent-blue to-accent-purple text-white font-semibold rounded-xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Sending...
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    Send Message
-                  </>
-                )}
-              </button>
-              
-              {submitStatus === 'success' && (
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-accent-green text-center"
-                >
-                  Message sent successfully! I'll get back to you soon.
-                </motion.p>
-              )}
-              
-              {submitStatus === 'error' && (
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-red-400 text-center"
-                >
-                  Failed to send message. Please try again or contact me directly.
-                </motion.p>
-              )}
-            </form>
-          </motion.div>
-        </div>
+          <div className="grid gap-5">
+            <label className="grid gap-2">
+              <span className="text-sm uppercase tracking-[0.2em] text-zinc-500">Name</span>
+              <input
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                className="rounded-2xl border border-white/10 bg-[#151515] px-4 py-4 text-white outline-none transition focus:border-[#f97316]"
+              />
+            </label>
+
+            <label className="grid gap-2">
+              <span className="text-sm uppercase tracking-[0.2em] text-zinc-500">Email</span>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                required
+                className="rounded-2xl border border-white/10 bg-[#151515] px-4 py-4 text-white outline-none transition focus:border-[#f97316]"
+              />
+            </label>
+
+            <label className="grid gap-2">
+              <span className="text-sm uppercase tracking-[0.2em] text-zinc-500">Message</span>
+              <textarea
+                name="message"
+                rows={7}
+                value={formData.message}
+                onChange={handleChange}
+                required
+                className="rounded-2xl border border-white/10 bg-[#151515] px-4 py-4 text-white outline-none transition focus:border-[#f97316]"
+              />
+            </label>
+
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center justify-center gap-3 rounded-full bg-[#f97316] px-6 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-[#1a120d] transition hover:bg-[#fb923c] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isSubmitting ? 'Sending' : 'Send message'}
+              <Send className="h-4 w-4" />
+            </button>
+
+            {submitStatus === 'success' ? (
+              <p className="text-sm text-emerald-300">Message sent. I will reply as soon as I can.</p>
+            ) : null}
+            {submitStatus === 'error' ? (
+              <p className="text-sm text-rose-300">Message failed. Use email directly if this keeps happening.</p>
+            ) : null}
+          </div>
+        </motion.form>
       </div>
     </section>
   )

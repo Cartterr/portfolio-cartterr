@@ -18,6 +18,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') })
 
 const app = express()
 const PORT = process.env.PORT || 5000
+app.disable('x-powered-by')
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -30,8 +31,23 @@ app.use(helmet({
   crossOriginEmbedderPolicy: false
 }) as any)
 
+const allowedOrigins = new Set(
+  [
+    process.env.FRONTEND_URL,
+    'http://localhost:3000',
+    'https://josecarter.dev',
+    'https://portfolio-cartterr-production.up.railway.app',
+  ].filter(Boolean) as string[],
+)
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.has(origin)) {
+      callback(null, true)
+      return
+    }
+    callback(new Error('CORS blocked'))
+  },
   credentials: true
 }) as any)
 
@@ -43,33 +59,7 @@ const apiRouter = express.Router()
 apiRouter.use(limiter as any)
 app.use('/api', apiRouter)
 
-apiRouter.get('/proxy-image', async (req, res): Promise<void> => {
-  const src = String(req.query.src || '')
-  if (!src) {
-    res.status(400).send('src required')
-    return
-  }
-  try {
-    const direct = new URL(src)
-    const response = await fetch(direct.toString())
-    if (!response.ok) {
-      res.status(response.status).send('upstream error')
-      return
-    }
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Cache-Control', 'public, max-age=3600')
-    res.setHeader('Content-Type', response.headers.get('content-type') || 'image/jpeg')
-    const body = await response.arrayBuffer()
-    res.end(Buffer.from(body))
-    return
-  } catch (e) {
-    console.error('proxy-image error', e)
-    res.status(500).send('proxy failed')
-    return
-  }
-})
-
-app.get('/api/health', (_req, res) => {
+apiRouter.get('/health', (_req, res) => {
   res.json({
     status: 'OK',
     timestamp: new Date().toISOString(),
@@ -78,10 +68,10 @@ app.get('/api/health', (_req, res) => {
   })
 })
 
-app.get('/api/portfolio-data', (_req, res) => {
+apiRouter.get('/portfolio-data', (_req, res) => {
   res.json({
     name: 'José Carter Arriagada',
-    title: 'Software Engineer | Full-Stack Developer | AI & Data Science Researcher',
+    title: 'AI Systems Engineer | Full-Stack Developer | Simulation and Research Software',
     email: 'jose.carterx@gmail.com',
     universityEmail: 'jrcarter@uc.cl',
     linkedin: 'https://linkedin.com/in/jose-carter-arriagada',
@@ -90,117 +80,131 @@ app.get('/api/portfolio-data', (_req, res) => {
     education: {
       degree: 'B.S. in Computer Engineering',
       university: 'Pontificia Universidad Católica de Chile',
-      focus: 'Software Engineering and Data Science'
+      focus: 'Software Engineering, Data Science, and applied systems work'
     },
     experiences: [
       {
         id: 1,
-        title: 'Software Engineer Full Stack',
-        company: 'Flair - StartupChile Growth Winner',
+        title: 'Full Stack Developer',
+        company: 'Dily',
         location: 'Santiago, Chile',
-        period: 'Dec 2024 - Jul 2025',
-        description: 'Developed complete microservices architecture using Python for RESTful APIs and Vue.js for enterprise BMS platform, integrating InfluxDB for time series data and DynamoDB for transactional data. Created advanced pattern recognition algorithms that reduce energy consumption by up to 50%.',
-        technologies: ['Python', 'Vue.js', 'Docker', 'AWS', 'InfluxDB', 'DynamoDB', 'IoT'],
+        period: 'Sep 2025 - Present',
+        description: 'Developing lending and fintech platforms end to end with DDD and hexagonal architecture, TypeScript and Node.js services, and Angular-based frontend work in a production monorepo.',
+        technologies: ['TypeScript', 'Node.js', 'Express', 'Angular', 'Nx', 'MySQL', 'PostgreSQL', 'AWS'],
         achievements: [
-          'Reduced energy consumption by up to 50%',
-          'Built complete microservices architecture',
-          'Integrated multiple database systems'
+          'Applied DDD and hexagonal patterns to keep domain logic clean',
+          'Built testable backend services and product-facing frontend flows',
+          'Worked across monorepo architecture and cloud integrations'
         ]
       },
       {
         id: 2,
-        title: 'Software Engineer',
-        company: 'University of Notre Dame - Drone Response',
-        location: 'Notre Dame, Indiana, USA',
-        period: 'Jan 2024 - Mar 2024',
-        description: 'Developed Smart Mission Planner (SMP) using Python with advanced Hamiltonian pathfinding algorithms and clustering systems for autonomous drone management. Integrated OpenAI APIs for intelligent decision-making and MQTT protocols for real-time coordination.',
-        technologies: ['Python', 'OpenAI API', 'MQTT', 'Angular', 'AI', 'Algorithms'],
+        title: 'Lead Engineer, Alerting Platform Migration',
+        company: 'GridWorks',
+        location: 'Remote',
+        period: '2026 - Present',
+        description: 'Leading the end-to-end rebuild of an industrial alerting platform, replacing legacy automation flows with a modular service architecture, safer rollout controls, and production-grade operator tooling.',
+        technologies: ['Next.js', 'Node.js', 'Railway', 'MQTT', 'WhatsApp', 'PostgreSQL'],
         achievements: [
-          'Created advanced pathfinding algorithms',
-          'Integrated AI for intelligent decision-making',
-          'Implemented real-time coordination systems'
+          'Preserved parity while migrating live production workflows',
+          'Implemented alert lifecycle, escalation, and ingestion logic',
+          'Built safer rollout and observability paths for operators'
         ]
       },
       {
         id: 3,
-        title: 'Data Science Researcher',
-        company: 'Pontificia Universidad Católica de Chile',
+        title: 'Software Engineer',
+        company: 'Flair - StartupChile Growth Winner',
         location: 'Santiago, Chile',
-        period: 'Jul 2023 - Present',
-        description: 'Leading Politiktok research project backed by Fondecyt funding, processing datasets of 100,000+ records using Python, PyTorch, and advanced NLP techniques. Implemented GPU-accelerated ML pipelines achieving 10x performance improvements.',
-        technologies: ['Python', 'PyTorch', 'CUDA', 'NLP', 'Big Data', 'ML'],
+        period: 'Dec 2024 - Jul 2025',
+        description: 'Built backend services and enterprise UI for an energy-optimization platform with time-series data, cloud deployments, and production workflows tied to measurable HVAC efficiency gains.',
+        technologies: ['Python', 'Vue.js', 'Docker', 'AWS', 'InfluxDB', 'DynamoDB', 'IoT'],
         achievements: [
-          'Processed 100,000+ data records',
-          'Achieved 10x performance improvements',
-          'Led Fondecyt-funded research project'
+          'Reduced energy consumption by up to 50%',
+          'Built production-facing microservices and UI flows',
+          'Integrated time-series and transactional data systems'
         ]
       },
       {
         id: 4,
-        title: 'Advanced Teaching Assistant',
+        title: 'AI Systems Developer',
+        company: 'University of Notre Dame - Drone Response',
+        location: 'Notre Dame, Indiana, USA',
+        period: 'Jan 2024 - Mar 2024',
+        description: 'Developed Smart Mission Planner logic for autonomous drone coordination using optimization algorithms, MQTT messaging, and OpenAI-assisted decision support in an emergency-response context.',
+        technologies: ['Python', 'OpenAI API', 'MQTT', 'Angular', 'Java Spring', 'Algorithms'],
+        achievements: [
+          'Created route-planning and resource-allocation logic',
+          'Integrated AI-assisted decision support with real-time messaging',
+          'Worked in an international NASA and NSF backed environment'
+        ]
+      },
+      {
+        id: 5,
+        title: 'Data Science Researcher',
         company: 'Pontificia Universidad Católica de Chile',
         location: 'Santiago, Chile',
-        period: 'Mar 2023 - Present',
-        description: 'Distinguished "Advanced Level Teaching Assistant" for exceptional performance in Operating Systems, Software Testing, and High Performance Computing courses. Teaching Python from fundamentals to advanced HPC techniques.',
-        technologies: ['Python', 'HPC', 'Operating Systems', 'Teaching', 'Mentoring'],
+        period: 'Jul 2023 - Present',
+        description: 'Leading Politiktok research infrastructure backed by Fondecyt funding, processing 100,000+ records with Python, PyTorch, CUDA, and large-scale data workflows for political-media analysis.',
+        technologies: ['Python', 'PyTorch', 'CUDA', 'NLP', 'PostgreSQL', 'ML'],
         achievements: [
-          'Distinguished Advanced Level status',
-          'Taught multiple technical courses',
-          'Mentored students in HPC techniques'
+          'Processed 100,000+ data records',
+          'Achieved 10x performance improvements',
+          'Led Fondecyt-funded research project'
         ]
       }
     ],
     projects: [
       {
         id: 1,
-        title: 'Enterprise BMS Energy Optimization',
-        description: 'Developed complete energy management platform for commercial buildings using Python microservices, Vue.js interfaces, and Docker containers with InfluxDB/DynamoDB for real-time HVAC data processing.',
-        technologies: ['Python', 'Vue.js', 'Docker', 'AWS', 'InfluxDB', 'IoT'],
-        status: 'completed',
-        impact: '50% energy savings achieved'
+        title: 'GridWorks Alerting Platform Migration',
+        description: 'Industrial alerting platform migration covering ingestion, alert rules, escalation chains, operator tooling, and WhatsApp workflows under real production constraints.',
+        technologies: ['Next.js', 'Node.js', 'Railway', 'MQTT', 'WhatsApp', 'PostgreSQL'],
+        status: 'active',
+        impact: 'Production-safe migration and systems modernization'
       },
       {
         id: 2,
-        title: 'Smart Mission Planner - Autonomous Drones',
-        description: 'AI-powered drone management system with Hamiltonian optimization algorithms and OpenAI integration for intelligent resource allocation in emergency response scenarios.',
-        technologies: ['Python', 'OpenAI API', 'MQTT', 'Angular', 'AI', 'Algorithms'],
-        status: 'completed',
-        impact: 'Emergency response optimization'
+        title: 'Politiktok Research Infrastructure',
+        description: 'Large-scale political-media analysis platform with GPU-backed NLP pipelines, PostgreSQL-backed data workflows, and research-grade processing at 100,000+ record scale.',
+        technologies: ['Python', 'PyTorch', 'CUDA', 'PostgreSQL', 'NLP', 'Data Engineering'],
+        status: 'active',
+        impact: '10x performance improvement in research pipelines'
       },
       {
         id: 3,
-        title: 'Politiktok - Big Data Analytics Platform',
-        description: 'Large-scale social media behavior analysis system processing 100,000+ datasets with PyTorch and CUDA acceleration, featuring 10x performance improvements in ML pipelines.',
-        technologies: ['Python', 'PyTorch', 'CUDA', 'NLP', 'Big Data', 'ML'],
-        status: 'ongoing',
-        impact: '10x performance improvement'
-      },
-      {
-        id: 4,
-        title: 'Tectonic Plate Simulation Engine',
-        description: 'Advanced GPU-accelerated geological simulation system using CUDA and Python for earthquake prediction modeling with 15x performance improvements in parallel computing.',
-        technologies: ['Python', 'CUDA', 'GPU Computing', 'Simulation', 'Physics'],
-        status: 'completed',
-        impact: '15x performance improvement'
+        title: 'Autonomous Planning and Scientific Simulation',
+        description: 'A thread of work spanning autonomous drone mission planning and GPU-accelerated geoscience simulation, pointing toward the kind of AI plus aerospace and scientific-computing problems I want to pursue further.',
+        technologies: ['Python', 'CUDA', 'Optimization', 'MQTT', 'OpenAI API', 'Simulation'],
+        status: 'direction',
+        impact: 'Mission planning and 15x simulation speedups'
       }
     ],
     skills: {
-      programming: ['Python', 'JavaScript', 'TypeScript', 'C++', 'Java', 'SQL', 'CUDA'],
-      frameworks: ['React', 'Vue.js', 'Angular', 'Django', 'Flask', 'FastAPI', 'Node.js', 'PyTorch'],
-      databases: ['PostgreSQL', 'MySQL', 'MongoDB', 'InfluxDB', 'DynamoDB', 'Redis', 'MQTT'],
-      cloud: ['AWS EC2', 'AWS S3', 'AWS Lambda', 'Docker', 'Git', 'CI/CD', 'Linux'],
-      specializations: ['Machine Learning', 'AI Integration', 'IoT Development', 'GPU Computing', 'System Integration', 'API Development']
+      programming: ['Python', 'TypeScript', 'JavaScript', 'SQL', 'CUDA', 'Java'],
+      frameworks: ['React', 'Angular', 'Node.js', 'Express', 'PyTorch', 'Next.js', 'Vue.js'],
+      databases: ['PostgreSQL', 'MySQL', 'InfluxDB', 'DynamoDB', 'MongoDB', 'Redis', 'MQTT'],
+      cloud: ['Railway', 'AWS EC2', 'AWS S3', 'AWS Lambda', 'Docker', 'CI/CD', 'Linux'],
+      specializations: ['AI Systems', 'Simulation', 'NLP', 'IoT Development', 'Distributed Systems', 'API Development']
     },
     stats: {
-      yearsExperience: 5,
-      projectsCompleted: 20,
+      yearsExperience: 3,
+      projectsCompleted: 8,
       energySavings: 50,
       dataPointsProcessed: 100000
     }
   })
 })
 
-app.post('/api/contact', async (req, res) => {
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+
+apiRouter.post('/contact', async (req, res) => {
   const { name, email, message } = req.body
 
   if (!name || !email || !message) {
@@ -247,7 +251,7 @@ app.post('/api/contact', async (req, res) => {
       replyTo: `${name} <${email}>`,
       text: `From: ${name} <${email}>
 \n${message}`,
-      html: `<p><strong>From:</strong> ${name} &lt;${email}&gt;</p><p>${message.replace(/\n/g, '<br/>')}</p>`
+      html: `<p><strong>From:</strong> ${escapeHtml(name)} &lt;${escapeHtml(email)}&gt;</p><p>${escapeHtml(message).replace(/\n/g, '<br/>')}</p>`
     })
 
     return res.json({ success: true, message: 'Thank you for your message! I will get back to you soon.' })

@@ -1,10 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+:root {
+  color-scheme: dark;
+  font-family: 'Space Grotesk', sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(249, 115, 22, 0.18), transparent 28rem),
+    radial-gradient(circle at top right, rgba(244, 63, 94, 0.14), transparent 24rem),
+    linear-gradient(180deg, #090909 0%, #0f0f0f 100%);
+}
+
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
 }
 
@@ -13,119 +21,188 @@ html {
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: linear-gradient(135deg, #0a0a0a 0%, #000 50%, #0a0a0a 100%);
-  color: white;
-  overflow-x: hidden;
+  margin: 0;
+  min-width: 320px;
+  background: transparent;
+  color: #f8f5ec;
   line-height: 1.6;
 }
 
-.glass-effect {
-  background: rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, #ffffff 0%, #00d4ff 50%, #8b5cf6 100%);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+button,
+input,
+textarea {
+  font: inherit;
 }
 
-.floating-animation {
-  animation: float 20s infinite linear;
+input,
+textarea {
+  min-width: 0;
 }
 
-@keyframes float {
-  0% { transform: translateY(0px); }
-  100% { transform: translateY(-60px); }
+::selection {
+  background: rgba(249, 115, 22, 0.3);
+  color: #fff7ed;
 }
 
-@keyframes kenburns {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.06); }
-}
-.kenburns {
-  animation: kenburns 8s ease-out forwards;
-}
-.kenburns-out {
-  transform: scale(1.06);
+.section-kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #fbbf24;
 }
 
-.skeleton {
+.section-title {
+  margin-top: 1rem;
+  color: #f8f5ec;
+  font-size: clamp(2.35rem, 5vw, 4.8rem);
+  font-weight: 600;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.page-orb {
+  pointer-events: none;
+  position: fixed;
+  z-index: 0;
+  height: 28rem;
+  width: 28rem;
+  border-radius: 999px;
+  filter: blur(60px);
+  opacity: 0.18;
+}
+
+.page-orb-left {
+  left: -8rem;
+  top: 8rem;
+  background: #f97316;
+}
+
+.page-orb-right {
+  right: -10rem;
+  top: 24rem;
+  background: #fb7185;
+}
+
+.gallery-image {
+  animation: galleryReveal 420ms ease-out;
+}
+
+.pretext-line {
+  text-wrap: nowrap;
+}
+
+.liquid-ascii-shell {
   position: relative;
-  background: #111;
+  min-height: min(60vw, 34rem);
   overflow: hidden;
-  contain: layout style paint;
+  border-radius: 1.7rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(circle at 20% 10%, rgba(249, 115, 22, 0.16), transparent 22rem),
+    radial-gradient(circle at 85% 18%, rgba(251, 113, 133, 0.12), transparent 18rem),
+    linear-gradient(180deg, rgba(17, 17, 17, 0.95), rgba(8, 8, 8, 0.98));
 }
-.skeleton::after {
+
+.liquid-ascii-shell::after {
   content: '';
   position: absolute;
   inset: 0;
-  transform: translateX(-100%);
-  background-image: linear-gradient(90deg, rgba(255,255,255,0) 0, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0) 100%);
-  animation: shimmer 1.2s infinite;
-  will-change: transform;
-}
-@keyframes shimmer {
-  100% { transform: translateX(100%); }
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 16%, transparent 84%, rgba(255, 255, 255, 0.03));
+  pointer-events: none;
 }
 
-.spinner {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: 3px solid rgba(255,255,255,0.2);
-  border-top-color: #00d4ff;
-  animation: spin 0.9s linear infinite;
-  will-change: transform;
-  contain: layout style paint;
-}
-@keyframes spin {
-  to { transform: rotate(360deg); }
+.liquid-ascii-glow {
+  position: absolute;
+  inset: auto 0 -22%;
+  height: 60%;
+  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.22), transparent 60%);
+  filter: blur(40px);
+  opacity: 0.8;
 }
 
-/* Performance optimizations for smooth scrolling */
-.image-container {
-  contain: layout style paint;
-  transform: translateZ(0);
+.liquid-ascii {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  padding: 1.2rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(8px, 0.82vw, 12px);
+  line-height: 1.08;
+  letter-spacing: 0.045em;
+  white-space: pre;
+  overflow: hidden;
+  user-select: none;
+  color: transparent;
+  background:
+    linear-gradient(135deg, #fff7ed 0%, #fbbf24 28%, #f97316 52%, #fb7185 76%, #fde68a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  text-shadow:
+    0 0 10px rgba(251, 191, 36, 0.18),
+    0 0 20px rgba(249, 115, 22, 0.08);
+  opacity: 0.92;
 }
 
-.smooth-scroll {
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
+.liquid-ascii-label {
+  position: absolute;
+  inset: auto 1rem 1rem 1rem;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(248, 245, 236, 0.72);
 }
 
-/* Animation delays for staggered effects */
-.animation-delay-75 {
-  animation-delay: 75ms;
-}
-
-.animation-delay-150 {
-  animation-delay: 150ms;
-}
-
-.animation-delay-300 {
-  animation-delay: 300ms;
-}
-
-/* Beautiful loading animations */
-@keyframes shimmer-loading {
-  0% {
-    transform: translateX(-100%);
+@keyframes galleryReveal {
+  from {
+    opacity: 0.2;
+    transform: scale(1.02);
   }
-  100% {
-    transform: translateX(200%);
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
-.loading-shimmer {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
-  animation: shimmer-loading 2s infinite;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .liquid-ascii-shell {
+    min-height: 22rem;
+  }
+
+  .liquid-ascii {
+    padding: 0.95rem;
+    font-size: 8px;
+  }
+
+  .liquid-ascii-label {
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+  }
 }

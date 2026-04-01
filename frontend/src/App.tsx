@@ -1,4 +1,3 @@
-
 import Hero from './components/Hero'
 import About from './components/About'
 import Experience from './components/Experience'
@@ -11,8 +10,9 @@ import ScrollProgress from './components/ScrollProgress'
 
 function App() {
   return (
-    <div className="min-h-screen">
-
+    <div className="min-h-screen bg-[#0b0b0b] text-white">
+      <div className="page-orb page-orb-left" />
+      <div className="page-orb page-orb-right" />
       <ScrollProgress />
       <Navigation />
       <Hero />
@@ -21,9 +21,9 @@ function App() {
       <Projects />
       <Skills />
       <Contact />
-      <footer className="text-center py-12 text-gray-400 border-t border-glass-border">
-        <div className="container mx-auto px-6">
-          <p>&copy; 2025 José Carter Arriagada. Designed with passion for innovation and excellence.</p>
+      <footer className="border-t border-white/10 px-6 py-10 text-center text-sm uppercase tracking-[0.2em] text-zinc-500">
+        <div className="mx-auto max-w-6xl">
+          <p>&copy; 2026 José Carter Arriagada · Built to feel more like engineering work than a template demo.</p>
         </div>
       </footer>
     </div>
