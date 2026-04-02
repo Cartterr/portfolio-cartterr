@@ -262,10 +262,27 @@ apiRouter.post('/contact', async (req, res) => {
 })
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../frontend/dist')))
+  const frontendDist = path.join(__dirname, '../../frontend/dist')
+
+  app.use(express.static(frontendDist, {
+    setHeaders: (res, filePath) => {
+      if (filePath.endsWith('.html')) {
+        res.setHeader('Cache-Control', 'no-store')
+        return
+      }
+
+      if (/[/\\]assets[/\\].+\.[0-9a-f]{8}\./i.test(filePath)) {
+        res.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
+        return
+      }
+
+      res.setHeader('Cache-Control', 'public, max-age=3600')
+    }
+  }))
 
   app.get('*', (_req, res) => {
-    res.sendFile(path.join(__dirname, '../../frontend/dist/index.html'))
+    res.setHeader('Cache-Control', 'no-store')
+    res.sendFile(path.join(frontendDist, 'index.html'))
   })
 }
 
