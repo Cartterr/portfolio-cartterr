@@ -47,7 +47,7 @@ const Navigation = () => {
               href={`#${item.id}`}
               className={`rounded-full px-4 py-2 text-xs font-medium uppercase tracking-[0.18em] transition ${
                 activeId === item.id
-                  ? 'bg-[#f97316] text-[#1a120d]'
+                  ? 'bg-zinc-100 text-black text-[#1a120d]'
                   : 'text-zinc-300 hover:bg-white/8 hover:text-white'
               }`}
             >

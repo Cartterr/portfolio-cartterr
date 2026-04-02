@@ -108,7 +108,7 @@ const ImageGallery = ({
                 onClick={() => goTo(index)}
                 className={`overflow-hidden rounded-2xl border transition ${
                   index === activeIndex
-                    ? 'border-[#f97316] opacity-100'
+                    ? 'border-white opacity-100'
                     : 'border-white/10 opacity-60 hover:opacity-100'
                 }`}
                 aria-label={`View ${label} image ${index + 1}`}

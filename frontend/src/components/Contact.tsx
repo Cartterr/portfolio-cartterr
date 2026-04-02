@@ -106,7 +106,7 @@ const Contact = () => {
                   rel={card.href.startsWith('http') ? 'noreferrer' : undefined}
                   className="flex items-center gap-4 rounded-2xl border border-white/10 bg-[#151515] px-5 py-4 transition hover:border-white/20 hover:bg-[#1a1a1a]"
                 >
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[#f97316]/12 text-[#fbbf24]">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-zinc-100 text-black/12 text-zinc-400">
                     <Icon className="h-5 w-5" />
                   </span>
                   <span>
@@ -135,7 +135,7 @@ const Contact = () => {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="rounded-2xl border border-white/10 bg-[#151515] px-4 py-4 text-white outline-none transition focus:border-[#f97316]"
+                className="rounded-2xl border border-white/10 bg-[#151515] px-4 py-4 text-white outline-none transition focus:border-white"
               />
             </label>
 
@@ -147,7 +147,7 @@ const Contact = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="rounded-2xl border border-white/10 bg-[#151515] px-4 py-4 text-white outline-none transition focus:border-[#f97316]"
+                className="rounded-2xl border border-white/10 bg-[#151515] px-4 py-4 text-white outline-none transition focus:border-white"
               />
             </label>
 
@@ -159,14 +159,14 @@ const Contact = () => {
                 value={formData.message}
                 onChange={handleChange}
                 required
-                className="rounded-2xl border border-white/10 bg-[#151515] px-4 py-4 text-white outline-none transition focus:border-[#f97316]"
+                className="rounded-2xl border border-white/10 bg-[#151515] px-4 py-4 text-white outline-none transition focus:border-white"
               />
             </label>
 
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center justify-center gap-3 rounded-full bg-[#f97316] px-6 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-[#1a120d] transition hover:bg-[#fb923c] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center justify-center gap-3 rounded-full bg-zinc-100 text-black px-6 py-4 text-sm font-semibold uppercase tracking-[0.22em] text-[#1a120d] transition hover:bg-zinc-300 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isSubmitting ? 'Sending' : 'Send message'}
               <Send className="h-4 w-4" />

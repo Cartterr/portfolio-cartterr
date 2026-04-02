@@ -6,10 +6,7 @@
 :root {
   color-scheme: dark;
   font-family: 'Space Grotesk', sans-serif;
-  background:
-    radial-gradient(circle at top left, rgba(249, 115, 22, 0.18), transparent 28rem),
-    radial-gradient(circle at top right, rgba(244, 63, 94, 0.14), transparent 24rem),
-    linear-gradient(180deg, #090909 0%, #0f0f0f 100%);
+  background: #090909;
 }
 
 * {
@@ -23,7 +20,7 @@ html {
 body {
   margin: 0;
   min-width: 320px;
-  background: transparent;
+  background: #090909;
   color: #f8f5ec;
   line-height: 1.6;
 }
@@ -45,8 +42,8 @@ textarea {
 }
 
 ::selection {
-  background: rgba(249, 115, 22, 0.3);
-  color: #fff7ed;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
 }
 
 .section-kicker {
@@ -54,7 +51,7 @@ textarea {
   font-size: 0.78rem;
   letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: #fbbf24;
+  color: #a1a1aa;
 }
 
 .section-title {
@@ -93,41 +90,11 @@ textarea {
   animation: galleryReveal 420ms ease-out;
 }
 
-.pretext-line {
-  text-wrap: nowrap;
-}
 
-.liquid-ascii-shell {
-  position: relative;
-  min-height: min(60vw, 34rem);
-  overflow: hidden;
-  border-radius: 1.7rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background:
-    radial-gradient(circle at 20% 10%, rgba(249, 115, 22, 0.16), transparent 22rem),
-    radial-gradient(circle at 85% 18%, rgba(251, 113, 133, 0.12), transparent 18rem),
-    linear-gradient(180deg, rgba(17, 17, 17, 0.95), rgba(8, 8, 8, 0.98));
-}
-
-.liquid-ascii-shell::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 16%, transparent 84%, rgba(255, 255, 255, 0.03));
-  pointer-events: none;
-}
-
-.liquid-ascii-glow {
-  position: absolute;
-  inset: auto 0 -22%;
-  height: 60%;
-  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.22), transparent 60%);
-  filter: blur(40px);
-  opacity: 0.8;
-}
 
 .liquid-ascii {
-  position: relative;
+  position: absolute;
+  top: 0; left: 0;
   z-index: 1;
   margin: 0;
   height: 100%;
@@ -141,28 +108,10 @@ textarea {
   overflow: hidden;
   user-select: none;
   color: transparent;
-  background:
-    linear-gradient(135deg, #fff7ed 0%, #fbbf24 28%, #f97316 52%, #fb7185 76%, #fde68a 100%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(200,200,200,0.3) 100%);
   -webkit-background-clip: text;
   background-clip: text;
-  text-shadow:
-    0 0 10px rgba(251, 191, 36, 0.18),
-    0 0 20px rgba(249, 115, 22, 0.08);
   opacity: 0.92;
-}
-
-.liquid-ascii-label {
-  position: absolute;
-  inset: auto 1rem 1rem 1rem;
-  z-index: 2;
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: rgba(248, 245, 236, 0.72);
 }
 
 @keyframes galleryReveal {
@@ -192,17 +141,8 @@ textarea {
 }
 
 @media (max-width: 640px) {
-  .liquid-ascii-shell {
-    min-height: 22rem;
-  }
-
   .liquid-ascii {
     padding: 0.95rem;
     font-size: 8px;
-  }
-
-  .liquid-ascii-label {
-    font-size: 0.58rem;
-    letter-spacing: 0.18em;
   }
 }

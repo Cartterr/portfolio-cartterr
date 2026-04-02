@@ -10,9 +10,9 @@ import ScrollProgress from './components/ScrollProgress'
 
 function App() {
   return (
-    <div className="min-h-screen bg-[#0b0b0b] text-white">
-      <div className="page-orb page-orb-left" />
-      <div className="page-orb page-orb-right" />
+    <div className="min-h-screen bg-[#0b0b0b] text-white overflow-x-hidden">
+      <div className="relative overflow-x-hidden">
+
       <ScrollProgress />
       <Navigation />
       <Hero />
@@ -26,6 +26,7 @@ function App() {
           <p>&copy; 2026 José Carter Arriagada · Built to feel more like engineering work than a template demo.</p>
         </div>
       </footer>
+      </div>
     </div>
   )
 }

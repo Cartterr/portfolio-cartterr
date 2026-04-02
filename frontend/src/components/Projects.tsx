@@ -33,7 +33,7 @@ const Projects = () => (
                 className="text-2xl font-semibold leading-tight text-[#f8f5ec]"
                 lineClassName="pretext-line block"
               />
-              <span className="rounded-full border border-[#f97316]/25 bg-[#f97316]/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-[#fbbf24]">
+              <span className="rounded-full border border-white/10 bg-zinc-100 text-black/10 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-zinc-400">
                 {project.status}
               </span>
             </div>
@@ -67,7 +67,7 @@ const Projects = () => (
                 href={project.link}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-auto pt-8 inline-flex items-center gap-2 text-sm font-medium text-[#fbbf24] transition hover:text-[#fb923c]"
+                className="mt-auto pt-8 inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition hover:text-zinc-200"
               >
                 Open project
                 <ArrowUpRight className="h-4 w-4" />

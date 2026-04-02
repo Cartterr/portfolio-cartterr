@@ -36,7 +36,7 @@ const Experience = () => (
                 className="mt-4 text-3xl font-semibold text-[#f8f5ec]"
                 lineClassName="pretext-line block"
               />
-              <p className="mt-2 text-lg text-[#f97316]">{entry.company}</p>
+              <p className="mt-2 text-lg text-zinc-100">{entry.company}</p>
               <ResponsivePretext
                 as="p"
                 text={entry.summary}
@@ -63,7 +63,7 @@ const Experience = () => (
                   href={entry.link.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-[#fbbf24] transition hover:text-[#fb923c]"
+                  className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-zinc-400 transition hover:text-zinc-200"
                 >
                   {entry.link.label}
                   <ArrowUpRight className="h-4 w-4" />

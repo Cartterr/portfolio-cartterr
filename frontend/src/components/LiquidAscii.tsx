@@ -8,7 +8,6 @@ const LiquidAscii = () => {
   const ref = useRef<HTMLDivElement | null>(null)
   const pointerRef = useRef({ x: 0.5, y: 0.5, active: false })
   const [frame, setFrame] = useState('')
-  const [stats, setStats] = useState({ cols: 0, rows: 0 })
 
   useEffect(() => {
     const element = ref.current
@@ -67,7 +66,6 @@ const LiquidAscii = () => {
       if (time - lastCommit > 72) {
         lastCommit = time
         setFrame(next)
-        setStats((current) => (current.cols === cols && current.rows === rows ? current : { cols, rows }))
       }
 
       frameId = window.requestAnimationFrame(render)
@@ -81,10 +79,11 @@ const LiquidAscii = () => {
     })
 
     const handleMove = (event: PointerEvent) => {
-      const rect = element.getBoundingClientRect()
+      const w = window.innerWidth
+      const h = window.innerHeight
       pointerRef.current = {
-        x: clamp((event.clientX - rect.left) / rect.width, 0, 1),
-        y: clamp((event.clientY - rect.top) / rect.height, 0, 1),
+        x: clamp(event.clientX / w, 0, 1),
+        y: clamp(event.clientY / h, 0, 1),
         active: true,
       }
     }
@@ -94,30 +93,23 @@ const LiquidAscii = () => {
     }
 
     resizeObserver.observe(element)
-    element.addEventListener('pointermove', handleMove)
-    element.addEventListener('pointerleave', handleLeave)
+    window.addEventListener('pointermove', handleMove as any)
+    window.addEventListener('pointerleave', handleLeave)
     frameId = window.requestAnimationFrame(render)
 
     return () => {
       cancelAnimationFrame(frameId)
       resizeObserver.disconnect()
-      element.removeEventListener('pointermove', handleMove)
-      element.removeEventListener('pointerleave', handleLeave)
+      window.removeEventListener('pointermove', handleMove as any)
+      window.removeEventListener('pointerleave', handleLeave)
     }
   }, [])
 
   return (
-    <div ref={ref} className="liquid-ascii-shell">
-      <div className="liquid-ascii-glow" />
+    <div ref={ref} className="absolute inset-0 z-[1] overflow-hidden pointer-events-none opacity-[0.10] [mask-image:linear-gradient(to_bottom,white_40%,transparent)]">
       <pre className="liquid-ascii" aria-hidden="true">
         {frame}
       </pre>
-      <div className="liquid-ascii-label">
-        <span>liquid ascii field</span>
-        <span>
-          {stats.cols}x{stats.rows}
-        </span>
-      </div>
     </div>
   )
 }

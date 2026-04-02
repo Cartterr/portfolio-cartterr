@@ -77,6 +77,22 @@ export const experienceEntries = [
     gallery: 'politiktok' as const,
     link: { href: 'https://politiktok.cl/', label: 'Open project' },
   },
+  {
+    period: 'Jan 2023 - Jul 2024',
+    title: 'Simulation Engineer',
+    company: 'Pontificia Universidad Católica de Chile',
+    summary: 'Developed advanced computational simulations for tectonic plate modeling using Python and CUDA for predictive analysis.',
+    impact: 'Optimized parallel algorithms achieving 15x performance improvements, and implemented seismic risk models for massive data processing.',
+    stack: ['Python', 'CUDA', 'Optimization', 'Data Pipelines'],
+  },
+  {
+    period: 'Mar 2023 - Nov 2024',
+    title: 'Advanced Teaching Assistant & Instructor',
+    company: 'PUC & Escuela Militar de Chile',
+    summary: 'Designed and taught Python programming curriculums, covering APIs, automated testing, operating systems, and high-performance computing.',
+    impact: 'Awarded "Advanced Teaching Assistant" distinction for exceptional performance across multiple advanced engineering courses.',
+    stack: ['Python', 'Software Testing', 'Operating Systems', 'Technical Communication'],
+  },
 ]
 
 export const projectEntries = [
