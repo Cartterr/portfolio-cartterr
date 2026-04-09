@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-const palette = ' .,:-=+*#%@'
+const palette = '   ..,:-=+*#%@'
 
 const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value))
 
@@ -24,10 +24,17 @@ const LiquidAscii = () => {
         return
       }
 
-      const cols = clamp(Math.floor(width / 9), 28, 86)
-      const rows = clamp(Math.floor(height / 14), 18, 34)
-      const mouse = pointerRef.current
-      const t = time * 0.0011
+      const cols = clamp(Math.floor(width / 8.1) + 14, 72, 240)
+      const rows = clamp(Math.floor(height / 12.6) + 8, 32, 92)
+      const pointer = pointerRef.current
+      const t = time * 0.00095
+      const mouse = pointer.active
+        ? pointer
+        : {
+            x: 0.58 + Math.cos(t * 0.9) * 0.16,
+            y: 0.38 + Math.sin(t * 1.1) * 0.12,
+            active: false,
+          }
       let next = ''
 
       for (let row = 0; row < rows; row += 1) {
@@ -38,23 +45,27 @@ const LiquidAscii = () => {
           const dy = y - mouse.y
           const dist = Math.sqrt(dx * dx + dy * dy)
 
-          const base =
-            Math.sin(x * 8.2 + t * 2.1) * 0.7 +
-            Math.cos(y * 9.4 - t * 1.5) * 0.65 +
-            Math.sin((x + y) * 10.5 - t * 1.2) * 0.45 +
-            Math.cos((x - y) * 13.5 + t * 1.8) * 0.25
-
-          const ripple = mouse.active ? Math.cos(dist * 24 - t * 5.2) * Math.max(0, 1 - dist * 2.2) : 0
-          const swirl = Math.sin((x * x + y * y) * 18 - t * 2.8) * 0.4
-          const intensity = base + ripple + swirl
-          const normalized = clamp((intensity + 2.4) / 4.8, 0, 0.999)
+          const wave =
+            Math.sin((x * 7.4 - y * 3.8) + t * 2.8) * 0.72 +
+            Math.cos((y * 9.6 + x * 2.5) - t * 2.1) * 0.62
+          const diagonal = Math.sin((x + y) * 13.5 - t * 2.7) * 0.38
+          const vortex = Math.cos(((x - 0.55) ** 2 + (y - 0.44) ** 2) * 38 - t * 5.4) * 0.5
+          const shimmer = Math.sin((x * 24 + y * 18) + t * 4.8) * 0.16
+          const ripple = Math.cos(dist * 28 - t * 6.2) * Math.max(0, 1 - dist * 2.4) * 0.95
+          const focus = Math.max(0, 1 - dist * 1.55) * 0.58
+          const intensity = wave + diagonal + vortex + shimmer + ripple + focus
+          const normalized = clamp((intensity + 2.9) / 5.8, 0, 0.999)
           let char = palette[Math.floor(normalized * palette.length)]
 
-          if (normalized > 0.74 && (row + col + Math.floor(t * 9)) % 5 === 0) {
+          if (normalized > 0.83 && (row + col + Math.floor(t * 8)) % 4 === 0) {
+            char = '%'
+          } else if (normalized > 0.72 && (row + Math.floor(t * 6)) % 4 === 0) {
             char = '@'
-          } else if (normalized > 0.55 && (row + Math.floor(t * 7)) % 6 === 0) {
+          } else if (normalized > 0.58 && (col + Math.floor(t * 6)) % 5 === 0) {
             char = '#'
-          } else if (normalized < 0.18 && (col + Math.floor(t * 4)) % 8 === 0) {
+          } else if (normalized > 0.48 && (row + col + Math.floor(t * 10)) % 6 === 0) {
+            char = '*'
+          } else if (normalized < 0.16 && (col + Math.floor(t * 3)) % 9 === 0) {
             char = '.'
           }
 
@@ -79,11 +90,12 @@ const LiquidAscii = () => {
     })
 
     const handleMove = (event: PointerEvent) => {
-      const w = window.innerWidth
-      const h = window.innerHeight
+      const rect = element.getBoundingClientRect()
+      const w = rect.width || window.innerWidth
+      const h = rect.height || window.innerHeight
       pointerRef.current = {
-        x: clamp(event.clientX / w, 0, 1),
-        y: clamp(event.clientY / h, 0, 1),
+        x: clamp((event.clientX - rect.left) / w, 0, 1),
+        y: clamp((event.clientY - rect.top) / h, 0, 1),
         active: true,
       }
     }
@@ -106,8 +118,22 @@ const LiquidAscii = () => {
   }, [])
 
   return (
-    <div ref={ref} className="absolute inset-0 z-[1] overflow-hidden pointer-events-none opacity-[0.10] [mask-image:linear-gradient(to_bottom,white_40%,transparent)]">
-      <pre className="liquid-ascii" aria-hidden="true">
+    <div
+      ref={ref}
+      className="liquid-ascii-stage absolute -inset-x-8 -inset-y-10 z-[1] overflow-hidden pointer-events-none"
+    >
+      <div className="liquid-ascii-aura liquid-ascii-aura-left" />
+      <div className="liquid-ascii-aura liquid-ascii-aura-right" />
+      <pre className="liquid-ascii liquid-ascii-echo liquid-ascii-shift-right" aria-hidden="true">
+        {frame}
+      </pre>
+      <pre className="liquid-ascii liquid-ascii-echo liquid-ascii-shift-down" aria-hidden="true">
+        {frame}
+      </pre>
+      <pre className="liquid-ascii liquid-ascii-base" aria-hidden="true">
+        {frame}
+      </pre>
+      <pre className="liquid-ascii liquid-ascii-glow" aria-hidden="true">
         {frame}
       </pre>
     </div>

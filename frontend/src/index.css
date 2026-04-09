@@ -92,26 +92,83 @@ textarea {
 
 
 
+.liquid-ascii-stage {
+  opacity: 0.9;
+  background:
+    radial-gradient(circle at 18% 22%, rgba(249, 115, 22, 0.14), transparent 24%),
+    radial-gradient(circle at 76% 18%, rgba(244, 114, 182, 0.12), transparent 26%),
+    radial-gradient(circle at 48% 58%, rgba(255, 255, 255, 0.03), transparent 26%);
+  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.94) 74%, rgba(0, 0, 0, 0.42) 100%);
+}
+
 .liquid-ascii {
   position: absolute;
-  top: 0; left: 0;
+  inset: 0;
   z-index: 1;
   margin: 0;
   height: 100%;
   width: 100%;
-  padding: 1.2rem;
+  padding: clamp(1rem, 2vw, 2.25rem);
   font-family: 'IBM Plex Mono', monospace;
-  font-size: clamp(8px, 0.82vw, 12px);
-  line-height: 1.08;
-  letter-spacing: 0.045em;
+  font-size: clamp(7px, 0.62vw, 10px);
+  line-height: 1;
+  letter-spacing: 0.035em;
   white-space: pre;
   overflow: hidden;
   user-select: none;
+}
+
+.liquid-ascii-base {
+  color: rgba(248, 245, 236, 0.2);
+  text-shadow: 0 0 12px rgba(248, 245, 236, 0.08);
+  opacity: 0.9;
+}
+
+.liquid-ascii-echo {
+  color: rgba(255, 216, 178, 0.12);
+  text-shadow: 0 0 18px rgba(249, 115, 22, 0.08);
+  opacity: 0.72;
+}
+
+.liquid-ascii-shift-right {
+  transform: translate3d(22%, 2%, 0) scale(0.98);
+}
+
+.liquid-ascii-shift-down {
+  transform: translate3d(6%, 20%, 0) scale(1.03);
+}
+
+.liquid-ascii-glow {
   color: transparent;
-  background: linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(200,200,200,0.3) 100%);
+  background:
+    linear-gradient(112deg, rgba(248, 245, 236, 0.82) 0%, rgba(255, 211, 156, 0.92) 34%, rgba(249, 115, 22, 0.82) 68%, rgba(244, 114, 182, 0.74) 100%);
   -webkit-background-clip: text;
   background-clip: text;
-  opacity: 0.92;
+  filter: blur(0.35px) saturate(1.1);
+  opacity: 0.68;
+}
+
+.liquid-ascii-aura {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(72px);
+  opacity: 0.55;
+}
+
+.liquid-ascii-aura-left {
+  left: 6%;
+  top: 12%;
+  height: 16rem;
+  width: 18rem;
+  background: rgba(249, 115, 22, 0.12);
+}
+
+.liquid-ascii-aura-right {
+  right: 8%;
+  top: 24%;
+  height: 18rem;
+  width: 20rem;
+  background: rgba(244, 114, 182, 0.11);
 }
 
 @keyframes galleryReveal {
@@ -142,7 +199,51 @@ textarea {
 
 @media (max-width: 640px) {
   .liquid-ascii {
-    padding: 0.95rem;
-    font-size: 8px;
+    padding: 0.9rem;
+    font-size: 7px;
+    letter-spacing: 0.02em;
   }
+
+  .liquid-ascii-shift-right,
+  .liquid-ascii-shift-down {
+    transform: none;
+  }
+}
+
+/* Linear-style glowing cards */
+.glowing-card {
+  position: relative;
+  transition: border-color 0.3s ease;
+}
+
+.glowing-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 0) var(--mouse-y, 0),
+    rgba(255, 255, 255, 0.1),
+    transparent 40%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.glowing-card:hover::before {
+  opacity: 1;
+}
+
+/* High-end subtle grid background */
+.bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
 }
