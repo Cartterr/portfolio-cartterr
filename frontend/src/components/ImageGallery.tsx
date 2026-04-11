@@ -46,31 +46,54 @@ const ImageGallery = ({
     return () => window.clearInterval(timer)
   }, [autoplay, images.length, intervalMs])
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const rail = thumbnailRailRef.current
     const activeThumbnail = thumbnailRefs.current[activeIndex]
     if (!rail || !activeThumbnail) return
 
-    const thumbOffsetLeft = activeThumbnail.offsetLeft
-    const thumbOffsetRight = thumbOffsetLeft + activeThumbnail.offsetWidth
-    const visibleLeft = rail.scrollLeft
-    const visibleRight = visibleLeft + rail.clientWidth
-    const edgePadding = 20
+    const syncThumbnailRail = (behavior: ScrollBehavior) => {
+      const maxScrollLeft = Math.max(rail.scrollWidth - rail.clientWidth, 0)
+      if (maxScrollLeft <= 0) return
 
-    let nextScrollLeft: number | null = null
+      const railRect = rail.getBoundingClientRect()
+      const thumbRect = activeThumbnail.getBoundingClientRect()
+      const edgePadding = 12
+      const visibleLeft = railRect.left + edgePadding
+      const visibleRight = railRect.right - edgePadding
 
-    if (thumbOffsetLeft - edgePadding < visibleLeft) {
-      nextScrollLeft = Math.max(thumbOffsetLeft - edgePadding, 0)
-    } else if (thumbOffsetRight + edgePadding > visibleRight) {
-      nextScrollLeft = thumbOffsetRight - rail.clientWidth + edgePadding
+      let targetScrollLeft = rail.scrollLeft
+
+      if (thumbRect.left < visibleLeft) {
+        targetScrollLeft += thumbRect.left - visibleLeft
+      } else if (thumbRect.right > visibleRight) {
+        targetScrollLeft += thumbRect.right - visibleRight
+      } else {
+        return
+      }
+
+      rail.scrollTo({
+        left: Math.max(0, Math.min(targetScrollLeft, maxScrollLeft)),
+        behavior,
+      })
     }
 
-    if (nextScrollLeft === null) return
-
-    rail.scrollTo({
-      left: Math.max(0, Math.min(nextScrollLeft, rail.scrollWidth - rail.clientWidth)),
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const scrollBehavior = prefersReducedMotion ? 'auto' : 'smooth'
+    const frame = window.requestAnimationFrame(() => {
+      syncThumbnailRail(scrollBehavior)
     })
+    const correctionTimer = prefersReducedMotion
+      ? null
+      : window.setTimeout(() => {
+          syncThumbnailRail('auto')
+        }, 260)
+
+    return () => {
+      window.cancelAnimationFrame(frame)
+      if (correctionTimer !== null) {
+        window.clearTimeout(correctionTimer)
+      }
+    }
   }, [activeIndex])
 
   const preloadImage = (image: GalleryImage) =>
