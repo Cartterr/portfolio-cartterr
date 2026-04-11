@@ -1,14 +1,35 @@
+import { Suspense, lazy, startTransition, useEffect, useState } from 'react'
 import Hero from './components/Hero'
 import About from './components/About'
-import Experience from './components/Experience'
-import Projects from './components/Projects'
-import Skills from './components/Skills'
-import Contact from './components/Contact'
 import Navigation from './components/Navigation'
 import ScrollProgress from './components/ScrollProgress'
 
+const BelowFoldSections = lazy(() => import('./components/BelowFoldSections'))
 
 function App() {
+  const [showBelowFold, setShowBelowFold] = useState(false)
+
+  useEffect(() => {
+    const reveal = () => {
+      startTransition(() => {
+        setShowBelowFold(true)
+      })
+    }
+
+    const idleWindow = window as Window & {
+      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number
+      cancelIdleCallback?: (handle: number) => void
+    }
+
+    if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
+      const idleId = idleWindow.requestIdleCallback(reveal, { timeout: 1200 })
+      return () => idleWindow.cancelIdleCallback?.(idleId)
+    }
+
+    const timeoutId = window.setTimeout(reveal, 500)
+    return () => window.clearTimeout(timeoutId)
+  }, [])
+
   return (
     <div className="min-h-screen bg-[#0b0b0b] text-white overflow-x-hidden">
       <div className="relative overflow-x-hidden">
@@ -17,15 +38,11 @@ function App() {
       <Navigation />
       <Hero />
       <About />
-      <Experience />
-      <Projects />
-      <Skills />
-      <Contact />
-      <footer className="border-t border-white/10 px-6 py-10 text-center text-sm uppercase tracking-[0.2em] text-zinc-500">
-        <div className="mx-auto max-w-6xl">
-          <p>&copy; 2026 José Carter Arriagada · Built to feel more like engineering work than a template demo.</p>
-        </div>
-      </footer>
+      {showBelowFold ? (
+        <Suspense fallback={null}>
+          <BelowFoldSections />
+        </Suspense>
+      ) : null}
       </div>
     </div>
   )

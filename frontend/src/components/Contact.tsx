@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Github, GraduationCap, Linkedin, Mail, Send } from 'lucide-react'
-import ResponsivePretext from './ResponsivePretext'
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api'
 
@@ -82,18 +81,10 @@ const Contact = () => {
           className="rounded-[2rem] border border-white/10 bg-white/5 p-7"
         >
           <p className="section-kicker">Contact</p>
-          <ResponsivePretext
-            as="h2"
-            text="If the work is serious, I am interested."
-            className="mt-4 text-4xl font-semibold leading-tight text-[#f8f5ec] sm:text-5xl"
-            lineClassName="pretext-line block"
-          />
-          <ResponsivePretext
-            as="p"
-            text="Best fit conversations are around product engineering, AI-backed systems, infrastructure cleanups, data-heavy research tooling, or hard debugging on messy production surfaces."
-            className="mt-5 text-base leading-7 text-zinc-300"
-            lineClassName="pretext-line block"
-          />
+          <h2 className="mt-4 text-4xl font-semibold leading-tight text-[#f8f5ec] sm:text-5xl">If the work is serious, I am interested.</h2>
+          <p className="mt-5 text-base leading-7 text-zinc-300">
+            Best fit conversations are around product engineering, AI-backed systems, infrastructure cleanups, data-heavy research tooling, or hard debugging on messy production surfaces.
+          </p>
 
           <div className="mt-8 grid gap-3">
             {contactCards.map((card) => {

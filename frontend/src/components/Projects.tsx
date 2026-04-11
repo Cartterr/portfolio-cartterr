@@ -2,7 +2,6 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { ArrowUpRight, Code2, Terminal, Database, Server, Cpu } from 'lucide-react'
 import { projectEntries } from '../content'
-import ResponsivePretext from './ResponsivePretext'
 
 const getStackIcon = (item: string) => {
   const lowerItem = item.toLowerCase()
@@ -23,16 +22,10 @@ const Projects = () => {
 
   return (
     <section id="projects" className="px-6 py-20 sm:py-28 relative">
-      <div className="absolute inset-0 bg-grid-pattern opacity-10" />
       <div className="mx-auto max-w-6xl relative z-10">
         <div className="mb-14 max-w-3xl">
           <p className="section-kicker">Selected Work</p>
-          <ResponsivePretext
-            as="h2"
-            text="Projects demonstrating scale, performance, and applied research."
-            className="section-title"
-            lineClassName="pretext-line block"
-          />
+          <h2 className="section-title">Projects demonstrating scale, performance, and applied research.</h2>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
@@ -47,12 +40,7 @@ const Projects = () => {
               className="glowing-card group flex h-full flex-col rounded-[2rem] border border-white/10 bg-white/5 p-8 transition-colors hover:bg-white/10"
             >
               <div className="flex items-start justify-between gap-4">
-                <ResponsivePretext
-                  as="h3"
-                  text={project.title}
-                  className="text-2xl font-semibold leading-tight text-[#f8f5ec]"
-                  lineClassName="pretext-line block"
-                />
+                <h3 className="text-2xl font-semibold leading-tight text-[#f8f5ec]">{project.title}</h3>
               </div>
               <div className="mt-3">
                 <span className="inline-flex rounded-full border border-orange-500/20 bg-orange-500/10 text-orange-300 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em]">
@@ -60,18 +48,8 @@ const Projects = () => {
                 </span>
               </div>
 
-              <ResponsivePretext
-                as="p"
-                text={project.description}
-                className="mt-6 text-base leading-7 text-zinc-300"
-                lineClassName="pretext-line block"
-              />
-              <ResponsivePretext
-                as="p"
-                text={project.detail}
-                className="mt-4 text-sm leading-6 text-zinc-400 group-hover:text-zinc-300 transition-colors"
-                lineClassName="pretext-line block"
-              />
+              <p className="mt-6 text-base leading-7 text-zinc-300">{project.description}</p>
+              <p className="mt-4 text-sm leading-6 text-zinc-400 transition-colors group-hover:text-zinc-300">{project.detail}</p>
 
               <div className="mt-8 flex flex-wrap gap-2">
                 {project.stack.map((item) => (

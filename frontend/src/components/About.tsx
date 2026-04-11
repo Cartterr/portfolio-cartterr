@@ -1,20 +1,27 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { BrainCircuit, GraduationCap, Layers3 } from 'lucide-react'
 import { getImages } from '../imageManifest'
 import { stats } from '../content'
 import ImageGallery from './ImageGallery'
-import ResponsivePretext from './ResponsivePretext'
 
-const codeSnippet = `const persona = {
-  role: "Software & AI Engineer",
-  focus: [
-    "Systems Architecture",
-    "Model Deployment",
-    "Scientific Computing"
-  ],
-  approach: "Pragmatic, scalable, type-safe.",
-  status: 200
-};`
+const aboutHighlights = [
+  {
+    icon: GraduationCap,
+    title: 'Computer Engineering at PUC Chile',
+    body: 'Formal training, then real-world work across research, product, and systems that actually have to hold up under pressure.',
+  },
+  {
+    icon: BrainCircuit,
+    title: 'Software engineering + data science',
+    body: 'I do not treat those as separate tracks. The interesting work usually lives where production software and research workflows meet.',
+  },
+  {
+    icon: Layers3,
+    title: 'Production and research infrastructure',
+    body: 'From fintech and industrial tooling to autonomous drones, political-media analysis, and scientific computing.',
+  },
+]
 
 const About = () => {
   const handleMouseMove = (e: React.MouseEvent<HTMLElement>) => {
@@ -25,8 +32,7 @@ const About = () => {
   }
 
   return (
-    <section id="about" className="px-6 py-20 sm:py-28 relative">
-      <div className="absolute inset-0 bg-grid-pattern opacity-[0.03]" />
+    <section id="about" className="relative px-6 pb-20 pt-10 sm:pb-28 sm:pt-14">
       <div className="mx-auto grid max-w-6xl gap-14 lg:grid-cols-[0.95fr_1.05fr] lg:items-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 32 }}
@@ -35,17 +41,48 @@ const About = () => {
           transition={{ duration: 0.6 }}
           className="space-y-6"
         >
-          <ImageGallery images={getImages('profile')} label="Profile gallery" autoplay priority />
-          <div className="rounded-[1.5rem] border border-white/10 bg-[#0d0d0d] p-5 font-mono text-sm shadow-inner">
-            <div className="flex gap-2 border-b border-white/10 pb-3 mb-3">
-              <div className="w-3 h-3 rounded-full bg-red-500/20" />
-              <div className="w-3 h-3 rounded-full bg-yellow-500/20" />
-              <div className="w-3 h-3 rounded-full bg-green-500/20" />
+          <div className="space-y-4">
+            <div className="inline-flex items-center gap-2 rounded-full border border-orange-400/20 bg-orange-400/10 px-4 py-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-orange-100">
+              Personal context
             </div>
-            <pre className="text-zinc-300 overflow-x-auto">
-              <code className="text-orange-300">{codeSnippet.split('=')[0]}=</code>
-              <code className="text-zinc-300">{codeSnippet.split('=')[1]}</code>
-            </pre>
+            <ImageGallery
+              images={getImages('profile')}
+              label="Profile gallery"
+              autoplay
+              intervalMs={7000}
+              priority
+              variant="portrait"
+            />
+          </div>
+
+          <div
+            className="glowing-card rounded-[1.75rem] border border-white/10 bg-[#0d0d0d] p-6 shadow-inner"
+            onMouseMove={handleMouseMove}
+          >
+            <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.2em] text-zinc-400">
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Software Engineering</span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Data Science</span>
+              <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Research Systems</span>
+            </div>
+            <h3 className="mt-5 text-3xl font-semibold leading-tight text-[#f8f5ec]">
+              The older version of this section had the right instinct: show the person, not just one project.
+            </h3>
+            <p className="mt-5 text-base leading-7 text-zinc-300">
+              I am a Computer Engineer from Pontificia Universidad Católica de Chile working across software engineering, AI systems, data science, and research infrastructure. The common thread is building things that stay understandable when the work stops being a demo and starts touching real constraints, real users, or real data.
+            </p>
+            <div className="mt-6 grid gap-3">
+              {aboutHighlights.map((item) => (
+                <div key={item.title} className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-zinc-200">
+                  <div className="flex items-start gap-3">
+                    <item.icon className="mt-0.5 h-4 w-4 shrink-0 text-orange-300" />
+                    <div>
+                      <p className="font-medium text-[#f8f5ec]">{item.title}</p>
+                      <p className="mt-1 leading-6 text-zinc-400">{item.body}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </motion.div>
 
@@ -58,23 +95,14 @@ const About = () => {
         >
           <div className="space-y-5">
             <p className="section-kicker">About</p>
-            <ResponsivePretext
-              as="h2"
-              text="Software engineering with one foot in production and the other in research."
-              className="section-title"
-              lineClassName="pretext-line block"
-            />
+            <h2 className="section-title">Production systems, research mindset.</h2>
             <div className="space-y-5 text-lg leading-8 text-zinc-300">
-              <ResponsivePretext
-                as="p"
-                text="I studied Computer Engineering at Pontificia Universidad Católica de Chile and have worked across fintech, industrial operations, energy optimization, autonomous drones, and large-scale research tooling. The common thread is building systems that stay understandable when the stakes move beyond a demo."
-                lineClassName="pretext-line block"
-              />
-              <ResponsivePretext
-                as="p"
-                text="I am especially interested in the edge where AI meets simulation, remote sensing, computer vision, and aerospace-style problems. Alongside engineering work, I have also taught operating systems, testing, high-performance computing, and Python in technical academic settings."
-                lineClassName="pretext-line block"
-              />
+              <p>
+                I studied Computer Engineering at Pontificia Universidad Católica de Chile and have worked across fintech, industrial systems, energy optimization, autonomous drones, and research tooling. The throughline is building software and data systems that can survive real production constraints.
+              </p>
+              <p>
+                I am especially interested in where AI meets simulation, remote sensing, computer vision, and aerospace-style problems. I have also taught operating systems, testing, high-performance computing, and Python, which pushed me to value clarity and rigor as much as raw technical depth.
+              </p>
             </div>
           </div>
 
