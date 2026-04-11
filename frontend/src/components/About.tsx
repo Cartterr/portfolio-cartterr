@@ -65,10 +65,10 @@ const About = () => {
               <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5">Research Systems</span>
             </div>
             <h3 className="mt-5 text-3xl font-semibold leading-tight text-[#f8f5ec]">
-              The older version of this section had the right instinct: show the person, not just one project.
+              Computer engineer working across software, AI, and research systems.
             </h3>
             <p className="mt-5 text-base leading-7 text-zinc-300">
-              I am a Computer Engineer from Pontificia Universidad Católica de Chile working across software engineering, AI systems, data science, and research infrastructure. The common thread is building things that stay understandable when the work stops being a demo and starts touching real constraints, real users, or real data.
+              I studied Computer Engineering at Pontificia Universidad Católica de Chile and have worked across product engineering, AI systems, data science, and technical research environments. The work I care about most is where software has to be reliable, models have to be useful, and the full system has to hold up under real operating conditions.
             </p>
             <div className="mt-6 grid gap-3">
               {aboutHighlights.map((item) => (
