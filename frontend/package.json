@@ -12,10 +12,9 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@chenglou/pretext": "^0.0.3",
-    "framer-motion": "^10.16.4",
+    "@fontsource-variable/manrope": "5.2.8",
+    "@fontsource-variable/newsreader": "5.2.10",
     "lucide-react": "^0.290.0",
-    "pdf-parse": "^1.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
