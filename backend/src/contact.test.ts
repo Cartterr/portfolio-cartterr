@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildContactMail, escapeHtml } from './contact'
+import { buildContactMail, escapeHtml } from './contact.js'
 
 describe('contact mail construction', () => {
   it('escapes HTML-derived values and uses structured reply-to data', () => {
@@ -20,5 +20,23 @@ describe('contact mail construction', () => {
 
   it('escapes every HTML metacharacter used by contact content', () => {
     expect(escapeHtml(`&<>"'`)).toBe('&amp;&lt;&gt;&quot;&#39;')
+  })
+
+  it('removes CR and LF from subject and structured reply-to header values', () => {
+    const mail = buildContactMail(
+      {
+        name: 'Ada\r\nBcc: injected@example.com',
+        email: 'ada@example.com',
+        message: 'Hello',
+      },
+      'portfolio@example.com',
+    )
+
+    expect(mail.subject).toBe('New portfolio message from Ada Bcc: injected@example.com')
+    expect(mail.replyTo).toEqual({
+      name: 'Ada Bcc: injected@example.com',
+      address: 'ada@example.com',
+    })
+    expect(mail.subject).not.toMatch(/[\r\n]/u)
   })
 })

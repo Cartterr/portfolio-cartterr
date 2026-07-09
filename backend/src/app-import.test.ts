@@ -9,7 +9,7 @@ afterEach(() => {
 it('can be imported without opening a TCP listener', async () => {
   const listen = vi.spyOn(Server.prototype, 'listen')
 
-  const module = await import('./app')
+  const module = await import('./app.js')
 
   expect(module.createApp).toBeTypeOf('function')
   expect(listen).not.toHaveBeenCalled()

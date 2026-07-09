@@ -6,13 +6,24 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { createContactHandler, type SendContactEmail } from './contact'
+import { createContactHandler, type SendContactEmail } from './contact.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 export type CreateAppOptions = {
   sendContactEmail?: SendContactEmail
+}
+
+class CorsOriginError extends Error {}
+
+function hasBodyErrorType(error: unknown, expectedType: string) {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'type' in error &&
+    error.type === expectedType
+  )
 }
 
 export function createApp(options: CreateAppOptions = {}) {
@@ -42,7 +53,7 @@ export function createApp(options: CreateAppOptions = {}) {
           callback(null, true)
           return
         }
-        callback(new Error('CORS blocked'))
+        callback(new CorsOriginError('Origin is not allowed'))
       },
       credentials: true,
     }),
@@ -53,11 +64,9 @@ export function createApp(options: CreateAppOptions = {}) {
       skip: () => process.env.NODE_ENV === 'test',
     }),
   )
-  app.use(express.json({ limit: '10mb' }))
-  app.use(express.urlencoded({ extended: true, limit: '10mb' }))
 
-  const apiRouter = express.Router()
-  apiRouter.use(
+  app.use(
+    '/api',
     rateLimit({
       windowMs: 15 * 60 * 1000,
       limit: 100,
@@ -69,7 +78,9 @@ export function createApp(options: CreateAppOptions = {}) {
       },
     }),
   )
+  app.use('/api', express.json({ limit: '32kb', strict: true }))
 
+  const apiRouter = express.Router()
   apiRouter.get('/health', (_request, response) => {
     response.json({
       status: 'OK',
@@ -79,6 +90,9 @@ export function createApp(options: CreateAppOptions = {}) {
     })
   })
   apiRouter.post('/contact', createContactHandler(options.sendContactEmail))
+  apiRouter.use((_request, response) => {
+    response.status(404).json({ success: false, message: 'API route not found.' })
+  })
   app.use('/api', apiRouter)
 
   if (process.env.NODE_ENV === 'production') {
@@ -108,7 +122,22 @@ export function createApp(options: CreateAppOptions = {}) {
     })
   }
 
-  const errorHandler: ErrorRequestHandler = (_error, _request, response, _next) => {
+  const errorHandler: ErrorRequestHandler = (error, _request, response, _next) => {
+    if (error instanceof CorsOriginError) {
+      response.status(403).json({ success: false, message: 'Origin is not allowed.' })
+      return
+    }
+
+    if (hasBodyErrorType(error, 'entity.too.large')) {
+      response.status(413).json({ success: false, message: 'Request body is too large.' })
+      return
+    }
+
+    if (hasBodyErrorType(error, 'entity.parse.failed')) {
+      response.status(400).json({ success: false, message: 'Request body must be valid JSON.' })
+      return
+    }
+
     response.status(500).json({
       error: 'Something went wrong.',
       message: 'Internal server error',
