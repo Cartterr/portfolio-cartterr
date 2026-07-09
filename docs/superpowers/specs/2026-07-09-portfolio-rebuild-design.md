@@ -23,7 +23,7 @@ The home page uses this order:
 7. Three evidence-backed capability groups with no more than 18 total items.
 8. Contact section with direct email, LinkedIn, GitHub, and a functional accessible form.
 
-Each featured case study communicates context, role, problem, constraints, contribution, outcome, technologies, one representative image, and a public link where one exists. Private work is clearly labeled and does not imply public source access.
+Each featured case study communicates context, role, problem, constraints, contribution, outcome, technologies, one representative image, and a public link where one exists. Work without a verified public URL is presented without a link; the site does not infer that it is private or confidential.
 
 ## Visual system
 
@@ -52,4 +52,3 @@ Each featured case study communicates context, role, problem, constraints, contr
 - Lighthouse targets on the deployed apex: Performance 95+, Accessibility 100, Best Practices 100, SEO 100; LCP below 2.5s and CLS below 0.1 on mobile.
 - All internal anchors, external links, CV download, API health, and contact delivery work after deployment.
 - Preserve the current production commit as a Railway rollback point and the unrelated discounts dashboard on its dedicated WIP branch.
-
