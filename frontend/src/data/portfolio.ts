@@ -82,12 +82,12 @@ export const portfolioContent = {
       'I build production software across AI systems, data infrastructure, scientific computing, and autonomous planning.',
     location: 'Santiago, Chile',
     primaryCta: {
-      label: 'View selected work',
-      href: '#case-studies',
+      label: 'Explore selected work',
+      href: '#work',
     },
     secondaryCta: {
-      label: 'Email José',
-      href: 'mailto:jose.carterx@gmail.com',
+      label: 'Download CV',
+      href: '/Jose_Carter_CV_Eng.pdf',
     },
   },
   metrics: [
@@ -130,9 +130,8 @@ export const portfolioContent = {
       technologies: ['Next.js', 'Node.js', 'Railway', 'MQTT', 'WhatsApp', 'PostgreSQL'],
       image: gridWorksImage,
       imageAlt: 'GridWorks logo for the industrial alerting platform',
-      imageWidth: 1024,
-      imageHeight: 1024,
-      private: true,
+      imageWidth: 1600,
+      imageHeight: 1600,
     },
     {
       slug: 'notre-dame-drone-response',
@@ -150,7 +149,7 @@ export const portfolioContent = {
         'Delivered planning logic in an international NASA- and NSF-backed research environment.',
       technologies: ['Python', 'Algorithms', 'MQTT', 'OpenAI API', 'Angular', 'Java Spring'],
       image: notreDameImage,
-      imageAlt: 'Autonomous Drone Response aircraft at a Notre Dame test site',
+      imageAlt: 'Autonomous Drone Response aircraft prepared for a field test',
       imageWidth: 1600,
       imageHeight: 1200,
       link: {
@@ -203,11 +202,6 @@ export const portfolioContent = {
       imageAlt: 'Rendered geoscience simulation showing terrain and a plate boundary',
       imageWidth: 1600,
       imageHeight: 898,
-      link: {
-        label: 'Read the research',
-        href: 'https://eartharxiv.org/repository/view/7166/',
-        external: true,
-      },
     },
   ],
   experience: [
@@ -294,7 +288,7 @@ export const portfolioContent = {
       },
       {
         src: khipuImage,
-        alt: 'José Carter at KHIPU 2025 in Chile',
+        alt: 'José Carter standing in front of the KHIPU 2025 event backdrop',
         width: 1370,
         height: 1600,
       },
