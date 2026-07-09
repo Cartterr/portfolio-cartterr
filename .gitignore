@@ -126,3 +126,6 @@ ssl/
 # Backup files
 *.backup
 *.bak
+
+# Local isolated development worktrees
+.worktrees/
