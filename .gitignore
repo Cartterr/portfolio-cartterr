@@ -129,3 +129,6 @@ ssl/
 
 # Local isolated development worktrees
 .worktrees/
+
+# Local agent progress and review artifacts
+.superpowers/
