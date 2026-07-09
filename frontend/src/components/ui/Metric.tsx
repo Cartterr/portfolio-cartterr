@@ -4,7 +4,7 @@ type MetricProps = {
   metric: PortfolioMetric
 }
 
-function Metric({ metric }: MetricProps) {
+export function Metric({ metric }: MetricProps) {
   return (
     <div className="metric">
       <p className="metric__value">{metric.value}</p>
@@ -13,5 +13,3 @@ function Metric({ metric }: MetricProps) {
     </div>
   )
 }
-
-export default Metric

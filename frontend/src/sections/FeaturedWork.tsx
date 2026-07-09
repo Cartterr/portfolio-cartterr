@@ -1,11 +1,11 @@
-import ArrowLink from '../components/ui/ArrowLink'
+import { ArrowLink } from '../components/ui/ArrowLink'
 import type { CaseStudy } from '../data/portfolio'
 
 type FeaturedWorkProps = {
   caseStudies: CaseStudy[]
 }
 
-function FeaturedWork({ caseStudies }: FeaturedWorkProps) {
+export function FeaturedWork({ caseStudies }: FeaturedWorkProps) {
   return (
     <section aria-labelledby="work-title" className="section featured-work" id="work">
       <div className="section-heading">
@@ -70,5 +70,3 @@ function FeaturedWork({ caseStudies }: FeaturedWorkProps) {
     </section>
   )
 }
-
-export default FeaturedWork

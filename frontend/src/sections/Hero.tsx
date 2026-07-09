@@ -1,4 +1,4 @@
-import ArrowLink from '../components/ui/ArrowLink'
+import { ArrowLink } from '../components/ui/ArrowLink'
 import type { CaseStudy, PortfolioContent } from '../data/portfolio'
 
 type HeroProps = {
@@ -8,7 +8,7 @@ type HeroProps = {
 
 const highPriorityImage = { fetchpriority: 'high' }
 
-function Hero({ content, image }: HeroProps) {
+export function Hero({ content, image }: HeroProps) {
   return (
     <section aria-labelledby="hero-title" className="hero">
       <div className="hero__inner">
@@ -43,5 +43,3 @@ function Hero({ content, image }: HeroProps) {
     </section>
   )
 }
-
-export default Hero

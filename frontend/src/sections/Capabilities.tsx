@@ -4,7 +4,7 @@ type CapabilitiesProps = {
   groups: CapabilityGroup[]
 }
 
-function Capabilities({ groups }: CapabilitiesProps) {
+export function Capabilities({ groups }: CapabilitiesProps) {
   return (
     <section aria-labelledby="capabilities-title" className="section capabilities">
       <div className="section-heading">
@@ -28,5 +28,3 @@ function Capabilities({ groups }: CapabilitiesProps) {
     </section>
   )
 }
-
-export default Capabilities

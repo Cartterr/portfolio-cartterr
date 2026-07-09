@@ -4,7 +4,7 @@ type AboutProps = {
   content: PortfolioContent['about']
 }
 
-function About({ content }: AboutProps) {
+export function About({ content }: AboutProps) {
   return (
     <section aria-labelledby="about-title" className="section about" id="about">
       <div className="about__copy">
@@ -19,7 +19,7 @@ function About({ content }: AboutProps) {
         {content.images.map((image) => (
           <figure key={image.src}>
             <img
-              alt={image.alt}
+              alt=""
               decoding="async"
               height={image.height}
               loading="lazy"
@@ -33,5 +33,3 @@ function About({ content }: AboutProps) {
     </section>
   )
 }
-
-export default About

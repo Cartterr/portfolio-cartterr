@@ -12,7 +12,11 @@
   --muted: #626a70;
   --line: rgba(17, 23, 34, 0.16);
   --copper: #c45a35;
+  --copper-text: #8d321c;
+  --copper-on-dark: #e58c69;
+  --copper-surface: #b94e2e;
   --teal: #3d8f87;
+  --teal-text: #23665f;
   --white: #fffdf8;
   --radius-sm: 0.75rem;
   --radius-lg: 1.5rem;
@@ -94,7 +98,7 @@ ul {
 }
 
 ::selection {
-  background: var(--copper);
+  background: var(--copper-surface);
   color: var(--white);
 }
 
@@ -145,7 +149,7 @@ main [id] {
 }
 
 .eyebrow {
-  color: var(--copper);
+  color: var(--copper-text);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
   font-size: 0.75rem;
   font-weight: 700;
@@ -155,7 +159,7 @@ main [id] {
 }
 
 .eyebrow--research {
-  color: var(--teal);
+  color: var(--teal-text);
 }
 
 .section {
@@ -195,8 +199,7 @@ main [id] {
   top: 0;
   z-index: 50;
   border-bottom: 1px solid var(--line);
-  background: color-mix(in srgb, var(--paper) 92%, transparent);
-  backdrop-filter: blur(16px);
+  background: var(--paper);
 }
 
 .site-header__inner {
@@ -237,7 +240,7 @@ main [id] {
 }
 
 .site-nav a:hover {
-  color: var(--copper);
+  color: var(--copper-text);
 }
 
 .site-nav__cv {
@@ -290,7 +293,7 @@ main [id] {
 }
 
 .hero__eyebrow {
-  color: var(--copper);
+  color: var(--copper-on-dark);
 }
 
 .hero h1 {
@@ -336,8 +339,8 @@ main [id] {
 }
 
 .button-link--primary {
-  border-color: var(--copper);
-  background: var(--copper);
+  border-color: var(--copper-surface);
+  background: var(--copper-surface);
   color: var(--white);
 }
 
@@ -390,7 +393,7 @@ main [id] {
 }
 
 .metric__value {
-  color: var(--copper);
+  color: var(--copper-text);
   font-family: 'Newsreader Variable', Georgia, serif;
   font-size: clamp(2rem, 4vw, 3.3rem);
   font-weight: 600;
@@ -543,7 +546,7 @@ main [id] {
   width: fit-content;
   margin-top: 0.3rem;
   border-bottom: 1px solid currentColor;
-  color: var(--copper);
+  color: var(--copper-text);
   transition: color 180ms ease;
 }
 
@@ -700,7 +703,7 @@ main [id] {
 }
 
 .contact .eyebrow {
-  color: var(--copper);
+  color: var(--copper-on-dark);
 }
 
 .contact h2 {
@@ -727,7 +730,7 @@ main [id] {
 
 .contact__links .arrow-link:hover {
   border-color: var(--white);
-  color: var(--copper);
+  color: var(--copper-on-dark);
 }
 
 .site-footer {
@@ -766,7 +769,7 @@ main [id] {
 }
 
 @media (max-width: 900px) {
-  .case-study,
+  .case-study[data-direction='media-first'],
   .case-study[data-direction='copy-first'] {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:

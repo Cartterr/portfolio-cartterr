@@ -5,7 +5,7 @@ type SiteFooterProps = {
   name: string
 }
 
-function SiteFooter({ links, name }: SiteFooterProps) {
+export function SiteFooter({ links, name }: SiteFooterProps) {
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
@@ -31,5 +31,3 @@ function SiteFooter({ links, name }: SiteFooterProps) {
     </footer>
   )
 }
-
-export default SiteFooter

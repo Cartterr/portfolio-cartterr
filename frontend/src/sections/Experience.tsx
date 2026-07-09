@@ -4,7 +4,7 @@ type ExperienceProps = {
   items: ExperienceItem[]
 }
 
-function Experience({ items }: ExperienceProps) {
+export function Experience({ items }: ExperienceProps) {
   return (
     <section aria-labelledby="experience-title" className="section experience" id="experience">
       <div className="section-heading section-heading--split">
@@ -27,5 +27,3 @@ function Experience({ items }: ExperienceProps) {
     </section>
   )
 }
-
-export default Experience

@@ -1,11 +1,11 @@
-import ArrowLink from '../components/ui/ArrowLink'
+import { ArrowLink } from '../components/ui/ArrowLink'
 import type { PortfolioContent } from '../data/portfolio'
 
 type ContactProps = {
   content: PortfolioContent['contact']
 }
 
-function Contact({ content }: ContactProps) {
+export function Contact({ content }: ContactProps) {
   return (
     <section aria-labelledby="contact-title" className="contact" id="contact">
       <div className="contact__inner">
@@ -23,5 +23,3 @@ function Contact({ content }: ContactProps) {
     </section>
   )
 }
-
-export default Contact

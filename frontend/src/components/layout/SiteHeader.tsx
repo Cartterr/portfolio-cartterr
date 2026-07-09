@@ -11,7 +11,7 @@ const navigationItems = [
   { label: 'Contact', href: '#contact' },
 ]
 
-function SiteHeader({ cvHref }: SiteHeaderProps) {
+export function SiteHeader({ cvHref }: SiteHeaderProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
@@ -73,5 +73,3 @@ function SiteHeader({ cvHref }: SiteHeaderProps) {
     </header>
   )
 }
-
-export default SiteHeader

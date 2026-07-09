@@ -25,4 +25,29 @@ describe('portfolio page', () => {
     await user.keyboard('{Escape}')
     expect(menu).toHaveAttribute('aria-expanded', 'false')
   })
+
+  it('moves keyboard focus to main content from the skip link', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    const skipLink = screen.getByRole('link', { name: /skip to content/i })
+    const main = screen.getByRole('main')
+
+    await user.tab()
+    expect(skipLink).toHaveFocus()
+    await user.keyboard('{Enter}')
+
+    expect(main).toHaveAttribute('tabindex', '-1')
+    expect(main).toHaveFocus()
+  })
+
+  it('treats event photos as captioned images without duplicate alternative text', () => {
+    render(<App />)
+    const figures = document.querySelectorAll('#about figure')
+
+    expect(figures).toHaveLength(2)
+    for (const figure of figures) {
+      expect(figure.querySelector('img')).toHaveAttribute('alt', '')
+      expect(figure.querySelector('figcaption')).not.toBeEmptyDOMElement()
+    }
+  })
 })

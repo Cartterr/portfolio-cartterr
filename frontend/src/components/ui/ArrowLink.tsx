@@ -4,7 +4,7 @@ type ArrowLinkProps = PortfolioLink & {
   className?: string
 }
 
-function ArrowLink({ label, href, external = false, className = '' }: ArrowLinkProps) {
+export function ArrowLink({ label, href, external = false, className = '' }: ArrowLinkProps) {
   return (
     <a
       className={`arrow-link ${className}`.trim()}
@@ -18,5 +18,3 @@ function ArrowLink({ label, href, external = false, className = '' }: ArrowLinkP
     </a>
   )
 }
-
-export default ArrowLink
