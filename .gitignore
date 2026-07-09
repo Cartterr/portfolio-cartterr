@@ -26,6 +26,7 @@ build/
 # Logs
 logs
 *.log
+.tmp-lighthouse-*.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -113,9 +114,6 @@ temp/
 .Trashes
 ehthumbs.db
 Thumbs.db
-
-# Docker
-.docker/
 
 # SSL certificates
 ssl/

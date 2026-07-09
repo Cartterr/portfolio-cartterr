@@ -1,233 +1,76 @@
-# 🚀 José Carter Arriagada - Portfolio
+# José Carter — Engineering Portfolio
 
-A modern, full-stack portfolio website showcasing my work as a Software Engineer, Full-Stack Developer, and AI & Data Science Researcher.
+A case-study-led portfolio for José Carter, a software engineer building reliable AI, data, scientific-computing, and autonomous systems. The site combines a React editorial frontend with a small, hardened Express contact API.
 
-## 🌟 Features
+## Project structure
 
-- **Modern Tech Stack**: React 18 + TypeScript + Vite frontend, Node.js + Express backend
-- **Responsive Design**: Mobile-first design with smooth animations using Framer Motion
-- **Performance Optimized**: Fast loading with code splitting and optimized builds
-- **Docker Support**: Complete containerization for easy deployment
-- **SEO Ready**: Optimized for search engines and social sharing
-- **Contact Form**: Functional contact form with validation
-- **Glass Morphism UI**: Modern glassmorphism design with gradient effects
-
-## 🛠️ Tech Stack
-
-### Frontend
-- **React 18** - Modern React with hooks and concurrent features
-- **TypeScript** - Type-safe development
-- **Vite** - Lightning-fast build tool
-- **Tailwind CSS** - Utility-first CSS framework
-- **Framer Motion** - Smooth animations and transitions
-- **Lucide React** - Beautiful, customizable icons
-
-### Backend
-- **Node.js** - JavaScript runtime
-- **Express** - Web framework
-- **TypeScript** - Type-safe backend development
-- **Helmet** - Security middleware
-- **CORS** - Cross-origin resource sharing
-- **Rate Limiting** - API protection
-
-### DevOps
-- **Docker** - Containerization
-- **Docker Compose** - Multi-container orchestration
-- **Nginx** - Reverse proxy and load balancer
-- **GitHub Actions** - CI/CD (optional)
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+ 
-- Yarn or npm
-- Docker (optional, for containerized deployment)
-
-### 1. Clone and Setup
-```bash
-git clone https://github.com/Cartterr/portfolio.git
-cd portfolio
-npm run setup
+```text
+portfolio-cartterr/
+├── frontend/       React 18, TypeScript, Vite, self-hosted fonts, static media
+├── backend/        Express, TypeScript, health endpoint, contact delivery
+├── scripts/        Native setup and production contract checks
+├── railway.json    Railway start and health-check contract
+└── package.json    Root orchestration for the single deployed service
 ```
 
-### 2. Development
-```bash
-# Start both frontend and backend in development mode
+The production server serves the compiled frontend and the same-origin API from one process. The public endpoints are:
+
+- `GET /api/health`
+- `POST /api/contact`
+
+The Vite application under `frontend/` is the only website source. The obsolete standalone root page, generated local audit captures, and retired deployment artifacts are intentionally not tracked.
+
+## Native Windows setup
+
+Prerequisites:
+
+- Node.js 18 or newer
+- npm 8 or newer
+- Yarn Classic available on `PATH`
+- PowerShell
+
+From PowerShell in the repository root:
+
+```powershell
+npm install
+npm run install:all
 npm run dev
-
-# Or start individually
-npm run dev:frontend  # http://localhost:3000
-npm run dev:backend   # http://localhost:5000
 ```
 
-### 3. Production Build
-```bash
-# Build both applications
-npm run build
+The Vite development server runs the frontend and proxies `/api` to the Express development server.
 
-# Start production servers
-npm run start
-```
+## Environment
 
-### 4. Docker Deployment
-```bash
-# Development with Docker
-npm run docker:dev
+Configure these names in the runtime environment; never commit their values:
 
-# Production with Docker
-npm run docker:prod
+- `PORT`
+- `NODE_ENV`
+- `FRONTEND_URL`
+- `SMTP_USER`
+- `SMTP_PASS`
 
-# Stop containers
-npm run docker:stop
-```
+The SMTP variables are required only for live contact delivery. Health checks and the static portfolio do not require mail credentials.
 
-## 📁 Project Structure
+## Verification and production commands
 
-```
-portfolio/
-├── frontend/                 # React + TypeScript frontend
-│   ├── src/
-│   │   ├── components/      # React components
-│   │   ├── App.tsx         # Main app component
-│   │   └── main.tsx        # Entry point
-│   ├── public/             # Static assets
-│   ├── Dockerfile          # Production Docker image
-│   ├── Dockerfile.dev      # Development Docker image
-│   └── package.json        # Frontend dependencies
-│
-├── backend/                  # Node.js + Express backend
-│   ├── src/
-│   │   └── server.ts       # Express server
-│   ├── Dockerfile          # Production Docker image
-│   ├── Dockerfile.dev      # Development Docker image
-│   └── package.json        # Backend dependencies
-│
-├── scripts/                  # Automation scripts
-│   ├── setup.js            # Project setup
-│   └── deploy.js           # Deployment script
-│
-├── docker-compose.yml        # Production containers
-├── docker-compose.dev.yml   # Development containers
-├── nginx.conf               # Nginx configuration
-└── package.json             # Root package.json
-```
-
-## 🔧 Configuration
-
-### Environment Variables
-
-#### Backend (.env)
-```env
-NODE_ENV=development
-PORT=5000
-FRONTEND_URL=http://localhost:3000
-```
-
-#### Frontend (.env)
-```env
-VITE_API_URL=http://localhost:5000/api
-VITE_ENABLE_ANALYTICS=false
-VITE_ENABLE_CONTACT_FORM=true
-```
-
-## 📱 API Endpoints
-
-### Health Check
-```
-GET /api/health
-```
-
-### Portfolio Data
-```
-GET /api/portfolio-data
-```
-
-### Contact Form
-```
-POST /api/contact
-Content-Type: application/json
-
-{
-  "name": "John Doe",
-  "email": "john@example.com",
-  "message": "Hello José!"
-}
-```
-
-## 🐳 Docker Commands
-
-```bash
-# Development
-docker-compose -f docker-compose.dev.yml up --build
-
-# Production
-docker-compose up --build -d
-
-# View logs
-docker-compose logs -f
-
-# Stop containers
-docker-compose down
-
-# Check status
-docker-compose ps
-```
-
-## 🚀 Deployment
-
-### Local Production
-```bash
+```powershell
+npm test
+npm run lint
+npm run type-check
 npm run build
 npm run start
 ```
 
-### Docker Production
-```bash
-npm run deploy
+Backend tests cover API validation, proxy-aware rate limiting, safe parser failures, canonical-host behavior, and cache headers. Frontend tests cover the content contract, navigation, responsive structure, and accessible contact states. The root contract test checks metadata, Railway configuration, package-manager authority, and production cleanup.
+
+## Railway deployment
+
+The production architecture is a single GitHub-connected Railway service:
+
+```text
+GitHub main → Railway Nixpacks → npm run build → npm run start
 ```
 
-### Custom Domain Setup
-1. Update `nginx.conf` with your domain
-2. Add SSL certificates to `./ssl/` directory
-3. Update environment variables for production
-4. Deploy to your server
+Railway activates a deployment only after `GET /api/health` succeeds within the configured health-check window. The canonical site is `https://josecarter.dev/`; `www.josecarter.dev` is expected to resolve to the same service and receives a permanent redirect to the apex domain after DNS ownership and certificate validation complete.
 
-## 🔒 Security Features
-
-- **Helmet.js** - Security headers
-- **CORS** - Cross-origin protection
-- **Rate Limiting** - API abuse prevention
-- **Input Validation** - Form validation
-- **CSP** - Content Security Policy
-
-## 📊 Performance
-
-- **Lighthouse Score**: 95+ on all metrics
-- **Bundle Size**: Optimized with code splitting
-- **Loading Speed**: < 2s first contentful paint
-- **SEO**: Fully optimized for search engines
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👨‍💻 About José Carter
-
-Software Engineer specialized in full-stack development and intelligent system design, with a B.S. in Computer Engineering from Pontificia Universidad Católica de Chile. Experienced in Python, JavaScript, AI, and cloud deployments.
-
-### 🔗 Connect with me:
-- **Email**: [jose.carterx@gmail.com](mailto:jose.carterx@gmail.com)
-- **LinkedIn**: [jose-carter-arriagada](https://linkedin.com/in/jose-carter-arriagada)
-- **GitHub**: [Cartterr](https://github.com/Cartterr)
-
----
-
-**Built with ❤️ using modern web technologies**
+For rollback, revert the faulty Git commit and push `main`, or select a previously successful deployment from the Railway dashboard and redeploy it. Do not place deployment credentials, Railway identifiers, or SMTP values in repository files.

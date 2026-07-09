@@ -1,8 +1,26 @@
 import request from 'supertest'
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it, vi } from 'vitest'
 import { createApp } from './app.js'
 
 const successMessage = 'Thanks for reaching out. Your message has been received.'
+const frontendDist = fileURLToPath(new URL('../../frontend/dist/', import.meta.url))
+
+async function withNodeEnvironment<T>(
+  nodeEnvironment: string,
+  callback: () => Promise<T>,
+): Promise<T> {
+  const previousNodeEnvironment = process.env.NODE_ENV
+  process.env.NODE_ENV = nodeEnvironment
+
+  try {
+    return await callback()
+  } finally {
+    process.env.NODE_ENV = previousNodeEnvironment
+  }
+}
 
 describe('portfolio API', () => {
   it('reports service health', async () => {
@@ -260,5 +278,99 @@ describe('portfolio API', () => {
       write.mockRestore()
       process.env.NODE_ENV = previousNodeEnv
     }
+  })
+
+  it('redirects only the exact www host to the apex in production and preserves the request target', async () => {
+    await withNodeEnvironment('production', async () => {
+      const app = createApp()
+      const canonicalized = await request(app)
+        .get('/selected-work?query=1')
+        .set('Host', 'www.josecarter.dev')
+      const railwayHealth = await request(app)
+        .get('/api/health')
+        .set('Host', 'portfolio-cartterr-production.up.railway.app')
+      const localHealth = await request(app).get('/api/health').set('Host', 'localhost:5000')
+
+      expect(canonicalized.status).toBe(308)
+      expect(canonicalized.headers.location).toBe('https://josecarter.dev/selected-work?query=1')
+      expect(railwayHealth.status).toBe(200)
+      expect(localHealth.status).toBe(200)
+    })
+
+    await withNodeEnvironment('development', async () => {
+      const response = await request(createApp())
+        .get('/api/health')
+        .set('Host', 'www.josecarter.dev')
+
+      expect(response.status).toBe(200)
+    })
+  })
+
+  it('uses immutable caching for hashed Vite assets and no-store for HTML', async () => {
+    const assetsDirectory = path.join(frontendDist, 'assets')
+    const hashedAssetPath = path.join(assetsDirectory, 'contract-abcdef123456.js')
+    const htmlPath = path.join(frontendDist, 'cache-contract.html')
+    fs.mkdirSync(assetsDirectory, { recursive: true })
+    fs.writeFileSync(hashedAssetPath, 'export const contract = true')
+    fs.writeFileSync(htmlPath, '<!doctype html><title>Cache contract</title>')
+
+    try {
+      await withNodeEnvironment('production', async () => {
+        const app = createApp()
+        const hashedAsset = await request(app).get('/assets/contract-abcdef123456.js')
+        const html = await request(app).get('/cache-contract.html')
+
+        expect(hashedAsset.status).toBe(200)
+        expect(hashedAsset.headers['cache-control']).toBe(
+          'public, max-age=31536000, immutable',
+        )
+        expect(html.status).toBe(200)
+        expect(html.headers['cache-control']).toBe('no-store')
+      })
+    } finally {
+      fs.rmSync(hashedAssetPath, { force: true })
+      fs.rmSync(htmlPath, { force: true })
+    }
+  })
+
+  it('gives the CV and social image one-day revalidation caching', async () => {
+    const cvPath = path.join(frontendDist, 'Jose_Carter_CV_Eng.pdf')
+    const socialImagePath = path.join(frontendDist, 'og-jose-carter.png')
+    fs.mkdirSync(frontendDist, { recursive: true })
+    fs.writeFileSync(cvPath, 'test CV')
+    fs.writeFileSync(socialImagePath, 'test social image')
+
+    try {
+      await withNodeEnvironment('production', async () => {
+        const app = createApp()
+        const cv = await request(app).get('/Jose_Carter_CV_Eng.pdf')
+        const socialImage = await request(app).get('/og-jose-carter.png')
+
+        expect(cv.headers['cache-control']).toBe('public, max-age=86400, must-revalidate')
+        expect(socialImage.headers['cache-control']).toBe(
+          'public, max-age=86400, must-revalidate',
+        )
+      })
+    } finally {
+      fs.rmSync(cvPath, { force: true })
+      fs.rmSync(socialImagePath, { force: true })
+    }
+  })
+
+  it('serves a production CSP limited to same-origin application resources', async () => {
+    await withNodeEnvironment('production', async () => {
+      const response = await request(createApp())
+        .get('/api/health')
+        .set('Host', 'portfolio-cartterr-production.up.railway.app')
+      const policy = response.headers['content-security-policy']
+
+      expect(policy).toContain("default-src 'self'")
+      expect(policy).toContain("connect-src 'self'")
+      expect(policy).toContain("font-src 'self'")
+      expect(policy).toContain("img-src 'self' data:")
+      expect(policy).not.toContain('http:')
+      expect(policy).not.toContain('https:')
+      expect(policy).not.toContain('*')
+    })
   })
 })

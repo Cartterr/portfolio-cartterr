@@ -36,17 +36,6 @@ FRONTEND_URL=http://localhost:3000
     console.log('✅ Created backend/.env');
   }
 
-  // Frontend .env
-  const frontendEnvPath = path.join(process.cwd(), 'frontend', '.env');
-  if (!fs.existsSync(frontendEnvPath)) {
-    const frontendEnvContent = `VITE_API_URL=http://localhost:5000/api
-VITE_ENABLE_ANALYTICS=false
-VITE_ENABLE_CONTACT_FORM=true
-`;
-    fs.writeFileSync(frontendEnvPath, frontendEnvContent);
-    console.log('✅ Created frontend/.env');
-  }
-  
   console.log('');
 }
 
@@ -94,8 +83,8 @@ function setupComplete() {
   console.log('📋 Next steps:');
   console.log('  1. npm run dev           - Start development servers');
   console.log('  2. npm run build         - Build for production');
-  console.log('  3. npm run docker:dev    - Run with Docker (development)');
-  console.log('  4. npm run docker:prod   - Run with Docker (production)');
+  console.log('  3. npm test              - Run production and application contracts');
+  console.log('  4. npm run type-check    - Type-check both workspaces');
   console.log('');
   console.log('🌐 URLs:');
   console.log('  Frontend: http://localhost:3000');

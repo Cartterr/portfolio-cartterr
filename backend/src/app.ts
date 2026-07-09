@@ -54,6 +54,18 @@ export function createApp(options: CreateAppOptions = {}) {
   const app = express()
   app.disable('x-powered-by')
   app.set('trust proxy', 1)
+  const isProduction = process.env.NODE_ENV === 'production'
+
+  if (isProduction) {
+    app.use((request, response, next) => {
+      if (request.hostname.toLowerCase() === 'www.josecarter.dev') {
+        response.redirect(308, `https://josecarter.dev${request.originalUrl}`)
+        return
+      }
+
+      next()
+    })
+  }
 
   const allowedOrigins = new Set(
     [
@@ -66,7 +78,26 @@ export function createApp(options: CreateAppOptions = {}) {
 
   app.use(
     helmet({
-      contentSecurityPolicy: false,
+      contentSecurityPolicy: isProduction
+        ? {
+            useDefaults: false,
+            directives: {
+              defaultSrc: ["'self'"],
+              baseUri: ["'self'"],
+              connectSrc: ["'self'"],
+              fontSrc: ["'self'"],
+              formAction: ["'self'"],
+              frameAncestors: ["'none'"],
+              frameSrc: ["'none'"],
+              imgSrc: ["'self'", 'data:'],
+              mediaSrc: ["'self'"],
+              objectSrc: ["'none'"],
+              scriptSrc: ["'self'"],
+              scriptSrcAttr: ["'none'"],
+              styleSrc: ["'self'"],
+            },
+          }
+        : false,
       crossOriginEmbedderPolicy: false,
     }),
   )
@@ -119,7 +150,7 @@ export function createApp(options: CreateAppOptions = {}) {
   })
   app.use('/api', apiRouter)
 
-  if (process.env.NODE_ENV === 'production') {
+  if (isProduction) {
     const frontendDist = path.join(__dirname, '../../frontend/dist')
 
     app.use(
@@ -130,12 +161,17 @@ export function createApp(options: CreateAppOptions = {}) {
             return
           }
 
-          if (/[/\\]assets[/\\].+\.[0-9a-f]{8}\./i.test(filePath)) {
+          if (/[/\\]assets[/\\][^/\\]+-[0-9a-f]{8,}\.[^/\\]+$/i.test(filePath)) {
             response.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
             return
           }
 
-          response.setHeader('Cache-Control', 'public, max-age=3600')
+          if (/\.pdf$/i.test(filePath) || path.basename(filePath) === 'og-jose-carter.png') {
+            response.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate')
+            return
+          }
+
+          response.setHeader('Cache-Control', 'public, max-age=3600, must-revalidate')
         },
       }),
     )

@@ -33,14 +33,6 @@ if not exist "backend\.env" (
     echo ✅ Created backend\.env
 )
 
-REM Frontend .env
-if not exist "frontend\.env" (
-    echo VITE_API_URL=http://localhost:5000/api> frontend\.env
-    echo VITE_ENABLE_ANALYTICS=false>> frontend\.env
-    echo VITE_ENABLE_CONTACT_FORM=true>> frontend\.env
-    echo ✅ Created frontend\.env
-)
-
 REM Install frontend dependencies
 echo 📱 Installing frontend dependencies...
 cd frontend
@@ -71,8 +63,8 @@ echo.
 echo 📋 Next steps:
 echo   npm run dev           - Start development servers
 echo   npm run build         - Build for production
-echo   npm run docker:dev    - Run with Docker (development)
-echo   npm run docker:prod   - Run with Docker (production)
+echo   npm test              - Run production and application contracts
+echo   npm run type-check    - Type-check both workspaces
 echo.
 echo 🌐 URLs:
 echo   Frontend: http://localhost:3000
