@@ -96,6 +96,7 @@ git commit -m "test: define portfolio content contract"
 - Create: `frontend/src/sections/Experience.tsx`
 - Create: `frontend/src/sections/About.tsx`
 - Create: `frontend/src/sections/Capabilities.tsx`
+- Create: `frontend/src/sections/Contact.tsx`
 - Modify: `frontend/src/App.tsx`
 - Modify: `frontend/src/index.css`
 - Create: `frontend/src/App.test.tsx`
@@ -160,7 +161,7 @@ git commit -m "feat: rebuild portfolio around case studies"
 - Create: `backend/src/contact.test.ts`
 - Modify: `backend/src/server.ts`
 - Modify: `backend/package.json`
-- Create: `frontend/src/sections/Contact.tsx`
+- Modify: `frontend/src/sections/Contact.tsx`
 - Create: `frontend/src/sections/Contact.test.tsx`
 
 **Interfaces:**
@@ -297,4 +298,3 @@ Publish Railway's exact `_railway-verify.www` TXT value through the authorized P
 - [ ] **Step 7: Roll back on any failed gate**
 
 Use Railway's rollback action immediately if the production smoke test fails. The durable source rollback is tag `portfolio-pre-rebuild-2026-07-09` at `c94ed511`.
-
