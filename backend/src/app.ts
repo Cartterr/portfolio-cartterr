@@ -26,6 +26,30 @@ function hasBodyErrorType(error: unknown, expectedType: string) {
   )
 }
 
+function hasErrorCode(error: unknown, expectedCode: string) {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'code' in error &&
+    error.code === expectedCode
+  )
+}
+
+function getExposedClientErrorStatus(error: unknown) {
+  if (typeof error !== 'object' || error === null || !('expose' in error) || error.expose !== true) {
+    return undefined
+  }
+
+  const status =
+    'status' in error && typeof error.status === 'number'
+      ? error.status
+      : 'statusCode' in error && typeof error.statusCode === 'number'
+        ? error.statusCode
+        : undefined
+
+  return status && status >= 400 && status < 500 ? status : undefined
+}
+
 export function createApp(options: CreateAppOptions = {}) {
   const app = express()
   app.disable('x-powered-by')
@@ -133,8 +157,35 @@ export function createApp(options: CreateAppOptions = {}) {
       return
     }
 
+    if (
+      hasBodyErrorType(error, 'charset.unsupported') ||
+      hasBodyErrorType(error, 'encoding.unsupported')
+    ) {
+      response
+        .status(415)
+        .json({ success: false, message: 'Request body encoding is not supported.' })
+      return
+    }
+
     if (hasBodyErrorType(error, 'entity.parse.failed')) {
       response.status(400).json({ success: false, message: 'Request body must be valid JSON.' })
+      return
+    }
+
+    const exposedStatus = getExposedClientErrorStatus(error)
+    if (hasErrorCode(error, 'Z_DATA_ERROR') && exposedStatus === 400) {
+      response.status(400).json({ success: false, message: 'Request body could not be decoded.' })
+      return
+    }
+
+    if (exposedStatus) {
+      response.status(exposedStatus).json({
+        success: false,
+        message:
+          exposedStatus === 415
+            ? 'Request body encoding is not supported.'
+            : 'Request body is invalid.',
+      })
       return
     }
 

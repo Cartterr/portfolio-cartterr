@@ -119,6 +119,50 @@ describe('portfolio API', () => {
     expect(sendContactEmail).not.toHaveBeenCalled()
   })
 
+  it('returns a safe 415 for an unsupported JSON charset without sending', async () => {
+    const sendContactEmail = vi.fn().mockResolvedValue(undefined)
+    const response = await request(createApp({ sendContactEmail }))
+      .post('/api/contact')
+      .set('Content-Type', 'application/json; charset=iso-8859-1')
+      .send(JSON.stringify({ name: 'Ada', email: 'ada@example.com', message: 'Hello' }))
+
+    expect(response.status).toBe(415)
+    expect(response.body).toEqual({
+      success: false,
+      message: 'Request body encoding is not supported.',
+    })
+    expect(sendContactEmail).not.toHaveBeenCalled()
+  })
+
+  it('returns a safe 415 for an unsupported content encoding without sending', async () => {
+    const sendContactEmail = vi.fn().mockResolvedValue(undefined)
+    const response = await request(createApp({ sendContactEmail }))
+      .post('/api/contact')
+      .set('Content-Type', 'application/json')
+      .set('Content-Encoding', 'compress')
+      .send(JSON.stringify({ name: 'Ada', email: 'ada@example.com', message: 'Hello' }))
+
+    expect(response.status).toBe(415)
+    expect(response.body).toEqual({
+      success: false,
+      message: 'Request body encoding is not supported.',
+    })
+    expect(sendContactEmail).not.toHaveBeenCalled()
+  })
+
+  it('returns a safe 400 for a malformed gzip body without sending', async () => {
+    const sendContactEmail = vi.fn().mockResolvedValue(undefined)
+    const response = await request(createApp({ sendContactEmail }))
+      .post('/api/contact')
+      .set('Content-Type', 'application/json')
+      .set('Content-Encoding', 'gzip')
+      .send(Buffer.from('not-a-valid-gzip-stream'))
+
+    expect(response.status).toBe(400)
+    expect(response.body).toEqual({ success: false, message: 'Request body could not be decoded.' })
+    expect(sendContactEmail).not.toHaveBeenCalled()
+  })
+
   it('returns 413 for a JSON body larger than 32kb without sending', async () => {
     const sendContactEmail = vi.fn().mockResolvedValue(undefined)
     const response = await request(createApp({ sendContactEmail }))
