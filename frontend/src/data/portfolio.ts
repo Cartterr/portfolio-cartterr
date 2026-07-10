@@ -248,11 +248,17 @@ export const portfolioContent = {
         'Developed Python and CUDA simulations for tectonic-plate modeling, seismic-risk analysis, and large-scale processing.',
     },
     {
-      period: 'Mar 2023 - Nov 2024',
-      title: 'Advanced Teaching Assistant & Instructor',
-      company: 'PUC & Escuela Militar de Chile',
+      period: 'Mar 2023 - Present',
+      title: 'Advanced Teaching Assistant & Technical Mentor',
+      company: 'Pontificia Universidad Católica de Chile',
       summary:
-        'Designed and taught Python curricula covering APIs, automated testing, operating systems, and high-performance computing.',
+        'Support advanced courses in operating systems, networks, high-performance computing, and extended reality.',
+    },
+    {
+      period: '2024 - Present',
+      title: 'Technical Instructor - Python & AI Applications',
+      company: 'Escuela Militar de Chile',
+      summary: 'Design and teach applied Python and AI courses for technical learners.',
     },
   ],
   capabilities: [

@@ -166,6 +166,13 @@ test('package managers and root scripts have one authority per workspace', () =>
   assert.equal(existsSync(fromRoot('frontend', 'yarn.lock')), true)
   assert.equal(existsSync(fromRoot('frontend', 'package-lock.json')), false)
   assert.equal(existsSync(fromRoot('backend', 'yarn.lock')), true)
+  assert.equal(
+    rootPackage.devDependencies.yarn,
+    '1.22.22',
+    'the npm-selected Railway build must install the Yarn binary used by nested workspace scripts',
+  )
+  const rootLock = readJson('package-lock.json')
+  assert.equal(rootLock.packages['node_modules/yarn']?.version, '1.22.22')
   assert.equal(frontendPackage.scripts['type-check'], 'tsc --noEmit')
   assert.equal(
     rootPackage.scripts.test,

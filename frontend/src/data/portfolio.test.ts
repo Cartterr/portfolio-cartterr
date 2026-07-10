@@ -85,4 +85,24 @@ describe('portfolioContent', () => {
     expect(portfolioContent.capabilities).toHaveLength(3)
     expect(portfolioContent.capabilities.flatMap((group) => group.items).length).toBeLessThanOrEqual(18)
   })
+
+  it('keeps current teaching roles aligned with the downloadable English CV', () => {
+    expect(
+      portfolioContent.experience.filter(({ title }) => /Teaching|Instructor/.test(title)),
+    ).toEqual([
+      {
+        period: 'Mar 2023 - Present',
+        title: 'Advanced Teaching Assistant & Technical Mentor',
+        company: 'Pontificia Universidad Católica de Chile',
+        summary:
+          'Support advanced courses in operating systems, networks, high-performance computing, and extended reality.',
+      },
+      {
+        period: '2024 - Present',
+        title: 'Technical Instructor - Python & AI Applications',
+        company: 'Escuela Militar de Chile',
+        summary: 'Design and teach applied Python and AI courses for technical learners.',
+      },
+    ])
+  })
 })

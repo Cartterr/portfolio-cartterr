@@ -22,8 +22,11 @@ describe('portfolio page', () => {
     const menu = screen.getByRole('button', { name: /open navigation/i })
     await user.click(menu)
     expect(menu).toHaveAttribute('aria-expanded', 'true')
+    await user.tab()
+    expect(screen.getByRole('link', { name: 'Work' })).toHaveFocus()
     await user.keyboard('{Escape}')
     expect(menu).toHaveAttribute('aria-expanded', 'false')
+    expect(menu).toHaveFocus()
   })
 
   it('moves keyboard focus to main content from the skip link', async () => {

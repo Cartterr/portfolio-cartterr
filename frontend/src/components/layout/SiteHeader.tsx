@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 type SiteHeaderProps = {
   cvHref: string
@@ -13,12 +13,15 @@ const navigationItems = [
 
 export function SiteHeader({ cvHref }: SiteHeaderProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (!isOpen) return undefined
 
     const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setIsOpen(false)
+      if (event.key !== 'Escape') return
+      setIsOpen(false)
+      menuButtonRef.current?.focus()
     }
 
     window.addEventListener('keydown', closeOnEscape)
@@ -40,6 +43,7 @@ export function SiteHeader({ cvHref }: SiteHeaderProps) {
           aria-label={isOpen ? 'Close navigation' : 'Open navigation'}
           className="menu-button"
           onClick={() => setIsOpen((open) => !open)}
+          ref={menuButtonRef}
           type="button"
         >
           <span aria-hidden="true" className="menu-button__lines">

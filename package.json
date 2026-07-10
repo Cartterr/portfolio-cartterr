@@ -26,7 +26,8 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "yarn": "1.22.22"
   },
   "keywords": [
     "portfolio",
