@@ -1,6 +1,6 @@
 import compression from 'compression'
 import cors from 'cors'
-import express, { type ErrorRequestHandler, type RequestHandler } from 'express'
+import express, { type ErrorRequestHandler, type Request, type RequestHandler } from 'express'
 import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
 import morgan from 'morgan'
@@ -13,9 +13,20 @@ const __dirname = path.dirname(__filename)
 
 export type CreateAppOptions = {
   sendContactEmail?: SendContactEmail
+  frontendDist?: string
 }
 
 class CorsOriginError extends Error {}
+
+function normalizeOrigin(value: string | undefined) {
+  if (!value) return undefined
+
+  try {
+    return new URL(value).origin
+  } catch {
+    return undefined
+  }
+}
 
 function hasBodyErrorType(error: unknown, expectedType: string) {
   return (
@@ -73,7 +84,9 @@ export function createApp(options: CreateAppOptions = {}) {
       'http://localhost:3000',
       'https://josecarter.dev',
       'https://portfolio-cartterr-production.up.railway.app',
-    ].filter(Boolean) as string[],
+    ]
+      .map(normalizeOrigin)
+      .filter(Boolean) as string[],
   )
 
   app.use(
@@ -102,15 +115,21 @@ export function createApp(options: CreateAppOptions = {}) {
     }),
   )
   app.use(
-    cors({
-      origin: (origin, callback) => {
-        if (!origin || allowedOrigins.has(origin)) {
-          callback(null, true)
-          return
-        }
-        callback(new CorsOriginError('Origin is not allowed'))
-      },
-      credentials: true,
+    '/api',
+    cors<Request>((request, callback) => {
+      const rawOrigin = request.get('Origin')
+      const origin = normalizeOrigin(rawOrigin)
+      const host = request.get('Host')
+      const requestOrigin = normalizeOrigin(host ? `${request.protocol}://${host}` : undefined)
+      const isAllowedOrigin =
+        origin !== undefined && (origin === requestOrigin || allowedOrigins.has(origin))
+
+      if (!rawOrigin || isAllowedOrigin) {
+        callback(null, { origin: origin ?? false, credentials: true })
+        return
+      }
+
+      callback(new CorsOriginError('Origin is not allowed'))
     }),
   )
   app.use(compression() as unknown as RequestHandler)
@@ -151,7 +170,7 @@ export function createApp(options: CreateAppOptions = {}) {
   app.use('/api', apiRouter)
 
   if (isProduction) {
-    const frontendDist = path.join(__dirname, '../../frontend/dist')
+    const frontendDist = options.frontendDist ?? path.join(__dirname, '../../frontend/dist')
 
     app.use(
       express.static(frontendDist, {

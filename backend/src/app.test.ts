@@ -1,12 +1,11 @@
 import request from 'supertest'
 import fs from 'node:fs'
+import os from 'node:os'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { describe, expect, it, vi } from 'vitest'
 import { createApp } from './app.js'
 
 const successMessage = 'Thanks for reaching out. Your message has been received.'
-const frontendDist = fileURLToPath(new URL('../../frontend/dist/', import.meta.url))
 
 async function withNodeEnvironment<T>(
   nodeEnvironment: string,
@@ -19,6 +18,18 @@ async function withNodeEnvironment<T>(
     return await callback()
   } finally {
     process.env.NODE_ENV = previousNodeEnvironment
+  }
+}
+
+async function withTemporaryFrontendDist<T>(
+  callback: (frontendDist: string) => Promise<T>,
+): Promise<T> {
+  const frontendDist = fs.mkdtempSync(path.join(os.tmpdir(), 'portfolio-static-test-'))
+
+  try {
+    return await callback(frontendDist)
+  } finally {
+    fs.rmSync(frontendDist, { recursive: true, force: true })
   }
 }
 
@@ -58,11 +69,28 @@ describe('portfolio API', () => {
     const app = createApp()
     const allowed = await request(app).get('/api/health').set('Origin', 'https://josecarter.dev')
     const denied = await request(app).get('/api/health').set('Origin', 'https://untrusted.example')
+    const malformed = await request(app).get('/api/health').set('Origin', 'not a URL')
 
     expect(allowed.status).toBe(200)
     expect(allowed.headers['access-control-allow-origin']).toBe('https://josecarter.dev')
     expect(denied.status).toBe(403)
     expect(denied.body).toEqual({ success: false, message: 'Origin is not allowed.' })
+    expect(malformed.status).toBe(403)
+    expect(malformed.body).toEqual({ success: false, message: 'Origin is not allowed.' })
+  })
+
+  it('allows a same-origin API contact request dynamically', async () => {
+    const sendContactEmail = vi.fn().mockResolvedValue(undefined)
+    const origin = 'http://127.0.0.1:5000'
+    const response = await request(createApp({ sendContactEmail }))
+      .post('/api/contact')
+      .set('Host', '127.0.0.1:5000')
+      .set('Origin', origin)
+      .send({ name: 'Ada', email: 'ada@example.com', message: 'Hello' })
+
+    expect(response.status).toBe(200)
+    expect(response.headers['access-control-allow-origin']).toBe(origin)
+    expect(sendContactEmail).toHaveBeenCalledOnce()
   })
 
   it('normalizes a valid contact submission before sending it', async () => {
@@ -307,16 +335,20 @@ describe('portfolio API', () => {
   })
 
   it('uses immutable caching for hashed Vite assets and no-store for HTML', async () => {
-    const assetsDirectory = path.join(frontendDist, 'assets')
-    const hashedAssetPath = path.join(assetsDirectory, 'contract-abcdef123456.js')
-    const htmlPath = path.join(frontendDist, 'cache-contract.html')
-    fs.mkdirSync(assetsDirectory, { recursive: true })
-    fs.writeFileSync(hashedAssetPath, 'export const contract = true')
-    fs.writeFileSync(htmlPath, '<!doctype html><title>Cache contract</title>')
+    await withTemporaryFrontendDist(async (frontendDist) => {
+      const assetsDirectory = path.join(frontendDist, 'assets')
+      fs.mkdirSync(assetsDirectory, { recursive: true })
+      fs.writeFileSync(
+        path.join(assetsDirectory, 'contract-abcdef123456.js'),
+        'export const contract = true',
+      )
+      fs.writeFileSync(
+        path.join(frontendDist, 'cache-contract.html'),
+        '<!doctype html><title>Cache contract</title>',
+      )
 
-    try {
       await withNodeEnvironment('production', async () => {
-        const app = createApp()
+        const app = createApp({ frontendDist })
         const hashedAsset = await request(app).get('/assets/contract-abcdef123456.js')
         const html = await request(app).get('/cache-contract.html')
 
@@ -327,22 +359,16 @@ describe('portfolio API', () => {
         expect(html.status).toBe(200)
         expect(html.headers['cache-control']).toBe('no-store')
       })
-    } finally {
-      fs.rmSync(hashedAssetPath, { force: true })
-      fs.rmSync(htmlPath, { force: true })
-    }
+    })
   })
 
   it('gives the CV and social image one-day revalidation caching', async () => {
-    const cvPath = path.join(frontendDist, 'Jose_Carter_CV_Eng.pdf')
-    const socialImagePath = path.join(frontendDist, 'og-jose-carter.png')
-    fs.mkdirSync(frontendDist, { recursive: true })
-    fs.writeFileSync(cvPath, 'test CV')
-    fs.writeFileSync(socialImagePath, 'test social image')
+    await withTemporaryFrontendDist(async (frontendDist) => {
+      fs.writeFileSync(path.join(frontendDist, 'Jose_Carter_CV_Eng.pdf'), 'test CV')
+      fs.writeFileSync(path.join(frontendDist, 'og-jose-carter.png'), 'test social image')
 
-    try {
       await withNodeEnvironment('production', async () => {
-        const app = createApp()
+        const app = createApp({ frontendDist })
         const cv = await request(app).get('/Jose_Carter_CV_Eng.pdf')
         const socialImage = await request(app).get('/og-jose-carter.png')
 
@@ -351,10 +377,31 @@ describe('portfolio API', () => {
           'public, max-age=86400, must-revalidate',
         )
       })
-    } finally {
-      fs.rmSync(cvPath, { force: true })
-      fs.rmSync(socialImagePath, { force: true })
-    }
+    })
+  })
+
+  it('serves production module assets even when a loopback Origin header is present', async () => {
+    await withTemporaryFrontendDist(async (frontendDist) => {
+      const assetsDirectory = path.join(frontendDist, 'assets')
+      fs.mkdirSync(assetsDirectory, { recursive: true })
+      fs.writeFileSync(
+        path.join(assetsDirectory, 'app-abcdef123456.js'),
+        'export const mounted = true',
+      )
+      fs.writeFileSync(path.join(frontendDist, 'index.html'), '<main>Portfolio</main>')
+
+      await withNodeEnvironment('production', async () => {
+        const response = await request(createApp({ frontendDist }))
+          .get('/assets/app-abcdef123456.js')
+          .set('Host', '127.0.0.1:4400')
+          .set('Origin', 'http://127.0.0.1:4400')
+
+        expect(response.status).toBe(200)
+        expect(response.type).toMatch(/javascript/)
+        expect(response.text).toContain('mounted = true')
+        expect(response.headers['access-control-allow-origin']).toBeUndefined()
+      })
+    })
   })
 
   it('serves a production CSP limited to same-origin application resources', async () => {

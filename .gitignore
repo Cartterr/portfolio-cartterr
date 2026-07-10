@@ -51,6 +51,7 @@ jspm_packages/
 
 # TypeScript cache
 *.tsbuildinfo
+frontend/vite.config.ts.timestamp-*.mjs
 
 # Optional npm cache directory
 .npm

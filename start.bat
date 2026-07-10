@@ -32,7 +32,7 @@ if not exist "%ROOT%node_modules\.bin\concurrently.cmd" call :install_root
 call :free_port %BACKEND_PORT%
 call :free_port %FRONTEND_PORT%
 
-set "FRONT_CMD=cmd /c "cd /d frontend && set NODE_ENV=development&& set VITE_API_URL=%API_URL%&& yarn dev --port %FRONTEND_PORT%""
+set "FRONT_CMD=cmd /c "cd /d frontend && set NODE_ENV=development&& yarn dev --port %FRONTEND_PORT%""
 set "BACK_CMD=cmd /c "timeout /t 1 /nobreak >nul && cd /d backend && set NODE_ENV=development&& set PORT=%BACKEND_PORT%&& set FRONTEND_URL=http://localhost:%FRONTEND_PORT%&& yarn dev""
 echo 🧪 running both services with concurrently
 "%ROOT%node_modules\.bin\concurrently.cmd" -k --handle-input -n frontend,backend -c magenta,blue "%FRONT_CMD%" "%BACK_CMD%"

@@ -11,9 +11,7 @@
     "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "smoke:compiled": "node scripts/smoke-compiled.mjs",
-    "clean": "rm -rf dist",
-    "prepare:images": "mkdir -p public/images"
+    "smoke:compiled": "node scripts/smoke-compiled.mjs"
   },
   "dependencies": {
     "compression": "^1.7.4",

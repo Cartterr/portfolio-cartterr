@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import path from 'node:path'
+import { spawnSync } from 'node:child_process'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 
@@ -58,11 +59,14 @@ test('portfolio metadata uses one aligned canonical identity and real social ass
   assert.equal(attribute(singleMeta(html, 'name', 'robots'), 'content'), 'max-image-preview:large')
   assert.doesNotMatch(html, /data:image|og-preview\.svg|(?:href|content)=["'][^"']+\.svg/i)
 
-  const faviconLinks = tags(html, 'link').filter((tag) =>
-    ['icon', 'apple-touch-icon'].includes(attribute(tag, 'rel')),
+  const icon = tags(html, 'link').filter((tag) => attribute(tag, 'rel') === 'icon')
+  const touchIcon = tags(html, 'link').filter(
+    (tag) => attribute(tag, 'rel') === 'apple-touch-icon',
   )
-  assert.ok(faviconLinks.length >= 2)
-  assert.ok(faviconLinks.every((tag) => attribute(tag, 'href') === '/favicon.webp'))
+  assert.equal(icon.length, 1)
+  assert.equal(attribute(icon[0], 'href'), '/favicon.webp')
+  assert.equal(touchIcon.length, 1)
+  assert.equal(attribute(touchIcon[0], 'href'), '/apple-touch-icon.png')
 
   const socialImage = readFileSync(fromRoot('frontend', 'public', 'og-jose-carter.png'))
   assert.equal(socialImage.readUInt32BE(16), 1200)
@@ -71,6 +75,38 @@ test('portfolio metadata uses one aligned canonical identity and real social ass
     sha256(fromRoot('frontend', 'public', 'favicon.webp')),
     sha256(fromRoot('frontend', 'src', 'assets', 'images', 'optimized', 'brand-avatar.webp')),
   )
+  const touchIconPath = fromRoot('frontend', 'public', 'apple-touch-icon.png')
+  assert.equal(existsSync(touchIconPath), true)
+  if (existsSync(touchIconPath)) {
+    const touchIconPng = readFileSync(touchIconPath)
+    assert.equal(touchIconPng.toString('ascii', 1, 4), 'PNG')
+    assert.equal(touchIconPng.readUInt32BE(16), 160)
+    assert.equal(touchIconPng.readUInt32BE(20), 160)
+  }
+})
+
+test('frontend build externalizes fonts and does not publish source maps', () => {
+  const buildCommand =
+    process.platform === 'win32'
+      ? { executable: 'cmd.exe', arguments: ['/d', '/s', '/c', 'yarn build'] }
+      : { executable: 'yarn', arguments: ['build'] }
+  const build = spawnSync(buildCommand.executable, buildCommand.arguments, {
+    cwd: fromRoot('frontend'),
+    encoding: 'utf8',
+    env: process.env,
+  })
+  assert.equal(build.status, 0, `${build.error ?? ''}\n${build.stdout}\n${build.stderr}`)
+
+  const assetsDirectory = fromRoot('frontend', 'dist', 'assets')
+  const assetNames = readdirSync(assetsDirectory)
+  const builtCss = assetNames
+    .filter((assetName) => assetName.endsWith('.css'))
+    .map((assetName) => readFileSync(path.join(assetsDirectory, assetName), 'utf8'))
+    .join('\n')
+
+  assert.doesNotMatch(builtCss, /data:font/i)
+  assert.ok(assetNames.some((assetName) => assetName.endsWith('.woff2')))
+  assert.deepEqual(assetNames.filter((assetName) => assetName.endsWith('.map')), [])
 })
 
 test('JSON-LD describes a restrained WebSite, ProfilePage, and Person graph', () => {
@@ -123,6 +159,7 @@ test('Railway deploy contract is health-gated and contains no identifiers or sec
 test('package managers and root scripts have one authority per workspace', () => {
   const rootPackage = readJson('package.json')
   const frontendPackage = readJson('frontend', 'package.json')
+  const backendPackage = readJson('backend', 'package.json')
 
   assert.equal(existsSync(fromRoot('package-lock.json')), true)
   assert.equal(existsSync(fromRoot('yarn.lock')), false)
@@ -139,6 +176,21 @@ test('package managers and root scripts have one authority per workspace', () =>
   assert.equal(rootPackage.repository.url, 'https://github.com/Cartterr/portfolio-cartterr.git')
   assert.ok(!Object.keys(rootPackage.scripts).some((name) => name.startsWith('docker:')))
   assert.equal('deploy' in rootPackage.scripts, false)
+  assert.ok(
+    !Object.values(backendPackage.scripts).some((script) => /rm -rf|mkdir -p/i.test(script)),
+  )
+})
+
+test('development uses the Vite API proxy without obsolete public environment exports', () => {
+  const viteEnvironmentTypes = readText('frontend', 'vite-env.d.ts').trim()
+  const windowsStart = readText('start.bat')
+  const shellStart = readText('start.sh')
+  const viteConfig = readText('frontend', 'vite.config.ts')
+
+  assert.equal(viteEnvironmentTypes, '/// <reference types="vite/client" />')
+  assert.doesNotMatch(windowsStart, /VITE_API_URL/)
+  assert.doesNotMatch(shellStart, /VITE_API_URL/)
+  assert.match(viteConfig, /['"]\/api['"]\s*:\s*\{[\s\S]*target:\s*['"]http:\/\/localhost:5000['"]/)
 })
 
 test('obsolete container and deploy artifacts are absent', () => {
@@ -176,4 +228,5 @@ test('obsolete container and deploy artifacts are absent', () => {
   const maintainedText = maintainedEntryPoints.map((filePath) => readText(filePath)).join('\n')
   assert.doesNotMatch(maintainedText, /Docker|docker-compose|nginx/i)
   assert.match(readText('.gitignore'), /^\.tmp-lighthouse-\*\.json$/m)
+  assert.match(readText('.gitignore'), /^frontend\/vite\.config\.ts\.timestamp-\*\.mjs$/m)
 })
