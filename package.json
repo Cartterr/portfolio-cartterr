@@ -1,27 +1,24 @@
 {
   "name": "cartterr-portfolio",
   "version": "1.0.0",
-  "description": "José Carter Arriagada's Professional Portfolio - Full Stack Application",
+  "description": "José Carter's portfolio for reliable AI, data, and autonomous systems",
   "private": true,
   "scripts": {
     "setup": "node scripts/setup.js",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:frontend": "cd frontend && yarn dev",
     "dev:backend": "cd backend && yarn dev",
+    "test": "node --test scripts/production-contract.test.mjs && npm run test:backend && npm run test:frontend",
+    "test:frontend": "cd frontend && yarn test",
+    "test:backend": "cd backend && yarn test",
+    "lint": "npm run lint:frontend",
+    "lint:frontend": "cd frontend && yarn lint",
     "build": "npm run build:backend && npm run build:frontend",
     "build:frontend": "cd frontend && yarn install --production=false --non-interactive && yarn build",
     "build:backend": "cd backend && yarn install --production=false --non-interactive && yarn build",
     "start": "npm run start:backend",
     "start:frontend": "cd frontend && yarn preview",
     "start:backend": "cd backend && yarn start",
-    "docker:dev": "docker-compose -f docker-compose.dev.yml up --build",
-    "docker:prod": "docker-compose up --build -d",
-    "docker:stop": "docker-compose down",
-    "docker:logs": "docker-compose logs -f",
-    "deploy": "node scripts/deploy.js",
-    "clean": "npm run clean:frontend && npm run clean:backend",
-    "clean:frontend": "cd frontend && rm -rf dist node_modules",
-    "clean:backend": "cd backend && rm -rf dist node_modules",
     "install:all": "cd frontend && yarn install && cd ../backend && yarn install",
     "type-check": "npm run type-check:frontend && npm run type-check:backend",
     "type-check:frontend": "cd frontend && yarn type-check",
@@ -29,7 +26,8 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "yarn": "1.22.22"
   },
   "keywords": [
     "portfolio",
@@ -43,7 +41,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Cartterr/portfolio.git"
+    "url": "https://github.com/Cartterr/portfolio-cartterr.git"
   },
   "engines": {
     "node": ">=18.0.0",

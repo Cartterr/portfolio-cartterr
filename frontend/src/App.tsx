@@ -1,50 +1,45 @@
-import { Suspense, lazy, startTransition, useEffect, useState } from 'react'
-import Hero from './components/Hero'
-import About from './components/About'
-import Navigation from './components/Navigation'
-import ScrollProgress from './components/ScrollProgress'
+import { useRef } from 'react'
+import { SiteFooter } from './components/layout/SiteFooter'
+import { SiteHeader } from './components/layout/SiteHeader'
+import { Metric } from './components/ui/Metric'
+import { portfolioContent } from './data/portfolio'
+import { About } from './sections/About'
+import { Capabilities } from './sections/Capabilities'
+import { Contact } from './sections/Contact'
+import { Experience } from './sections/Experience'
+import { FeaturedWork } from './sections/FeaturedWork'
+import { Hero } from './sections/Hero'
 
-const BelowFoldSections = lazy(() => import('./components/BelowFoldSections'))
+const droneCaseStudy = portfolioContent.caseStudies.find(
+  (study) => study.slug === 'notre-dame-drone-response',
+) ?? portfolioContent.caseStudies[0]
 
 function App() {
-  const [showBelowFold, setShowBelowFold] = useState(false)
-
-  useEffect(() => {
-    const reveal = () => {
-      startTransition(() => {
-        setShowBelowFold(true)
-      })
-    }
-
-    const idleWindow = window as Window & {
-      requestIdleCallback?: (callback: IdleRequestCallback, options?: IdleRequestOptions) => number
-      cancelIdleCallback?: (handle: number) => void
-    }
-
-    if (idleWindow.requestIdleCallback && idleWindow.cancelIdleCallback) {
-      const idleId = idleWindow.requestIdleCallback(reveal, { timeout: 1200 })
-      return () => idleWindow.cancelIdleCallback?.(idleId)
-    }
-
-    const timeoutId = window.setTimeout(reveal, 500)
-    return () => window.clearTimeout(timeoutId)
-  }, [])
+  const mainRef = useRef<HTMLElement>(null)
 
   return (
-    <div className="min-h-screen bg-[#0b0b0b] text-white overflow-x-hidden">
-      <div className="relative overflow-x-hidden">
-
-      <ScrollProgress />
-      <Navigation />
-      <Hero />
-      <About />
-      {showBelowFold ? (
-        <Suspense fallback={null}>
-          <BelowFoldSections />
-        </Suspense>
-      ) : null}
-      </div>
-    </div>
+    <>
+      <a className="skip-link" href="#main" onClick={() => mainRef.current?.focus()}>
+        Skip to content
+      </a>
+      <SiteHeader cvHref={portfolioContent.hero.secondaryCta.href} />
+      <main id="main" ref={mainRef} tabIndex={-1}>
+        <Hero content={portfolioContent.hero} image={droneCaseStudy} />
+        <section aria-label="Selected outcomes" className="metrics-strip">
+          <div className="metrics-strip__inner">
+            {portfolioContent.metrics.map((metric) => (
+              <Metric key={metric.label} metric={metric} />
+            ))}
+          </div>
+        </section>
+        <FeaturedWork caseStudies={portfolioContent.caseStudies} />
+        <Experience items={portfolioContent.experience} />
+        <About content={portfolioContent.about} />
+        <Capabilities groups={portfolioContent.capabilities} />
+        <Contact content={portfolioContent.contact} />
+      </main>
+      <SiteFooter links={portfolioContent.contact.links} name={portfolioContent.hero.name} />
+    </>
   )
 }
 

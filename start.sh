@@ -39,7 +39,6 @@ echo "✅ Backend starting on ${BACKEND_URL} (pid ${BACKEND_PID}) 💡 try ${API
 (
   cd frontend
   export NODE_ENV=development
-  export VITE_API_URL="${API_URL}"
   if [ "$PM" = "npm" ]; then npm run dev; else "$PM" dev; fi
 ) &
 FRONTEND_PID=$!

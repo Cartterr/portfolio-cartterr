@@ -33,16 +33,6 @@ EOF
     echo "✅ Created backend/.env"
 fi
 
-# Frontend .env
-if [ ! -f "frontend/.env" ]; then
-    cat > frontend/.env << EOF
-VITE_API_URL=http://localhost:5000/api
-VITE_ENABLE_ANALYTICS=false
-VITE_ENABLE_CONTACT_FORM=true
-EOF
-    echo "✅ Created frontend/.env"
-fi
-
 # Install frontend dependencies
 echo "📱 Installing frontend dependencies..."
 cd frontend
@@ -69,8 +59,8 @@ echo ""
 echo "📋 Next steps:"
 echo "  npm run dev           - Start development servers"
 echo "  npm run build         - Build for production"
-echo "  npm run docker:dev    - Run with Docker (development)"
-echo "  npm run docker:prod   - Run with Docker (production)"
+echo "  npm test              - Run production and application contracts"
+echo "  npm run type-check    - Type-check both workspaces"
 echo ""
 echo "🌐 URLs:"
 echo "  Frontend: http://localhost:3000"
