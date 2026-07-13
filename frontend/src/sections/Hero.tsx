@@ -6,6 +6,8 @@ type HeroProps = {
 }
 
 export function Hero({ content, id }: HeroProps) {
+  const secondaryIsDownload = /\.pdf(?:$|[?#])/i.test(content.secondaryCta.href)
+
   return (
     <section
       aria-labelledby="software-hero-title"
@@ -31,7 +33,7 @@ export function Hero({ content, id }: HeroProps) {
             </a>
             <a
               className="software-button software-button--secondary"
-              download
+              download={secondaryIsDownload || undefined}
               href={content.secondaryCta.href}
             >
               <span>{content.secondaryCta.label}</span>

@@ -80,6 +80,44 @@ describe('dual portfolio shell', () => {
     )
   })
 
+  it('keeps the Visual compatibility document content-aware and isolated from Software sections', () => {
+    setPath('/visual/')
+    render(<App />)
+
+    const visual = getPortfolio('visual')
+    const page = document.querySelector<HTMLElement>('[data-visual-compatibility]')
+    expect(page).toBeInTheDocument()
+    expect(page).toHaveAttribute('data-presentation', 'visual-compatibility')
+    expect(page).not.toHaveClass('software-document')
+    expect(page?.querySelector('.software-hero, .software-section')).not.toBeInTheDocument()
+
+    expect(within(page!).getByRole('heading', { level: 1 })).toHaveTextContent(visual.hero.title)
+    const contactCta = within(page!).getByRole('link', { name: visual.hero.secondaryCta.label })
+    expect(contactCta).toHaveAttribute('href', '#contact')
+    expect(contactCta).not.toHaveAttribute('download')
+
+    const about = within(page!).getByRole('region', { name: 'Visual profile and practice gallery' })
+    expect(about.querySelectorAll('.portfolio-carousel__slide')).toHaveLength(
+      visual.about.mediaIds.length,
+    )
+
+    const experience = within(page!).getByTestId('visual-experience')
+    const chapters = within(experience).getAllByTestId('visual-experience-chapter')
+    expect(chapters).toHaveLength(visual.experience.length)
+    visual.experience.forEach((story) => {
+      const chapter = within(experience).getByTestId(`visual-experience-${story.id}`)
+      expect(Number(chapter.dataset.mediaCount)).toBeGreaterThan(0)
+      expect(within(chapter).getByText(story.outcome)).toBeInTheDocument()
+    })
+    expect(within(page!).queryByText('0 of 0')).not.toBeInTheDocument()
+
+    expect(within(page!).getAllByTestId('visual-project')).toHaveLength(visual.projects.length)
+    expect(within(page!).getAllByTestId('visual-capability')).toHaveLength(
+      visual.capabilities.length,
+    )
+    expect(within(page!).getByRole('heading', { name: visual.contact.heading })).toBeInTheDocument()
+  })
+
   it('renders the active navigation and every destination section immediately', () => {
     render(<App />)
 

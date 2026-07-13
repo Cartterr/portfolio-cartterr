@@ -1,0 +1,427 @@
+.visual-compatibility {
+  --visual-canvas: #071014;
+  --visual-surface: #0d1a20;
+  --visual-raised: #13242b;
+  --visual-text: #effcff;
+  --visual-muted: #9bb5bc;
+  --visual-line: rgba(178, 234, 244, 0.18);
+  --visual-cyan: #73dff2;
+  --visual-violet: #af91ff;
+  --visual-frame: min(92vw, 1520px);
+  --ink: #071014;
+  --ink-soft: #102129;
+  --white: #effcff;
+  --copper-on-dark: #73dff2;
+  overflow: clip;
+  background: var(--visual-canvas);
+  color: var(--visual-text);
+}
+
+.visual-compatibility h1,
+.visual-compatibility h2,
+.visual-compatibility h3,
+.visual-compatibility strong {
+  font-family: 'Space Grotesk Variable', sans-serif;
+}
+
+.visual-compatibility h1,
+.visual-compatibility h2,
+.visual-compatibility h3 {
+  text-wrap: balance;
+}
+
+.visual-compatibility__kicker {
+  color: var(--visual-cyan);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.69rem;
+  letter-spacing: 0.14em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+
+.visual-compatibility__hero {
+  display: grid;
+  width: var(--visual-frame);
+  min-height: 100svh;
+  margin-inline: auto;
+  padding-block: clamp(8rem, 15vh, 12rem) clamp(4rem, 8vh, 7rem);
+  grid-template-columns: minmax(0, 1.35fr) minmax(20rem, 0.65fr);
+  gap: clamp(3rem, 8vw, 9rem);
+  align-items: end;
+}
+
+.visual-compatibility__hero-copy {
+  display: grid;
+  gap: 1.6rem;
+}
+
+.visual-compatibility__hero h1 {
+  max-width: 11ch;
+  font-size: clamp(4rem, 8vw, 9rem);
+  font-weight: 520;
+  letter-spacing: -0.07em;
+  line-height: 0.84;
+}
+
+.visual-compatibility__hero-copy > p:last-of-type {
+  max-width: 52rem;
+  color: var(--visual-muted);
+  font-size: clamp(1.05rem, 1.8vw, 1.45rem);
+  line-height: 1.7;
+}
+
+.visual-compatibility__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.visual-compatibility__actions a {
+  display: inline-flex;
+  min-height: 50px;
+  padding: 0.75rem 1.25rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  border: 1px solid var(--visual-line);
+  border-radius: 999px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.visual-compatibility__actions a:first-child {
+  border-color: var(--visual-cyan);
+  background: var(--visual-cyan);
+  color: #071014;
+}
+
+.visual-compatibility__metrics {
+  display: grid;
+  border-top: 1px solid var(--visual-line);
+}
+
+.visual-compatibility__metrics li {
+  display: grid;
+  padding-block: 1rem;
+  grid-template-columns: 5.5rem 1fr;
+  gap: 0.3rem 1rem;
+  border-bottom: 1px solid var(--visual-line);
+}
+
+.visual-compatibility__metrics strong {
+  grid-row: 1 / 3;
+  color: var(--visual-cyan);
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.visual-compatibility__metrics span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.visual-compatibility__metrics p {
+  color: var(--visual-muted);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.visual-compatibility__section {
+  width: var(--visual-frame);
+  margin-inline: auto;
+  padding-block: clamp(7rem, 12vw, 12rem);
+}
+
+.visual-compatibility__heading {
+  display: grid;
+  padding-top: 1.3rem;
+  grid-template-columns: minmax(8rem, 0.4fr) minmax(0, 1.6fr);
+  gap: 1.5rem;
+  border-top: 1px solid var(--visual-line);
+}
+
+.visual-compatibility__heading h2,
+.visual-compatibility__about h2 {
+  max-width: 15ch;
+  font-size: clamp(2.8rem, 6vw, 6.4rem);
+  font-weight: 520;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
+}
+
+.visual-compatibility__about {
+  display: grid;
+  grid-template-columns: minmax(20rem, 0.72fr) minmax(0, 1.28fr);
+  gap: clamp(3rem, 8vw, 9rem);
+  align-items: center;
+}
+
+.visual-compatibility__copy {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.visual-compatibility__copy > p:not(.visual-compatibility__kicker) {
+  color: var(--visual-muted);
+  line-height: 1.75;
+}
+
+.visual-compatibility .portfolio-carousel {
+  border-color: var(--visual-line);
+  background: var(--visual-raised);
+  box-shadow: 0 2rem 7rem rgba(0, 0, 0, 0.34);
+}
+
+.visual-compatibility .portfolio-carousel__media {
+  background: #061014;
+}
+
+.visual-compatibility__chapters {
+  display: grid;
+  margin-top: clamp(5rem, 9vw, 9rem);
+  gap: clamp(7rem, 12vw, 12rem);
+}
+
+.visual-compatibility__chapter {
+  display: grid;
+  min-width: 0;
+  grid-template-columns: minmax(20rem, 0.76fr) minmax(0, 1.24fr);
+  gap: clamp(2.5rem, 6vw, 7rem);
+  align-items: center;
+}
+
+.visual-compatibility__chapter[data-direction='media-first'] {
+  grid-template-columns: minmax(0, 1.24fr) minmax(20rem, 0.76fr);
+}
+
+.visual-compatibility__chapter[data-direction='media-first']
+  .visual-compatibility__chapter-copy {
+  order: 2;
+}
+
+.visual-compatibility__chapter-copy {
+  display: grid;
+  gap: 1.3rem;
+}
+
+.visual-compatibility__chapter h3,
+.visual-compatibility__projects h3 {
+  max-width: 14ch;
+  font-size: clamp(2.2rem, 4vw, 4.8rem);
+  font-weight: 520;
+  letter-spacing: -0.05em;
+  line-height: 0.96;
+}
+
+.visual-compatibility__company {
+  color: var(--visual-violet);
+}
+
+.visual-compatibility__chapter-copy > p:not(.visual-compatibility__kicker, .visual-compatibility__company),
+.visual-compatibility__projects article > div > p:not(.visual-compatibility__kicker),
+.visual-compatibility__capability-list article p {
+  color: var(--visual-muted);
+  line-height: 1.7;
+}
+
+.visual-compatibility__chapter dl,
+.visual-compatibility__projects dl {
+  display: grid;
+  border-top: 1px solid var(--visual-line);
+}
+
+.visual-compatibility__chapter dl > div,
+.visual-compatibility__projects dl > div {
+  display: grid;
+  padding-block: 0.85rem;
+  grid-template-columns: 7rem 1fr;
+  gap: 1rem;
+  border-bottom: 1px solid var(--visual-line);
+}
+
+.visual-compatibility dt {
+  color: var(--visual-cyan);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.visual-compatibility dd {
+  color: var(--visual-muted);
+  line-height: 1.65;
+}
+
+.visual-compatibility__chapter-copy > ul,
+.visual-compatibility__capability-list article > ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.visual-compatibility__chapter-copy > ul li,
+.visual-compatibility__capability-list article > ul:first-of-type li {
+  padding: 0.42rem 0.65rem;
+  border: 1px solid var(--visual-line);
+  border-radius: 999px;
+  color: var(--visual-muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.61rem;
+  text-transform: uppercase;
+}
+
+.visual-compatibility__projects {
+  display: grid;
+  margin-top: clamp(4rem, 8vw, 8rem);
+  gap: 2rem;
+}
+
+.visual-compatibility__projects article {
+  display: grid;
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  grid-template-columns: minmax(0, 1.05fr) minmax(20rem, 0.95fr);
+  gap: clamp(2rem, 5vw, 5rem);
+  align-items: center;
+  border: 1px solid var(--visual-line);
+  border-radius: 1.5rem;
+  background: var(--visual-surface);
+}
+
+.visual-compatibility__projects article > img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  border-radius: 1rem;
+  background: #061014;
+  object-fit: contain;
+}
+
+.visual-compatibility__projects article > div {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.visual-compatibility__capability-list {
+  display: grid;
+  margin-top: clamp(4rem, 8vw, 8rem);
+  border-top: 1px solid var(--visual-line);
+}
+
+.visual-compatibility__capability-list article {
+  display: grid;
+  padding-block: 2.5rem;
+  grid-template-columns: minmax(18rem, 0.85fr) minmax(0, 1fr) minmax(16rem, 0.65fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  border-bottom: 1px solid var(--visual-line);
+}
+
+.visual-compatibility__capability-list h3 {
+  margin-bottom: 0.7rem;
+  font-size: clamp(1.7rem, 3vw, 3rem);
+  font-weight: 520;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.visual-compatibility__capability-list article > ul:last-child {
+  display: grid;
+  align-content: start;
+}
+
+.visual-compatibility__capability-list a {
+  display: block;
+  padding-block: 0.55rem;
+  border-bottom: 1px solid var(--visual-line);
+  color: var(--visual-cyan);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+
+.visual-compatibility > .contact .contact__inner {
+  width: var(--visual-frame);
+}
+
+.visual-compatibility > .contact h2 {
+  font-family: 'Space Grotesk Variable', sans-serif;
+  font-weight: 520;
+  letter-spacing: -0.05em;
+}
+
+@media (max-width: 900px) {
+  .visual-compatibility__hero,
+  .visual-compatibility__about,
+  .visual-compatibility__chapter,
+  .visual-compatibility__chapter[data-direction='media-first'],
+  .visual-compatibility__projects article {
+    grid-template-columns: 1fr;
+  }
+
+  .visual-compatibility__chapter[data-direction='media-first']
+    .visual-compatibility__chapter-copy {
+    order: 0;
+  }
+
+  .visual-compatibility__metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .visual-compatibility__metrics li:nth-child(odd) {
+    border-right: 1px solid var(--visual-line);
+  }
+
+  .visual-compatibility__capability-list article {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .visual-compatibility__capability-list article > ul:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .visual-compatibility {
+    --visual-frame: calc(100% - 1.5rem);
+  }
+
+  .visual-compatibility__hero h1 {
+    font-size: clamp(3.4rem, 16vw, 5rem);
+  }
+
+  .visual-compatibility__actions,
+  .visual-compatibility__heading,
+  .visual-compatibility__metrics,
+  .visual-compatibility__capability-list article {
+    grid-template-columns: 1fr;
+  }
+
+  .visual-compatibility__actions {
+    display: grid;
+  }
+
+  .visual-compatibility__metrics li:nth-child(odd) {
+    border-right: 0;
+  }
+
+  .visual-compatibility__chapter dl > div,
+  .visual-compatibility__projects dl > div {
+    grid-template-columns: 1fr;
+  }
+
+  .visual-compatibility__capability-list article > ul:last-child {
+    grid-column: auto;
+  }
+}
+
+@media (forced-colors: active) {
+  .visual-compatibility,
+  .visual-compatibility__projects article {
+    background: Canvas;
+    color: CanvasText;
+  }
+}

@@ -1,51 +1,12 @@
-import { Fragment, useRef } from 'react'
+import { useRef } from 'react'
 import { AnimatePresence, m } from 'motion/react'
 import { SiteFooter } from './components/layout/SiteFooter'
 import { SiteHeader } from './components/layout/SiteHeader'
 import { MotionProvider } from './components/providers/MotionProvider'
-import { Metric } from './components/ui/Metric'
-import { getPortfolio, type PortfolioPage } from './data/portfolio'
-import type { PortfolioSection } from './data/types'
+import { getPortfolio } from './data/portfolio'
 import { usePortfolioRoute } from './hooks/usePortfolioRoute'
 import { SoftwarePortfolio } from './pages/SoftwarePortfolio'
-import { About } from './sections/About'
-import { Capabilities } from './sections/Capabilities'
-import { Contact } from './sections/Contact'
-import { Experience } from './sections/Experience'
-import { FeaturedWork } from './sections/FeaturedWork'
-import { Hero } from './sections/Hero'
-
-const renderSection = (section: PortfolioSection, page: PortfolioPage) => {
-  switch (section.kind) {
-    case 'hero':
-      return (
-        <div id={section.id}>
-          <Hero content={page.hero} />
-          <section aria-label="Selected outcomes" className="metrics-strip">
-            <div className="metrics-strip__inner">
-              {page.metrics.map((metric) => (
-                <Metric key={metric.label} metric={metric} />
-              ))}
-            </div>
-          </section>
-        </div>
-      )
-    case 'about':
-      return <About content={page.about} />
-    case 'experience':
-      return <Experience items={page.experience} />
-    case 'work':
-      return <FeaturedWork caseStudies={page.projects} />
-    case 'capabilities':
-      return (
-        <div id={section.id}>
-          <Capabilities groups={page.capabilities} />
-        </div>
-      )
-    case 'contact':
-      return <Contact content={page.contact} />
-  }
-}
+import { VisualCompatibilityPortfolio } from './pages/VisualCompatibilityPortfolio'
 
 function PortfolioShell() {
   const mainRef = useRef<HTMLElement>(null)
@@ -77,9 +38,7 @@ function PortfolioShell() {
             {mode === 'software' ? (
               <SoftwarePortfolio />
             ) : (
-              page.sections.map((section) => (
-                <Fragment key={section.id}>{renderSection(section, page)}</Fragment>
-              ))
+              <VisualCompatibilityPortfolio />
             )}
           </m.div>
         </AnimatePresence>
