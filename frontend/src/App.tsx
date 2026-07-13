@@ -6,7 +6,7 @@ import { MotionProvider } from './components/providers/MotionProvider'
 import { getPortfolio } from './data/portfolio'
 import { usePortfolioRoute } from './hooks/usePortfolioRoute'
 import { SoftwarePortfolio } from './pages/SoftwarePortfolio'
-import { VisualCompatibilityPortfolio } from './pages/VisualCompatibilityPortfolio'
+import { VisualPortfolio } from './pages/VisualPortfolio'
 
 function PortfolioShell() {
   const mainRef = useRef<HTMLElement>(null)
@@ -38,7 +38,7 @@ function PortfolioShell() {
             {mode === 'software' ? (
               <SoftwarePortfolio />
             ) : (
-              <VisualCompatibilityPortfolio />
+              <VisualPortfolio />
             )}
           </m.div>
         </AnimatePresence>

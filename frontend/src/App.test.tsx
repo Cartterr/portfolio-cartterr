@@ -80,14 +80,14 @@ describe('dual portfolio shell', () => {
     )
   })
 
-  it('keeps the Visual compatibility document content-aware and isolated from Software sections', () => {
+  it('keeps the complete Visual document content-aware and isolated from Software sections', () => {
     setPath('/visual/')
     render(<App />)
 
     const visual = getPortfolio('visual')
-    const page = document.querySelector<HTMLElement>('[data-visual-compatibility]')
+    const page = document.querySelector<HTMLElement>('[data-visual-portfolio]')
     expect(page).toBeInTheDocument()
-    expect(page).toHaveAttribute('data-presentation', 'visual-compatibility')
+    expect(page).toHaveAttribute('data-presentation', 'visual-computing')
     expect(page).not.toHaveClass('software-document')
     expect(page?.querySelector('.software-hero, .software-section')).not.toBeInTheDocument()
 
@@ -96,25 +96,25 @@ describe('dual portfolio shell', () => {
     expect(contactCta).toHaveAttribute('href', '#contact')
     expect(contactCta).not.toHaveAttribute('download')
 
-    const about = within(page!).getByRole('region', { name: 'Visual profile and practice gallery' })
+    const about = within(page!).getByRole('region', {
+      name: 'Visual profile field and practice gallery',
+    })
     expect(about.querySelectorAll('.portfolio-carousel__slide')).toHaveLength(
       visual.about.mediaIds.length,
     )
 
-    const experience = within(page!).getByTestId('visual-experience')
-    const chapters = within(experience).getAllByTestId('visual-experience-chapter')
-    expect(chapters).toHaveLength(visual.experience.length)
     visual.experience.forEach((story) => {
-      const chapter = within(experience).getByTestId(`visual-experience-${story.id}`)
-      expect(Number(chapter.dataset.mediaCount)).toBeGreaterThan(0)
+      const chapter = within(page!).getByTestId(`visual-laboratory-${story.id}`)
       expect(within(chapter).getByText(story.outcome)).toBeInTheDocument()
     })
     expect(within(page!).queryByText('0 of 0')).not.toBeInTheDocument()
 
-    expect(within(page!).getAllByTestId('visual-project')).toHaveLength(visual.projects.length)
-    expect(within(page!).getAllByTestId('visual-capability')).toHaveLength(
-      visual.capabilities.length,
+    expect(within(page!).getAllByTestId('visual-project-story')).toHaveLength(
+      visual.projects.length,
     )
+    visual.capabilities.forEach((capability) => {
+      expect(within(page!).getByRole('heading', { name: capability.title })).toBeInTheDocument()
+    })
     expect(within(page!).getByRole('heading', { name: visual.contact.heading })).toBeInTheDocument()
   })
 
