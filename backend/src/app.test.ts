@@ -438,6 +438,27 @@ describe('portfolio API', () => {
     })
   })
 
+  it.each([
+    ['/index.html', '/'],
+    ['/visual/index.html', '/visual'],
+  ])('redirects the build entry %s to its canonical document route', async (entryPath, canonicalPath) => {
+    await withTemporaryFrontendDist(async (frontendDist) => {
+      const visualDirectory = path.join(frontendDist, 'visual')
+      fs.mkdirSync(visualDirectory, { recursive: true })
+      fs.writeFileSync(path.join(frontendDist, 'index.html'), '<main>SOFTWARE_DOCUMENT</main>')
+      fs.writeFileSync(path.join(visualDirectory, 'index.html'), '<main>VISUAL_DOCUMENT</main>')
+
+      await withNodeEnvironment('production', async () => {
+        const response = await request(createApp({ frontendDist })).get(`${entryPath}?source=entry`)
+
+        expect(response.status).toBe(308)
+        expect(response.headers.location).toBe(`${canonicalPath}?source=entry`)
+        expect(response.text).not.toContain('SOFTWARE_DOCUMENT')
+        expect(response.text).not.toContain('VISUAL_DOCUMENT')
+      })
+    })
+  })
+
   it('gives the CV and social image one-day revalidation caching', async () => {
     await withTemporaryFrontendDist(async (frontendDist) => {
       fs.writeFileSync(path.join(frontendDist, 'Jose_Carter_CV_Eng.pdf'), 'test CV')

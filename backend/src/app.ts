@@ -173,6 +173,15 @@ export function createApp(options: CreateAppOptions = {}) {
   if (isProduction) {
     const frontendDist = options.frontendDist ?? path.join(__dirname, '../../frontend/dist')
 
+    const redirectPortfolioEntry = (canonicalPath: string): RequestHandler =>
+      (request, response) => {
+        const query = new URL(request.originalUrl, 'http://localhost').search
+        response.redirect(308, `${canonicalPath}${query}`)
+      }
+
+    app.get('/index.html', redirectPortfolioEntry('/'))
+    app.get('/visual/index.html', redirectPortfolioEntry('/visual'))
+
     app.use(
       express.static(frontendDist, {
         index: false,
