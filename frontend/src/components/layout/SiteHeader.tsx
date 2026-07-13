@@ -14,7 +14,7 @@ type SiteHeaderProps = {
 
 export function SiteHeader({ mode, navigateMode, navigation, roleLabel }: SiteHeaderProps) {
   const hrefs = useMemo(() => navigation.map(({ href }) => href), [navigation])
-  const { activeHref, progress } = useScrollSpy(hrefs)
+  const { activeHref, progress } = useScrollSpy(hrefs, mode)
 
   return (
     <header className="site-header">

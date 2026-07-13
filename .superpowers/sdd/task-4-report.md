@@ -40,3 +40,15 @@ Complete.
 
 Tasks 5 and 6 replace the compatibility-rendered Software and Visual section presentations. Task 4
 does not implement their final long-form content or Visual hero scene.
+
+## Review follow-up
+
+- RED: destination-scroll-spy regression failed because no observer owned the mounted Visual
+  `#work` node; Lenis eligibility regression failed because the stateful child input was remounted.
+- GREEN: `useScrollSpy` is now keyed to the route and waits for the matching keyed page tree before
+  observing its section nodes.
+- GREEN: the application subtree now stays in a permanent reconciliation slot while the root
+  `ReactLenis` controller mounts and unmounts as an independent sibling.
+- Focused coverage includes destination IntersectionObserver/current-nav behavior and preservation
+  of child DOM identity, state, and focus across Lenis eligibility changes.
+- Follow-up commit: `fix: stabilize portfolio navigation lifecycle`.

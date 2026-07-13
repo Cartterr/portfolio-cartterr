@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
@@ -6,6 +6,41 @@ import { getPortfolio } from './data/portfolio'
 
 const setPath = (path: string, state: unknown = {}) => {
   window.history.replaceState(state, '', path)
+}
+
+class IntersectionObserverMock {
+  static instances: IntersectionObserverMock[] = []
+
+  observed = new Set<Element>()
+  private readonly callback: IntersectionObserverCallback
+
+  constructor(callback: IntersectionObserverCallback) {
+    this.callback = callback
+    IntersectionObserverMock.instances.push(this)
+  }
+
+  disconnect() {
+    this.observed.clear()
+  }
+
+  observe(target: Element) {
+    this.observed.add(target)
+  }
+
+  emit(target: Element) {
+    this.callback(
+      [{ isIntersecting: true, intersectionRatio: 1, target } as IntersectionObserverEntry],
+      this as unknown as IntersectionObserver,
+    )
+  }
+
+  takeRecords() {
+    return []
+  }
+
+  unobserve(target: Element) {
+    this.observed.delete(target)
+  }
 }
 
 describe('dual portfolio shell', () => {
@@ -17,6 +52,8 @@ describe('dual portfolio shell', () => {
 
   afterEach(() => {
     vi.restoreAllMocks()
+    vi.unstubAllGlobals()
+    IntersectionObserverMock.instances = []
   })
 
   it('derives the visual identity from pathname before the first render', () => {
@@ -83,6 +120,30 @@ describe('dual portfolio shell', () => {
       visual.meta.description,
     )
     expect(screen.getByText('Visual portfolio loaded')).toHaveAttribute('aria-live', 'polite')
+  })
+
+  it('observes destination sections after the mode transition mounts them', async () => {
+    vi.stubGlobal('IntersectionObserver', IntersectionObserverMock)
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('link', { name: 'Visual' }))
+    await screen.findByText('Visual portfolio loaded')
+
+    const destinationWork = document.querySelector('[data-portfolio-page="visual"] #work')
+    expect(destinationWork).not.toBeNull()
+    const destinationObserver = IntersectionObserverMock.instances.find((observer) =>
+      observer.observed.has(destinationWork!),
+    )
+    expect(destinationObserver).toBeDefined()
+
+    act(() => destinationObserver?.emit(destinationWork!))
+
+    const primaryNavigation = screen.getByRole('navigation', { name: 'Primary navigation' })
+    expect(within(primaryNavigation).getByRole('link', { name: 'Work' })).toHaveAttribute(
+      'aria-current',
+      'location',
+    )
   })
 
   it('lets modified mode-link clicks retain normal browser-link behavior', () => {

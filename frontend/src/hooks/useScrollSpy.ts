@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-export function useScrollSpy(hrefs: string[]) {
+export function useScrollSpy(hrefs: string[], mountedPageKey: string) {
   const [activeHref, setActiveHref] = useState(hrefs[0] ?? '')
   const [progress, setProgress] = useState(0)
   const activeHrefRef = useRef(activeHref)
@@ -9,7 +9,7 @@ export function useScrollSpy(hrefs: string[]) {
 
   useEffect(() => {
     setActiveHref(hrefs[0] ?? '')
-  }, [hrefKey, hrefs])
+  }, [hrefKey, hrefs, mountedPageKey])
 
   useEffect(() => {
     if (!('IntersectionObserver' in window)) return undefined
@@ -25,13 +25,35 @@ export function useScrollSpy(hrefs: string[]) {
       },
       { rootMargin: '-30% 0px -55% 0px', threshold: [0.15, 0.4, 0.7] },
     )
+    let mountObserver: MutationObserver | null = null
 
-    for (const href of hrefs) {
-      const section = document.querySelector(href)
-      if (section) observer.observe(section)
+    const observeMountedPage = () => {
+      const page = document.querySelector(
+        `[data-portfolio-page="${mountedPageKey}"]`,
+      )
+      if (!page) return false
+
+      for (const href of hrefs) {
+        const section = page.querySelector(href)
+        if (section) observer.observe(section)
+      }
+      mountObserver?.disconnect()
+      return true
     }
-    return () => observer.disconnect()
-  }, [hrefKey, hrefs])
+
+    if (!observeMountedPage()) {
+      const main = document.getElementById('main')
+      if (main) {
+        mountObserver = new MutationObserver(observeMountedPage)
+        mountObserver.observe(main, { childList: true, subtree: true })
+      }
+    }
+
+    return () => {
+      mountObserver?.disconnect()
+      observer.disconnect()
+    }
+  }, [hrefKey, hrefs, mountedPageKey])
 
   useEffect(() => {
     let animationFrame = 0

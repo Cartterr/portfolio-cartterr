@@ -1,5 +1,5 @@
 import { ReactLenis } from 'lenis/react'
-import { useEffect, useState, type PropsWithChildren } from 'react'
+import { Fragment, useEffect, useState, type PropsWithChildren } from 'react'
 
 type SaveDataConnection = EventTarget & {
   saveData?: boolean
@@ -36,11 +36,14 @@ export function SmoothScrollProvider({ children }: PropsWithChildren) {
     }
   }, [])
 
-  if (!isEnabled) return children
-
   return (
-    <ReactLenis options={lenisOptions} root>
-      {children}
-    </ReactLenis>
+    <>
+      <Fragment key="application">{children}</Fragment>
+      {isEnabled ? (
+        <ReactLenis options={lenisOptions} root>
+          <span aria-hidden="true" data-lenis-controller hidden />
+        </ReactLenis>
+      ) : null}
+    </>
   )
 }
