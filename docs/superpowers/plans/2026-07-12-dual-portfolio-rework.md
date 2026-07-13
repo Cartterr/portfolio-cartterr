@@ -191,7 +191,7 @@ Use existing optimized main/thumbnail WebPs for the legacy entries so this resto
 
 Software order: Hero, personal About, seven-story Experience, six selected engineering projects, four capability groups, engineering Contact.
 
-Visual order: Visual hero, creative-technology profile, visual laboratories, minimum launch work (geoscience, parametric configurator, Newton's cradle), visual pipeline/capabilities, visual collaboration Contact. Add XR and `playful-balls` only when the capture and authorship audit passes.
+Visual order: Visual hero, creative-technology profile, visual laboratories, minimum launch work (geoscience, parametric configurator, cleared Drone Response spatial autonomy), visual pipeline/capabilities, visual collaboration Contact. Add XR and `playful-balls` only when the capture and authorship audit passes.
 
 Use the user's full name, real verified dates/outcomes/links already present in committed content, and no SIGGRAPH text.
 
@@ -416,7 +416,7 @@ Use existing native project surfaces and current screenshots from the audited re
 
 - [ ] **Step 4: Implement the complete Visual DOM page**
 
-Build the Visual hero, profile, laboratories, selected visual work, pipeline/capabilities, and mode-specific contact. Use geoscience, shelving configurator, and Newton's cradle as the minimum launch set; add XR/particle work only when cleared.
+Build the Visual hero, profile, laboratories, selected visual work, pipeline/capabilities, and mode-specific contact. Use geoscience, the shelving configurator, and cleared Drone Response spatial-autonomy evidence as the minimum launch set; add XR/particle work only when cleared.
 
 - [ ] **Step 5: Implement the terrain-lens hero scene**
 
@@ -549,4 +549,3 @@ Verify apex `/`, `/visual`, `/api/health`, both canonical/OG documents, represen
 - [ ] **Step 9: Final review and deployment commit record**
 
 Run a whole-branch review against the merge base, resolve every Critical/Important finding with tests, then record the deployed commit and production verification in the final handoff without committing secrets or transient deployment IDs.
-

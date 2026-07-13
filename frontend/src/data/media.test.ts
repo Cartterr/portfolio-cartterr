@@ -10,6 +10,16 @@ const countByStory = (entries: typeof legacyMedia) =>
   )
 
 describe('portfolio media manifest', () => {
+  it('uses the portfolio owner full name in creator rights attributions', () => {
+    const creatorAttributions = portfolioMedia
+      .map(({ rights }) => rights.owner)
+      .filter((owner) => owner.startsWith('José'))
+
+    expect(creatorAttributions.length).toBeGreaterThan(0)
+    expect(creatorAttributions.every((owner) => owner.startsWith('José Ernesto Carter Arriagada')))
+      .toBe(true)
+  })
+
   it('restores every legacy gallery entry to its original story', () => {
     expect(legacyMedia).toHaveLength(57)
     expect(countByStory(legacyMedia)).toEqual({

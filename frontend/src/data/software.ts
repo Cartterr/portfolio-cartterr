@@ -268,7 +268,7 @@ export const softwarePortfolio = {
   mode: 'software',
   path: '/',
   meta: {
-    title: 'José Carter — Software Engineer',
+    title: 'José Ernesto Carter Arriagada — Software Engineer',
     description:
       'Software engineering across reliable AI, data infrastructure, scientific computing, and autonomous systems.',
   },

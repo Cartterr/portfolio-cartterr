@@ -120,7 +120,7 @@ const legacyStory = (
     }
   })
 
-const profileMedia = legacyStory('profile', 'José Carter Arriagada', [
+const profileMedia = legacyStory('profile', 'José Ernesto Carter Arriagada', [
   {
     name: 'profile14',
     width: 800,
@@ -309,7 +309,7 @@ const flairMedia = legacyStory('flair', 'Flair', [
   },
 ])
 
-const notreDameMedia = legacyStory('notreDame', 'José Carter Arriagada / Drone Response', [
+const notreDameMedia = legacyStory('notreDame', 'José Ernesto Carter Arriagada / Drone Response', [
   {
     name: 'nd1',
     width: 1600,
@@ -483,7 +483,7 @@ const politiktokMedia = legacyStory('politiktok', 'Politiktok / Pontificia Unive
   },
 ])
 
-const teachingMedia = legacyStory('teaching', 'José Carter Arriagada / Pontificia Universidad Católica de Chile', [
+const teachingMedia = legacyStory('teaching', 'José Ernesto Carter Arriagada / Pontificia Universidad Católica de Chile', [
   {
     name: 'ayudante1',
     width: 1600,
@@ -526,7 +526,7 @@ const teachingMedia = legacyStory('teaching', 'José Carter Arriagada / Pontific
   },
 ])
 
-const geoscienceMedia = legacyStory('geoscience', 'José Carter Arriagada / Pontificia Universidad Católica de Chile', [
+const geoscienceMedia = legacyStory('geoscience', 'José Ernesto Carter Arriagada / Pontificia Universidad Católica de Chile', [
   {
     name: 'geoscience7',
     width: 1600,
@@ -666,7 +666,7 @@ export const visualMedia: PortfolioImageMedia[] = visualDefinitions.map((definit
     fit: 'contain',
     objectPosition: definition.objectPosition,
     rights: {
-      owner: 'José Carter Arriagada',
+      owner: 'José Ernesto Carter Arriagada',
       source: 'Cleared native Playwright capture from repisas-3d-quote-demo',
       clearance: 'cleared-project-capture',
     },

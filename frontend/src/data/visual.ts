@@ -182,7 +182,7 @@ export const visualPortfolio = {
   mode: 'visual',
   path: '/visual',
   meta: {
-    title: 'José Carter — VFX, 3D & Visual Computing',
+    title: 'José Ernesto Carter Arriagada — VFX, 3D & Visual Computing',
     description:
       'Visual computing across real-time 3D, scientific visualization, simulation, and spatial autonomy.',
   },

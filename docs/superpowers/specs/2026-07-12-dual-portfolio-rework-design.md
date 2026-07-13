@@ -213,7 +213,8 @@ The Visual mode is a complete page, not a themed hero followed by Software conte
 - Minimum launch set:
   - Marga-Marga 3D geoscience and simulation pipeline.
   - Parametric Three.js / React Three Fiber shelving configurator.
-  - Electron / Matter.js Newton's cradle desktop physics overlay.
+  - Drone Response spatial-autonomy and mission-planning work backed by cleared field and project
+    media.
 - Additional launch work when its capture and contribution audit pass:
   - Native OpenXR / D3D11 / Unreal experimentation from `xr-home-suite`, with original contributions
     separated explicitly from upstream samples.

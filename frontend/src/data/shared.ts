@@ -7,7 +7,7 @@ import type {
 } from './types'
 
 export const portfolioOwner = {
-  name: 'José Carter Arriagada',
+  name: 'José Ernesto Carter Arriagada',
   location: 'Santiago, Chile',
 } as const
 
