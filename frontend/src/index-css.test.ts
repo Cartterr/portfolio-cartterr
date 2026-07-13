@@ -76,11 +76,13 @@ describe('portfolio CSS accessibility contracts', () => {
     expect(getRule('.contact .eyebrow')).toContain('color: var(--copper-on-dark)')
   })
 
-  it('keeps the sticky header opaque without glass effects', () => {
-    const headerRule = getRule('.site-header')
-
-    expect(headerRule).toContain('background: var(--paper)')
-    expect(headerRule).not.toContain('color-mix')
-    expect(headerRule).not.toContain('backdrop-filter')
+  it('provides progressive liquid-glass navigation with readable fallbacks', () => {
+    expect(styles).toContain('--shell-canvas: #090909')
+    expect(styles).toContain("[data-portfolio-mode='visual']")
+    expect(styles).toContain('@supports')
+    expect(styles).toContain('backdrop-filter')
+    expect(styles).toContain('@media (forced-colors: active)')
+    expect(styles).toContain('@media (prefers-contrast: more)')
+    expect(getRule('.site-header__inner')).toContain('background: var(--glass-opaque)')
   })
 })

@@ -1,11 +1,12 @@
-import type { PortfolioLink } from '../../data/portfolio'
+import type { PortfolioLink, PortfolioMode } from '../../data/portfolio'
 
 type SiteFooterProps = {
   links: PortfolioLink[]
+  mode: PortfolioMode
   name: string
 }
 
-export function SiteFooter({ links, name }: SiteFooterProps) {
+export function SiteFooter({ links, mode, name }: SiteFooterProps) {
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
@@ -26,7 +27,7 @@ export function SiteFooter({ links, name }: SiteFooterProps) {
             </li>
           ))}
         </ul>
-        <p>Built with React and TypeScript.</p>
+        <p>{mode === 'software' ? 'Software portfolio' : 'Visual / 3D portfolio'}</p>
       </div>
     </footer>
   )
