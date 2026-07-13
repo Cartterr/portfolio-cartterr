@@ -45,6 +45,7 @@ try {
   const health = await fetch(`${baseUrl}/api/health`)
   const software = await fetch(`${baseUrl}/`)
   const visual = await fetch(`${baseUrl}/visual`)
+  const visualSocialImage = await fetch(`${baseUrl}/og-jose-carter-visual.png`)
   const visualSlash = await fetch(`${baseUrl}/visual/?source=smoke`, { redirect: 'manual' })
   const indexEntry = await fetch(`${baseUrl}/index.html`, { redirect: 'manual' })
   const missingAsset = await fetch(`${baseUrl}/assets/missing-abcdef123456.js`)
@@ -54,7 +55,15 @@ try {
   assert.equal(software.status, 200)
   assert.match(await software.text(), /Software Engineer for AI, Data & Autonomous Systems/)
   assert.equal(visual.status, 200)
-  assert.match(await visual.text(), /Visual Computing, Real-Time 3D & Simulation/)
+  const visualHtml = await visual.text()
+  assert.match(visualHtml, /Visual Computing, Real-Time 3D & Simulation/)
+  assert.match(visualHtml, /og-jose-carter-visual\.png/)
+  assert.equal(visualSocialImage.status, 200)
+  assert.equal(visualSocialImage.headers.get('content-type'), 'image/png')
+  assert.equal(
+    visualSocialImage.headers.get('cache-control'),
+    'public, max-age=86400, must-revalidate',
+  )
   assert.equal(visualSlash.status, 308)
   assert.equal(visualSlash.headers.get('location'), '/visual?source=smoke')
   assert.equal(indexEntry.status, 308)

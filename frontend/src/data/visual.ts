@@ -187,7 +187,7 @@ export const visualPortfolio = {
       'José Carter builds real-time 3D tools, scientific visualization, simulation, and spatial computing systems.',
     canonical: 'https://josecarter.dev/visual',
     themeColor: '#11100f',
-    socialImage: 'https://josecarter.dev/og-jose-carter.png',
+    socialImage: 'https://josecarter.dev/og-jose-carter-visual.png',
     socialImageAlt:
       "José Carter's visual computing portfolio for real-time 3D, simulation, and spatial systems",
     twitterCard: 'summary_large_image',

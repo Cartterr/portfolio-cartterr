@@ -204,7 +204,10 @@ export function createApp(options: CreateAppOptions = {}) {
             return
           }
 
-          if (/\.pdf$/i.test(filePath) || path.basename(filePath) === 'og-jose-carter.png') {
+          if (
+            /\.pdf$/i.test(filePath) ||
+            /^og-jose-carter(?:-visual)?\.png$/i.test(path.basename(filePath))
+          ) {
             response.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate')
             return
           }

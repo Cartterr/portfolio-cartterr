@@ -16,7 +16,7 @@ function tags(html, tagName) {
 }
 
 function attribute(tag, name) {
-  return tag.match(new RegExp(`\\b${name}=["']([^"']+)["']`, 'i'))?.[1]
+  return tag.match(new RegExp(`\\b${name}=(["'])(.*?)\\1`, 'i'))?.[2]
 }
 
 function singleMeta(html, attributeName, attributeValue) {
@@ -90,6 +90,9 @@ test('Visual route metadata and structured data describe only the Visual portfol
   const expectedTitle = 'José Carter — Visual Computing, Real-Time 3D & Simulation'
   const expectedDescription =
     'José Carter builds real-time 3D tools, scientific visualization, simulation, and spatial computing systems.'
+  const expectedSocialImage = 'https://josecarter.dev/og-jose-carter-visual.png'
+  const expectedSocialImageAlt =
+    "José Carter's visual computing portfolio for real-time 3D, simulation, and spatial systems"
   const canonicalLinks = tags(html, 'link').filter(
     (tag) => attribute(tag, 'rel') === 'canonical',
   )
@@ -106,11 +109,31 @@ test('Visual route metadata and structured data describe only the Visual portfol
   assert.equal(attribute(singleMeta(html, 'property', 'og:url'), 'content'), 'https://josecarter.dev/visual')
   assert.equal(
     attribute(singleMeta(html, 'property', 'og:image'), 'content'),
-    'https://josecarter.dev/og-jose-carter.png',
+    expectedSocialImage,
+  )
+  assert.equal(
+    attribute(singleMeta(html, 'property', 'og:image:secure_url'), 'content'),
+    expectedSocialImage,
+  )
+  assert.equal(
+    attribute(singleMeta(html, 'property', 'og:image:alt'), 'content'),
+    expectedSocialImageAlt,
   )
   assert.equal(attribute(singleMeta(html, 'property', 'og:image:width'), 'content'), '1200')
   assert.equal(attribute(singleMeta(html, 'property', 'og:image:height'), 'content'), '630')
   assert.equal(attribute(singleMeta(html, 'name', 'twitter:card'), 'content'), 'summary_large_image')
+  assert.equal(attribute(singleMeta(html, 'name', 'twitter:image'), 'content'), expectedSocialImage)
+  assert.equal(
+    attribute(singleMeta(html, 'name', 'twitter:image:alt'), 'content'),
+    expectedSocialImageAlt,
+  )
+
+  const socialImage = readFileSync(
+    fromRoot('frontend', 'public', 'og-jose-carter-visual.png'),
+  )
+  assert.equal(socialImage.toString('ascii', 1, 4), 'PNG')
+  assert.equal(socialImage.readUInt32BE(16), 1200)
+  assert.equal(socialImage.readUInt32BE(20), 630)
 
   const scripts = [
     ...html.matchAll(/<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi),

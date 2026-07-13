@@ -478,18 +478,26 @@ describe('portfolio API', () => {
     })
   })
 
-  it('gives the CV and social image one-day revalidation caching', async () => {
+  it('gives the CV and both social images one-day revalidation caching', async () => {
     await withTemporaryFrontendDist(async (frontendDist) => {
       fs.writeFileSync(path.join(frontendDist, 'Jose_Carter_CV_Eng.pdf'), 'test CV')
       fs.writeFileSync(path.join(frontendDist, 'og-jose-carter.png'), 'test social image')
+      fs.writeFileSync(
+        path.join(frontendDist, 'og-jose-carter-visual.png'),
+        'test visual social image',
+      )
 
       await withNodeEnvironment('production', async () => {
         const app = createApp({ frontendDist })
         const cv = await request(app).get('/Jose_Carter_CV_Eng.pdf')
         const socialImage = await request(app).get('/og-jose-carter.png')
+        const visualSocialImage = await request(app).get('/og-jose-carter-visual.png')
 
         expect(cv.headers['cache-control']).toBe('public, max-age=86400, must-revalidate')
         expect(socialImage.headers['cache-control']).toBe(
+          'public, max-age=86400, must-revalidate',
+        )
+        expect(visualSocialImage.headers['cache-control']).toBe(
           'public, max-age=86400, must-revalidate',
         )
       })

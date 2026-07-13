@@ -203,6 +203,14 @@ describe('dual portfolio shell', () => {
       'content',
       visual.meta.canonical,
     )
+    expect(document.querySelector('meta[property="og:image"]')).toHaveAttribute(
+      'content',
+      visual.meta.socialImage,
+    )
+    expect(document.querySelector('meta[property="og:image:alt"]')).toHaveAttribute(
+      'content',
+      visual.meta.socialImageAlt,
+    )
     expect(document.querySelector('meta[name="twitter:card"]')).toHaveAttribute(
       'content',
       visual.meta.twitterCard,
@@ -210,6 +218,14 @@ describe('dual portfolio shell', () => {
     expect(document.querySelector('meta[name="twitter:title"]')).toHaveAttribute(
       'content',
       visual.meta.title,
+    )
+    expect(document.querySelector('meta[name="twitter:image"]')).toHaveAttribute(
+      'content',
+      visual.meta.socialImage,
+    )
+    expect(document.querySelector('meta[name="twitter:image:alt"]')).toHaveAttribute(
+      'content',
+      visual.meta.socialImageAlt,
     )
     const structuredData = JSON.parse(
       document.querySelector<HTMLScriptElement>('script[type="application/ld+json"]')?.textContent ??
