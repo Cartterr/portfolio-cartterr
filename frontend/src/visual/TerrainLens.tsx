@@ -11,6 +11,7 @@ import {
 
 type TerrainLensProps = {
   quality: 'low' | 'full'
+  scrollProgress: number
 }
 
 function buildTerrainGeometry(quality: TerrainLensProps['quality']) {
@@ -47,21 +48,26 @@ function buildTerrainGeometry(quality: TerrainLensProps['quality']) {
   return geometry
 }
 
-export function TerrainLens({ quality }: TerrainLensProps) {
+export function TerrainLens({ quality, scrollProgress }: TerrainLensProps) {
   const groupRef = useRef<Group>(null)
   const lensRef = useRef<Mesh>(null)
   const geometry = useMemo(() => buildTerrainGeometry(quality), [quality])
 
   useEffect(() => () => geometry.dispose(), [geometry])
 
-  useFrame(({ pointer }, delta) => {
+  useFrame(({ clock, pointer }, delta) => {
+    const entrance = Math.min(1, clock.getElapsedTime() / 1.4)
     if (groupRef.current) {
-      const target = pointer.x * 0.045
+      const target = pointer.x * 0.045 + scrollProgress * 0.08 - (1 - entrance) * 0.06
       groupRef.current.rotation.y += (target - groupRef.current.rotation.y) * Math.min(1, delta * 2)
     }
     if (lensRef.current) {
-      lensRef.current.rotation.x += delta * 0.045
-      lensRef.current.rotation.y += delta * 0.07
+      const targetX = 0.22 + scrollProgress * 0.16 - pointer.y * 0.035
+      const targetY = 0.36 + scrollProgress * 0.22 + pointer.x * 0.04
+      lensRef.current.rotation.x +=
+        (targetX - lensRef.current.rotation.x) * Math.min(1, delta * 2.2)
+      lensRef.current.rotation.y +=
+        (targetY - lensRef.current.rotation.y) * Math.min(1, delta * 2.2)
     }
   })
 

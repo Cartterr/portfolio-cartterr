@@ -181,6 +181,13 @@ export function createApp(options: CreateAppOptions = {}) {
 
     app.get('/index.html', redirectPortfolioEntry('/'))
     app.get('/visual/index.html', redirectPortfolioEntry('/visual'))
+    app.use((request, response, next) => {
+      if (request.path !== '/visual/') {
+        next()
+        return
+      }
+      redirectPortfolioEntry('/visual')(request, response, next)
+    })
 
     app.use(
       express.static(frontendDist, {
@@ -214,7 +221,7 @@ export function createApp(options: CreateAppOptions = {}) {
       }
 
     app.get('/', sendPortfolioDocument('index.html'))
-    app.get(['/visual', '/visual/'], sendPortfolioDocument(path.join('visual', 'index.html')))
+    app.get('/visual', sendPortfolioDocument(path.join('visual', 'index.html')))
 
     app.get('*', (request, response) => {
       response.setHeader('Cache-Control', 'no-store')
@@ -235,7 +242,7 @@ export function createApp(options: CreateAppOptions = {}) {
     <main>
       <h1>Page not found</h1>
       <p>The page you requested does not exist.</p>
-      <p><a href="/">Software portfolio</a> · <a href="/visual/">Visual portfolio</a></p>
+      <p><a href="/">Software portfolio</a> · <a href="/visual">Visual portfolio</a></p>
     </main>
   </body>
 </html>`)

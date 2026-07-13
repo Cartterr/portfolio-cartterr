@@ -4,6 +4,7 @@ import { Color, type Points } from 'three'
 
 type SpectralFieldProps = {
   quality: 'low' | 'full'
+  scrollProgress: number
 }
 
 function buildSpectralPoints(count: number) {
@@ -38,18 +39,22 @@ function buildSpectralPoints(count: number) {
   return { colors, positions }
 }
 
-export function SpectralField({ quality }: SpectralFieldProps) {
+export function SpectralField({ quality, scrollProgress }: SpectralFieldProps) {
   const pointsRef = useRef<Points>(null)
   const pointData = useMemo(
     () => buildSpectralPoints(quality === 'full' ? 160 : 72),
     [quality],
   )
 
-  useFrame(({ pointer }, delta) => {
+  useFrame(({ clock, pointer }, delta) => {
     if (!pointsRef.current) return
-    pointsRef.current.rotation.z += delta * 0.012
+    const entrance = Math.min(1, clock.getElapsedTime() / 1.4)
+    const targetZ = scrollProgress * 0.18 + pointer.x * 0.018 - (1 - entrance) * 0.1
+    pointsRef.current.rotation.z +=
+      (targetZ - pointsRef.current.rotation.z) * Math.min(1, delta * 1.7)
     pointsRef.current.rotation.x +=
-      (pointer.y * 0.025 - pointsRef.current.rotation.x) * Math.min(1, delta * 1.5)
+      (pointer.y * 0.025 + scrollProgress * 0.035 - pointsRef.current.rotation.x) *
+      Math.min(1, delta * 1.5)
   })
 
   return (

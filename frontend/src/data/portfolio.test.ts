@@ -5,14 +5,14 @@ import { portfolioMedia } from './media'
 const sectionOrder = ['hero', 'about', 'experience', 'work', 'capabilities', 'contact']
 
 describe('dual portfolio content', () => {
-  it('uses the portfolio owner full name in both modes', () => {
+  it('uses the portfolio owner full name in content and concise route-aligned metadata', () => {
     expect([softwarePortfolio.hero.name, visualPortfolio.hero.name]).toEqual([
       'José Ernesto Carter Arriagada',
       'José Ernesto Carter Arriagada',
     ])
     expect([softwarePortfolio.meta.title, visualPortfolio.meta.title]).toEqual([
-      'José Ernesto Carter Arriagada — Software Engineer',
-      'José Ernesto Carter Arriagada — VFX, 3D & Visual Computing',
+      'José Carter — Software Engineer for AI, Data & Autonomous Systems',
+      'José Carter — Visual Computing, Real-Time 3D & Simulation',
     ])
   })
 

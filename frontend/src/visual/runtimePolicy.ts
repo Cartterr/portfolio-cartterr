@@ -28,6 +28,23 @@ const SCHEDULER_TOLERANCE_SECONDS = 0.004
 const LONG_FRAME_SECONDS = 0.25
 const SUSTAINED_LONG_FRAME_COUNT = 2
 
+export function calculateHeroScrollProgress(
+  top: number,
+  height: number,
+  viewportHeight: number,
+) {
+  const firstSegment = Math.max(1, height, viewportHeight * 0.8)
+  return Math.max(0, Math.min(1, -top / firstSegment))
+}
+
+export function shouldTickScene(
+  nearViewport: boolean,
+  documentVisible: boolean,
+  motionWindowActive: boolean,
+) {
+  return nearViewport && documentVisible && motionWindowActive
+}
+
 export function evaluateRuntimeStall(
   state: RuntimeStallState,
   deltaSeconds: number,

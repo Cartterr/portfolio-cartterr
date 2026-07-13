@@ -38,13 +38,14 @@ export function PortfolioCarousel({
 }: PortfolioCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0)
   const [announcement, setAnnouncement] = useState('')
-  const [autoplayStopped, setAutoplayStopped] = useState(prefersReducedMotion)
+  const [autoplayStopped, setAutoplayStopped] = useState(false)
+  const [motionReduced, setMotionReduced] = useState(prefersReducedMotion)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const expandButtonRef = useRef<HTMLButtonElement>(null)
   const pointerSelectionPendingRef = useRef(false)
-  const [nearViewportRef, isNearViewport] = useNearViewport<HTMLDivElement>()
+  const [nearViewportRef, hasActivated, isNearViewport] = useNearViewport<HTMLDivElement>()
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: media.length > 1, duration: 28 },
+    { active: hasActivated, loop: media.length > 1, duration: 28 },
     [Fade()],
   )
   const total = media.length
@@ -98,7 +99,14 @@ export function PortfolioCarousel({
   }, [emblaApi, total])
 
   useEffect(() => {
-    if (!autoplayMs || autoplayMs <= 0 || autoplayStopped || !isNearViewport || total < 2) {
+    if (
+      !autoplayMs ||
+      autoplayMs <= 0 ||
+      autoplayStopped ||
+      motionReduced ||
+      !isNearViewport ||
+      total < 2
+    ) {
       return
     }
     const timer = window.setInterval(() => {
@@ -109,12 +117,13 @@ export function PortfolioCarousel({
       })
     }, autoplayMs)
     return () => window.clearInterval(timer)
-  }, [autoplayMs, autoplayStopped, emblaApi, isNearViewport, total])
+  }, [autoplayMs, autoplayStopped, emblaApi, isNearViewport, motionReduced, total])
 
   useEffect(() => {
     if (typeof window.matchMedia !== 'function') return
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     const handleMotionPreference = (event: MediaQueryListEvent) => {
+      setMotionReduced(event.matches)
       if (event.matches) stopAutoplay()
     }
     mediaQuery.addEventListener('change', handleMotionPreference)
@@ -153,10 +162,13 @@ export function PortfolioCarousel({
       data-autoplay-ms={autoplayMs}
       data-featured={featured || undefined}
       id={id}
-      onFocusCapture={stopAutoplay}
+      onFocusCapture={(event) => {
+        if (!(event.target as HTMLElement).closest('[data-autoplay-control]')) stopAutoplay()
+      }}
       onKeyDown={handleKeyDown}
       onMouseEnter={stopAutoplay}
-      onPointerDown={() => {
+      onPointerDown={(event) => {
+        if ((event.target as HTMLElement).closest('[data-autoplay-control]')) return
         pointerSelectionPendingRef.current = true
         stopAutoplay()
       }}
@@ -230,6 +242,18 @@ export function PortfolioCarousel({
         <span aria-live="polite" aria-atomic="true" className="sr-only" role="status">
           {announcement}
         </span>
+        {autoplayMs && autoplayMs > 0 && total > 1 && !motionReduced ? (
+          <button
+            aria-label={autoplayStopped ? 'Play slideshow' : 'Pause slideshow'}
+            className="portfolio-carousel__autoplay"
+            data-autoplay-control="true"
+            onClick={() => setAutoplayStopped((stopped) => !stopped)}
+            type="button"
+          >
+            <span aria-hidden="true">{autoplayStopped ? '▶' : 'Ⅱ'}</span>
+            <span>{autoplayStopped ? 'Play' : 'Pause'}</span>
+          </button>
+        ) : null}
         </div>
 
         {total > 1 ? (

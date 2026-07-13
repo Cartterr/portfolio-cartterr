@@ -17,7 +17,9 @@ import { TerrainLens } from './TerrainLens'
 import {
   evaluateRuntimeStall,
   evaluateRuntimeWindow,
+  calculateHeroScrollProgress,
   selectSceneVisibilityPolicy,
+  shouldTickScene,
   type RuntimeStallState,
   type RuntimeWindowState,
 } from './runtimePolicy'
@@ -33,6 +35,10 @@ type SceneErrorBoundaryProps = {
 type SceneErrorBoundaryState = {
   failed: boolean
 }
+
+const ENTRANCE_MOTION_MS = 1800
+const INTERACTION_MOTION_MS = 520
+const SCROLL_MOTION_MS = 420
 
 class SceneErrorBoundary extends Component<SceneErrorBoundaryProps, SceneErrorBoundaryState> {
   state = { failed: false }
@@ -84,6 +90,7 @@ function RuntimeGovernor({
     stall: { consecutiveLongFrames: 0 } satisfies RuntimeStallState,
     window: { slowWindows: 0 } satisfies RuntimeWindowState,
   })
+  const skipResumeFrameRef = useRef(false)
 
   useEffect(() => {
     sampleRef.current = {
@@ -92,10 +99,18 @@ function RuntimeGovernor({
       stall: { consecutiveLongFrames: 0 },
       window: { slowWindows: 0 },
     }
-  }, [active, capability, targetFps])
+  }, [capability, targetFps])
+
+  useEffect(() => {
+    if (active) skipResumeFrameRef.current = true
+  }, [active])
 
   useFrame((_state, delta) => {
     if (!active) return
+    if (skipResumeFrameRef.current) {
+      skipResumeFrameRef.current = false
+      return
+    }
     const sample = sampleRef.current
     const stallEvaluation = evaluateRuntimeStall(sample.stall, delta)
     sample.stall = stallEvaluation.state
@@ -128,9 +143,10 @@ function RuntimeGovernor({
   return null
 }
 
-function SceneContents({ active, capability, interactive }: VisualHeroSceneProps & {
+function SceneContents({ active, capability, interactive, scrollProgress }: VisualHeroSceneProps & {
   active: boolean
   interactive: boolean
+  scrollProgress: number
 }) {
   const fps = capability === 'full' ? (interactive ? 45 : 28) : interactive ? 26 : 18
 
@@ -141,8 +157,8 @@ function SceneContents({ active, capability, interactive }: VisualHeroSceneProps
       <ambientLight intensity={0.7} />
       <directionalLight color="#9ff5f3" intensity={2.3} position={[2.8, 4.2, 4]} />
       <pointLight color="#9f7cff" intensity={14} position={[-3, 0.8, 2.2]} />
-      <TerrainLens quality={capability} />
-      <SpectralField quality={capability} />
+      <TerrainLens quality={capability} scrollProgress={scrollProgress} />
+      <SpectralField quality={capability} scrollProgress={scrollProgress} />
       <DemandTicker active={active} fps={fps} />
       <RuntimeGovernor active={active} capability={capability} targetFps={fps} />
     </>
@@ -159,7 +175,20 @@ export default function VisualHeroScene({ capability }: VisualHeroSceneProps) {
     typeof document === 'undefined' ? false : document.visibilityState !== 'hidden',
   )
   const [interactive, setInteractive] = useState(false)
-  const active = nearViewport && documentVisible
+  const [motionWindowActive, setMotionWindowActive] = useState(true)
+  const [scrollProgress, setScrollProgress] = useState(0)
+  const motionTimerRef = useRef(0)
+  const visible = nearViewport && documentVisible
+  const active = shouldTickScene(nearViewport, documentVisible, motionWindowActive)
+
+  const activateMotionWindow = useCallback((duration = INTERACTION_MOTION_MS) => {
+    setMotionWindowActive(true)
+    if (motionTimerRef.current) window.clearTimeout(motionTimerRef.current)
+    motionTimerRef.current = window.setTimeout(() => {
+      motionTimerRef.current = 0
+      setMotionWindowActive(false)
+    }, duration)
+  }, [])
 
   useEffect(() => {
     const element = containerRef.current
@@ -178,6 +207,51 @@ export default function VisualHeroScene({ capability }: VisualHeroSceneProps) {
   }, [visibilityPolicy])
 
   useEffect(() => {
+    if (visible) {
+      activateMotionWindow(ENTRANCE_MOTION_MS)
+      return
+    }
+    if (motionTimerRef.current) window.clearTimeout(motionTimerRef.current)
+    motionTimerRef.current = 0
+    setMotionWindowActive(false)
+  }, [activateMotionWindow, visible])
+
+  useEffect(
+    () => () => {
+      if (motionTimerRef.current) window.clearTimeout(motionTimerRef.current)
+    },
+    [],
+  )
+
+  useEffect(() => {
+    const element = containerRef.current
+    if (!element || !visible) return
+
+    let frame = 0
+    const updateProgress = () => {
+      frame = 0
+      const bounds = element.getBoundingClientRect()
+      setScrollProgress(
+        calculateHeroScrollProgress(bounds.top, bounds.height, window.innerHeight),
+      )
+    }
+    const handleScroll = () => {
+      if (frame) return
+      frame = window.requestAnimationFrame(() => {
+        updateProgress()
+        activateMotionWindow(SCROLL_MOTION_MS)
+      })
+    }
+
+    updateProgress()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (frame) window.cancelAnimationFrame(frame)
+    }
+  }, [activateMotionWindow, visible])
+
+  useEffect(() => {
     const handleVisibilityChange = () => setDocumentVisible(document.visibilityState !== 'hidden')
     document.addEventListener('visibilitychange', handleVisibilityChange)
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
@@ -194,10 +268,17 @@ export default function VisualHeroScene({ capability }: VisualHeroSceneProps) {
       className="visual-hero-scene"
       data-dpr-max="1.5"
       data-quality={capability}
-      data-rendering={active ? 'active' : 'paused'}
+      data-rendering={active ? 'active' : visible ? 'idle' : 'paused'}
       data-testid="visual-hero-scene"
-      onPointerEnter={() => setInteractive(true)}
-      onPointerLeave={() => setInteractive(false)}
+      onPointerEnter={() => {
+        setInteractive(true)
+        activateMotionWindow()
+      }}
+      onPointerLeave={() => {
+        setInteractive(false)
+        activateMotionWindow()
+      }}
+      onPointerMove={() => activateMotionWindow()}
       ref={containerRef}
     >
       <SceneErrorBoundary>
@@ -215,7 +296,12 @@ export default function VisualHeroScene({ capability }: VisualHeroSceneProps) {
             gl.domElement.addEventListener('webglcontextlost', handleContextLost, { once: true })
           }}
         >
-          <SceneContents active={active} capability={capability} interactive={interactive} />
+          <SceneContents
+            active={active}
+            capability={capability}
+            interactive={interactive}
+            scrollProgress={scrollProgress}
+          />
         </Canvas>
       </SceneErrorBoundary>
     </div>

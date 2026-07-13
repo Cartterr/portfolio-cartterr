@@ -56,6 +56,11 @@ describe('VisualPortfolio', () => {
     expect(within(page).getByRole('heading', { level: 2, name: /selected visual work/i })).toBeInTheDocument()
     expect(within(page).getByRole('heading', { level: 2, name: /pipeline/i })).toBeInTheDocument()
     expect(within(page).getByRole('heading', { name: visualPortfolio.contact.heading })).toBeInTheDocument()
+    expect(within(page).getByRole('link', { name: 'Download CV' })).toHaveAttribute(
+      'href',
+      '/Jose_Carter_CV_Eng.pdf',
+    )
+    expect(within(page).getByRole('link', { name: 'Download CV' })).toHaveAttribute('download')
   })
 
   it('shows three cleared project stories as contextual single-image carousels', () => {

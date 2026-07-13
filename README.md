@@ -16,7 +16,8 @@ portfolio-cartterr/
 The production server serves the compiled frontend and the same-origin API from one process. The public endpoints are:
 
 - `GET /` — Software portfolio
-- `GET /visual` or `GET /visual/` — Visual portfolio
+- `GET /visual` — Visual portfolio
+- `GET /visual/` — permanent redirect to `/visual`
 - `GET /api/health`
 - `POST /api/contact`
 
@@ -61,14 +62,14 @@ npm run build
 npm run start
 ```
 
-Backend tests cover API validation, proxy-aware rate limiting, safe parser failures, canonical-host behavior, and cache headers. Frontend tests cover the content contract, navigation, responsive structure, and accessible contact states. The root contract test checks metadata, Railway configuration, package-manager authority, and production cleanup.
+Backend tests cover API validation, IPv6-aware proxy rate limiting, safe parser failures, canonical-host behavior, and cache headers. Frontend tests cover the content contract, navigation, responsive structure, and accessible contact states. The root test also builds the backend and runs a compiled production HTTP smoke across both documents, redirects, health, and real asset `404`s.
 
 ## Railway deployment
 
 The production architecture is a single GitHub-connected Railway service:
 
 ```text
-GitHub main → Railway Nixpacks → npm run build → npm run start
+GitHub or Railway CLI → Railway Railpack → npm run build → npm run start
 ```
 
 Railway activates a deployment only after `GET /api/health` succeeds within the configured health-check window. The canonical site is `https://josecarter.dev/`; `www.josecarter.dev` is expected to resolve to the same service and receives a permanent redirect to the apex domain after DNS ownership and certificate validation complete.

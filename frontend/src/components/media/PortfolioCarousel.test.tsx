@@ -56,6 +56,14 @@ const activateGallery = () => {
   })
 }
 
+const moveGalleryOffscreen = () => {
+  act(() => {
+    for (const callback of intersectionCallbacks) {
+      callback([{ isIntersecting: false } as IntersectionObserverEntry])
+    }
+  })
+}
+
 const mainImage = (galleryId: string, number: number) => {
   const slide = document.getElementById(`${galleryId}-slide-${number}`)
   const image = slide?.querySelector('img')
@@ -171,6 +179,17 @@ describe('PortfolioCarousel', () => {
     expect(mainImage('load', 5)).not.toHaveAttribute('src')
   })
 
+  it('keeps the carousel engine dormant until the gallery is near the viewport', () => {
+    render(<PortfolioCarousel id="dormant" label="Dormant gallery" media={media} />)
+    const firstSlide = document.getElementById('dormant-slide-1')!
+
+    expect(firstSlide).not.toHaveAttribute('style')
+
+    activateGallery()
+
+    expect(firstSlide).toHaveStyle({ transform: 'translateX(0px)' })
+  })
+
   it('does not autoplay when reduced motion is requested', () => {
     vi.useFakeTimers()
     reducedMotion = true
@@ -187,6 +206,64 @@ describe('PortfolioCarousel', () => {
     act(() => vi.advanceTimersByTime(500))
 
     expect(screen.getByText('1 of 3')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /slideshow/i })).not.toBeInTheDocument()
+  })
+
+  it('offers a visible Pause and Play control for autoplay', () => {
+    vi.useFakeTimers()
+    render(
+      <PortfolioCarousel
+        id="controlled-auto"
+        label="Controlled autoplay gallery"
+        media={media.slice(0, 3)}
+        autoplayMs={100}
+      />,
+    )
+    activateGallery()
+
+    const pause = screen.getByRole('button', { name: 'Pause slideshow' })
+    fireEvent.pointerDown(pause)
+    fireEvent.click(pause)
+    expect(screen.getByRole('button', { name: 'Play slideshow' })).toBeInTheDocument()
+
+    act(() => vi.advanceTimersByTime(500))
+    expect(screen.getByText('1 of 3')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Play slideshow' }))
+    expect(screen.getByRole('button', { name: 'Pause slideshow' })).toBeInTheDocument()
+    act(() => vi.advanceTimersByTime(100))
+    expect(screen.getByText('2 of 3')).toBeInTheDocument()
+  })
+
+  it('keeps its initialized engine but pauses autoplay and sources while offscreen', () => {
+    vi.useFakeTimers()
+    render(
+      <PortfolioCarousel
+        id="offscreen-auto"
+        label="Offscreen autoplay gallery"
+        media={media.slice(0, 3)}
+        autoplayMs={100}
+      />,
+    )
+    activateGallery()
+
+    act(() => vi.advanceTimersByTime(100))
+    expect(screen.getByText('2 of 3')).toBeInTheDocument()
+    const firstSlide = document.getElementById('offscreen-auto-slide-1')!
+    expect(firstSlide).toHaveStyle({ transform: 'translateX(0px)' })
+
+    moveGalleryOffscreen()
+    for (let number = 1; number <= 3; number += 1) {
+      expect(mainImage('offscreen-auto', number)).not.toHaveAttribute('src')
+    }
+    expect(firstSlide).toHaveStyle({ transform: 'translateX(0px)' })
+
+    act(() => vi.advanceTimersByTime(500))
+    expect(screen.getByText('2 of 3')).toBeInTheDocument()
+
+    activateGallery()
+    act(() => vi.advanceTimersByTime(100))
+    expect(screen.getByText('3 of 3')).toBeInTheDocument()
   })
 
   it('keeps autoplay changes out of the live region and stops permanently on focus', () => {

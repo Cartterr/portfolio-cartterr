@@ -9,7 +9,7 @@
   --software-surface-raised: #181613;
   --software-paper: #f8f5ec;
   --software-muted: #aaa49b;
-  --software-faint: #736f68;
+  --software-faint: #948f86;
   --software-line: rgba(255, 246, 232, 0.14);
   --software-line-strong: rgba(255, 246, 232, 0.28);
   --software-orange: #f2a066;
@@ -256,6 +256,8 @@
 
 .software-about {
   display: grid;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1100px;
   grid-template-columns: minmax(0, 1.18fr) minmax(22rem, 0.82fr);
   align-items: center;
   gap: clamp(3rem, 8vw, 9rem);
@@ -345,6 +347,8 @@
 
 .software-experience-chapter {
   display: grid;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1100px;
   min-width: 0;
   grid-template-columns: minmax(20rem, 0.82fr) minmax(0, 1.18fr);
   gap: clamp(2rem, 5vw, 6rem);
@@ -597,6 +601,8 @@
 
 .software-project-chapter {
   display: grid;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
   min-width: 0;
   grid-template-columns: minmax(0, 1.18fr) minmax(20rem, 0.82fr);
   gap: clamp(2.5rem, 6vw, 7rem);
@@ -688,6 +694,8 @@
 
 .software-capability-system {
   display: grid;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
   min-height: 17rem;
   padding-block: clamp(2rem, 4vw, 4rem);
   grid-template-columns: 6rem minmax(16rem, 0.78fr) minmax(18rem, 1fr) minmax(16rem, 0.72fr);
@@ -745,6 +753,8 @@
 }
 
 .software-contact {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 950px;
   border-top: 1px solid var(--software-line);
   background: #0d0c0b;
 }
@@ -769,7 +779,7 @@
   display: none;
 }
 
-.software-contact h2 {
+.software-document .software-contact h2 {
   max-width: 10ch;
   font-family: 'Space Grotesk Variable', sans-serif;
   font-size: clamp(3.4rem, 6vw, 7rem);

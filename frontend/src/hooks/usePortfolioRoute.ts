@@ -8,7 +8,7 @@ type PortfolioRouteHistory = {
 
 type PendingRoute = PortfolioRouteHistory & {
   hash: string
-  kind: 'initial' | 'popstate' | 'switch'
+  kind: 'hash' | 'initial' | 'popstate' | 'switch'
   revision: number
 }
 
@@ -23,18 +23,141 @@ const isPortfolioMode = (value: unknown): value is PortfolioMode =>
 export const getPortfolioModeFromPathname = (pathname: string): PortfolioMode =>
   pathname === '/visual' || pathname === '/visual/' ? 'visual' : 'software'
 
+const upsertMeta = (attribute: 'name' | 'property', key: string, content: string) => {
+  let element = document.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`)
+  if (!element) {
+    element = document.createElement('meta')
+    element.setAttribute(attribute, key)
+    document.head.append(element)
+  }
+  element.content = content
+}
+
+const portfolioStructuredData = (mode: PortfolioMode) => {
+  if (mode === 'visual') {
+    return {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'ProfilePage',
+          '@id': 'https://josecarter.dev/visual#profile',
+          url: 'https://josecarter.dev/visual',
+          name: 'José Carter — Visual Computing Portfolio',
+          description:
+            'Real-time 3D tools, scientific visualization, simulation, and spatial computing systems by José Carter.',
+          mainEntity: { '@id': 'https://josecarter.dev/#person' },
+        },
+        {
+          '@type': 'Person',
+          '@id': 'https://josecarter.dev/#person',
+          name: 'José Carter Arriagada',
+          url: 'https://josecarter.dev/',
+          jobTitle: 'Software Engineer and Visual Computing Developer',
+          description:
+            'Software engineer building real-time graphics, simulation, and interactive 3D systems.',
+          image: { '@type': 'ImageObject', url: 'https://josecarter.dev/favicon.webp' },
+          sameAs: [
+            'https://github.com/Cartterr',
+            'https://linkedin.com/in/jose-carter-arriagada',
+          ],
+        },
+      ],
+    }
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebSite',
+        '@id': 'https://josecarter.dev/#website',
+        url: 'https://josecarter.dev/',
+        name: 'José Carter',
+        inLanguage: 'en',
+      },
+      {
+        '@type': 'ProfilePage',
+        '@id': 'https://josecarter.dev/#profile',
+        url: 'https://josecarter.dev/',
+        name: 'José Carter — Software Engineer Portfolio',
+        isPartOf: { '@id': 'https://josecarter.dev/#website' },
+        mainEntity: { '@id': 'https://josecarter.dev/#person' },
+        primaryImageOfPage: { '@id': 'https://josecarter.dev/#profile-image' },
+        inLanguage: 'en',
+      },
+      {
+        '@type': 'Person',
+        '@id': 'https://josecarter.dev/#person',
+        name: 'José Carter Arriagada',
+        url: 'https://josecarter.dev/',
+        jobTitle: 'Software Engineer',
+        description: 'Software engineer building reliable AI, data, and autonomous systems.',
+        image: {
+          '@type': 'ImageObject',
+          '@id': 'https://josecarter.dev/#profile-image',
+          url: 'https://josecarter.dev/favicon.webp',
+          width: 160,
+          height: 160,
+        },
+        homeLocation: { '@type': 'Place', name: 'Santiago, Chile' },
+        sameAs: [
+          'https://github.com/Cartterr',
+          'https://linkedin.com/in/jose-carter-arriagada',
+        ],
+      },
+    ],
+  }
+}
+
 export const applyPortfolioIdentity = (mode: PortfolioMode) => {
   const page = getPortfolio(mode)
   document.documentElement.dataset.portfolioMode = mode
   document.title = page.meta.title
+  upsertMeta('name', 'description', page.meta.description)
+  upsertMeta('name', 'theme-color', page.meta.themeColor)
+  upsertMeta('property', 'og:type', 'website')
+  upsertMeta('property', 'og:locale', 'en_US')
+  upsertMeta('property', 'og:site_name', 'José Carter')
+  upsertMeta('property', 'og:title', page.meta.title)
+  upsertMeta('property', 'og:description', page.meta.description)
+  upsertMeta('property', 'og:url', page.meta.canonical)
+  upsertMeta('property', 'og:image', page.meta.socialImage)
+  upsertMeta('property', 'og:image:secure_url', page.meta.socialImage)
+  upsertMeta('property', 'og:image:type', 'image/png')
+  upsertMeta('property', 'og:image:width', '1200')
+  upsertMeta('property', 'og:image:height', '630')
+  upsertMeta('property', 'og:image:alt', page.meta.socialImageAlt)
+  upsertMeta('name', 'twitter:card', page.meta.twitterCard)
+  upsertMeta('name', 'twitter:title', page.meta.title)
+  upsertMeta('name', 'twitter:description', page.meta.description)
+  upsertMeta('name', 'twitter:image', page.meta.socialImage)
+  upsertMeta('name', 'twitter:image:alt', page.meta.socialImageAlt)
 
-  let description = document.querySelector<HTMLMetaElement>('meta[name="description"]')
-  if (!description) {
-    description = document.createElement('meta')
-    description.name = 'description'
-    document.head.append(description)
+  let canonical = document.querySelector<HTMLLinkElement>('link[rel="canonical"]')
+  if (!canonical) {
+    canonical = document.createElement('link')
+    canonical.rel = 'canonical'
+    document.head.append(canonical)
   }
-  description.content = page.meta.description
+  canonical.href = page.meta.canonical
+
+  let structuredData = document.querySelector<HTMLScriptElement>(
+    'script[type="application/ld+json"]',
+  )
+  if (!structuredData) {
+    structuredData = document.createElement('script')
+    structuredData.type = 'application/ld+json'
+    document.head.append(structuredData)
+  }
+  structuredData.textContent = JSON.stringify(portfolioStructuredData(mode))
+}
+
+const decodeHashId = (hash: string) => {
+  try {
+    return decodeURIComponent(hash.slice(1))
+  } catch {
+    return null
+  }
 }
 
 const withPortfolioRoute = (state: unknown, route: PortfolioRouteHistory) => ({
@@ -139,6 +262,26 @@ export function usePortfolioRoute() {
   }, [])
 
   useEffect(() => {
+    const handleHashChange = () => {
+      if (!window.location.hash) return
+      setRoute((current) => {
+        const revision = current.revision + 1
+        pendingRouteRef.current = {
+          mode: current.mode,
+          scrollY: window.scrollY,
+          hash: window.location.hash,
+          kind: 'hash',
+          revision,
+        }
+        return { ...current, revision }
+      })
+    }
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
+
+  useEffect(() => {
     const pending = pendingRouteRef.current
     if (!pending || pending.revision !== route.revision) return undefined
 
@@ -151,13 +294,17 @@ export function usePortfolioRoute() {
       if (!page) return false
 
       const hashTarget = pending.hash
-        ? document.getElementById(decodeURIComponent(pending.hash.slice(1)))
+        ? document.getElementById(decodeHashId(pending.hash) ?? '')
         : null
       if (hashTarget) {
         hashTarget.scrollIntoView?.()
-        if (hashTarget.id === 'main' || hashTarget.matches('h1, h2, h3, h4, h5, h6')) {
-          hashTarget.tabIndex = -1
-          hashTarget.focus({ preventScroll: true })
+        const focusTarget =
+          hashTarget.id === 'main' || hashTarget.matches('h1, h2, h3, h4, h5, h6')
+            ? hashTarget
+            : hashTarget.querySelector<HTMLElement>('h1, h2, h3, h4, h5, h6')
+        if (focusTarget) {
+          focusTarget.tabIndex = -1
+          focusTarget.focus({ preventScroll: true })
         }
       } else {
         window.scrollTo({ behavior: 'auto', left: 0, top: pending.scrollY })

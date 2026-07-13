@@ -1,5 +1,14 @@
+import { existsSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { legacyMedia, portfolioMedia, visualMedia } from './media'
+
+const forbiddenPrivateAssetPaths = [
+  'src/assets/images/flair4.png',
+  'src/assets/images/optimized/flair4-main.webp',
+  'src/assets/images/optimized/flair4-thumb.webp',
+  'src/assets/images/optimized/gridworks2-main.webp',
+  'src/assets/images/optimized/gridworks2-thumb.webp',
+]
 
 const countByStory = (entries: typeof legacyMedia) =>
   Object.fromEntries(
@@ -78,5 +87,9 @@ describe('portfolio media manifest', () => {
     expect(flairReplacement?.src).toBe(flairIdentity?.src)
     expect(gridWorksReplacement?.rights.clearance).toBe('privacy-safe-replacement')
     expect(flairReplacement?.rights.clearance).toBe('privacy-safe-replacement')
+  })
+
+  it('keeps private dashboard source files out of the repository checkout', () => {
+    expect(forbiddenPrivateAssetPaths.filter((path) => existsSync(path))).toEqual([])
   })
 })

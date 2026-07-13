@@ -273,9 +273,15 @@ export const softwarePortfolio = {
   mode: 'software',
   path: '/',
   meta: {
-    title: 'José Ernesto Carter Arriagada — Software Engineer',
+    title: 'José Carter — Software Engineer for AI, Data & Autonomous Systems',
     description:
-      'Software engineering across reliable AI, data infrastructure, scientific computing, and autonomous systems.',
+      'José Carter builds production software, AI and data infrastructure, scientific computing platforms, and autonomous systems.',
+    canonical: 'https://josecarter.dev/',
+    themeColor: '#111722',
+    socialImage: 'https://josecarter.dev/og-jose-carter.png',
+    socialImageAlt:
+      "José Carter's editorial portfolio for reliable AI, data, and autonomous systems",
+    twitterCard: 'summary_large_image',
   },
   navigation: softwareNavigation,
   sections: sectionOrder,

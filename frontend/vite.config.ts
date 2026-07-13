@@ -34,7 +34,7 @@ export default defineConfig({
     }
   },
   server: {
-    port: 3000,
+    port: Number(process.env.FRONTEND_PORT ?? 3000),
     host: true,
     proxy: {
       '/api': {

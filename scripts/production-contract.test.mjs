@@ -97,20 +97,20 @@ test('Visual route metadata and structured data describe only the Visual portfol
   assert.deepEqual(html.match(/<title>[^<]*<\/title>/gi) ?? [], [`<title>${expectedTitle}</title>`])
   assert.equal(attribute(singleMeta(html, 'name', 'description'), 'content'), expectedDescription)
   assert.equal(canonicalLinks.length, 1)
-  assert.equal(attribute(canonicalLinks[0], 'href'), 'https://josecarter.dev/visual/')
+  assert.equal(attribute(canonicalLinks[0], 'href'), 'https://josecarter.dev/visual')
   assert.equal(attribute(singleMeta(html, 'property', 'og:title'), 'content'), expectedTitle)
   assert.equal(
     attribute(singleMeta(html, 'property', 'og:description'), 'content'),
     expectedDescription,
   )
-  assert.equal(attribute(singleMeta(html, 'property', 'og:url'), 'content'), 'https://josecarter.dev/visual/')
+  assert.equal(attribute(singleMeta(html, 'property', 'og:url'), 'content'), 'https://josecarter.dev/visual')
   assert.equal(
     attribute(singleMeta(html, 'property', 'og:image'), 'content'),
-    'https://josecarter.dev/favicon.webp',
+    'https://josecarter.dev/og-jose-carter.png',
   )
-  assert.equal(attribute(singleMeta(html, 'property', 'og:image:width'), 'content'), '160')
-  assert.equal(attribute(singleMeta(html, 'property', 'og:image:height'), 'content'), '160')
-  assert.equal(attribute(singleMeta(html, 'name', 'twitter:card'), 'content'), 'summary')
+  assert.equal(attribute(singleMeta(html, 'property', 'og:image:width'), 'content'), '1200')
+  assert.equal(attribute(singleMeta(html, 'property', 'og:image:height'), 'content'), '630')
+  assert.equal(attribute(singleMeta(html, 'name', 'twitter:card'), 'content'), 'summary_large_image')
 
   const scripts = [
     ...html.matchAll(/<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi),
@@ -123,12 +123,35 @@ test('Visual route metadata and structured data describe only the Visual portfol
     ['ProfilePage', 'Person'],
   )
   const [profilePage, person] = structuredData['@graph']
-  assert.equal(profilePage.url, 'https://josecarter.dev/visual/')
+  assert.equal(profilePage.url, 'https://josecarter.dev/visual')
   assert.deepEqual(profilePage.mainEntity, { '@id': 'https://josecarter.dev/#person' })
   assert.equal(person.name, 'José Carter Arriagada')
   assert.equal(person.url, 'https://josecarter.dev/')
   assert.equal(person.jobTitle, 'Software Engineer and Visual Computing Developer')
   assert.doesNotMatch(JSON.stringify(structuredData), /birthDate|telephone|streetAddress|document|RUN/i)
+})
+
+test('both static entries keep useful, reciprocal, high-contrast no-JavaScript fallbacks', () => {
+  const entries = [
+    {
+      html: readText('frontend', 'index.html'),
+      reciprocalHref: '/visual',
+    },
+    {
+      html: readText('frontend', 'visual', 'index.html'),
+      reciprocalHref: '/',
+    },
+  ]
+
+  for (const { html, reciprocalHref } of entries) {
+    const fallback = html.match(/<noscript>([\s\S]*?)<\/noscript>/i)?.[1] ?? ''
+    assert.notEqual(fallback, '')
+    assert.match(fallback, new RegExp(`href=["']${reciprocalHref.replace('/', '\\/')}["']`, 'i'))
+    assert.match(fallback, /href=["']mailto:/i)
+    assert.match(fallback, /href=["']\/Jose_Carter_CV_Eng\.pdf["']/i)
+    assert.match(fallback, /background:\s*#090909/i)
+    assert.match(fallback, /color:\s*#f8f5ec/i)
+  }
 })
 
 test('frontend build externalizes fonts and does not publish source maps', () => {
@@ -193,6 +216,9 @@ test('Railway deploy contract is health-gated and contains no identifiers or sec
   const railway = readJson('railway.json')
   assert.deepEqual(railway, {
     $schema: 'https://railway.com/railway.schema.json',
+    build: {
+      builder: 'RAILPACK',
+    },
     deploy: {
       startCommand: 'npm run start',
       healthcheckPath: '/api/health',
@@ -236,8 +262,8 @@ test('native npm workspace owns the modern dual-entry frontend', () => {
   if (existsSync(visualHtmlPath)) {
     const visualHtml = readFileSync(visualHtmlPath, 'utf8')
     assert.match(visualHtml, /<html\b[^>]*data-portfolio-mode=["']visual["']/i)
-    assert.match(visualHtml, /<link\b[^>]*rel=["']canonical["'][^>]*href=["']https:\/\/josecarter\.dev\/visual\/["']/i)
-    assert.match(visualHtml, /<meta\b[^>]*property=["']og:url["'][^>]*content=["']https:\/\/josecarter\.dev\/visual\/["']/i)
+    assert.match(visualHtml, /<link\b[^>]*rel=["']canonical["'][^>]*href=["']https:\/\/josecarter\.dev\/visual["']/i)
+    assert.match(visualHtml, /<meta\b[^>]*property=["']og:url["'][^>]*content=["']https:\/\/josecarter\.dev\/visual["']/i)
     assert.match(visualHtml, /<script\b[^>]*src=["']\/src\/main\.tsx["']/i)
     assert.match(visualHtml, /<noscript>[\s\S]*(?:mailto:|CV)[\s\S]*<\/noscript>/i)
   }
@@ -245,7 +271,7 @@ test('native npm workspace owns the modern dual-entry frontend', () => {
   assert.equal(frontendPackage.scripts['type-check'], 'tsc --noEmit')
   assert.equal(
     rootPackage.scripts.test,
-    'node --test scripts/production-contract.test.mjs && npm run test --workspace backend && npm run test --workspace frontend',
+    'node --test scripts/production-contract.test.mjs && npm run test --workspace backend && npm run test --workspace frontend && npm run build:backend && npm run smoke:compiled --workspace backend',
   )
   assert.equal(rootPackage.scripts.lint, 'npm run lint --workspace frontend')
   assert.equal(
@@ -307,10 +333,15 @@ test('obsolete container and deploy artifacts are absent', () => {
     'scripts/setup.js',
     'setup.bat',
     'setup.sh',
+    'start.bat',
+    'start.sh',
   ]
   const maintainedText = maintainedEntryPoints.map((filePath) => readText(filePath)).join('\n')
   assert.doesNotMatch(maintainedText, /Docker|docker-compose|nginx/i)
   assert.doesNotMatch(maintainedText, /\byarn\b/i)
+  assert.doesNotMatch(maintainedText, /\bpnpm\b/i)
+  assert.doesNotMatch(maintainedText, /Nixpacks/i)
+  assert.match(readText('README.md'), /Railpack/)
   assert.match(readText('scripts', 'setup.js'), /majorVersion\s*!==\s*24/)
   assert.match(readText('.gitignore'), /^\.tmp-lighthouse-\*\.json$/m)
   assert.match(readText('.gitignore'), /^frontend\/vite\.config\.ts\.timestamp-\*\.mjs$/m)

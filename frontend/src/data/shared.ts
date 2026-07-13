@@ -12,7 +12,7 @@ export const portfolioOwner = {
 } as const
 
 export const sharedLinks = {
-  cv: { label: 'Download CV', href: '/Jose_Carter_CV_Eng.pdf' },
+  cv: { label: 'Download CV', href: '/Jose_Carter_CV_Eng.pdf', download: true },
   email: { label: 'Email', href: 'mailto:jose.carterx@gmail.com' },
   github: { label: 'GitHub', href: 'https://github.com/Cartterr', external: true },
   linkedIn: {

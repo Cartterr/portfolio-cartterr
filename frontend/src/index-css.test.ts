@@ -2,6 +2,8 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
 const styles = readFileSync('src/index.css', 'utf8')
+const softwareStyles = readFileSync('src/styles/software.css', 'utf8')
+const galleryStyles = readFileSync('src/styles/gallery.css', 'utf8')
 
 const getRule = (selector: string) => {
   const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -10,9 +12,29 @@ const getRule = (selector: string) => {
   return match?.[1] ?? ''
 }
 
+const getSoftwareRule = (selector: string) => {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const match = softwareStyles.match(new RegExp(`${escapedSelector}\\s*\\{([^}]*)\\}`))
+  expect(match, `Missing Software CSS rule for ${selector}`).not.toBeNull()
+  return match?.[1] ?? ''
+}
+
+const getGalleryRule = (selector: string) => {
+  const escapedSelector = selector.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const match = galleryStyles.match(new RegExp(`${escapedSelector}\\s*\\{([^}]*)\\}`))
+  expect(match, `Missing gallery CSS rule for ${selector}`).not.toBeNull()
+  return match?.[1] ?? ''
+}
+
 const getToken = (name: string) => {
   const match = styles.match(new RegExp(`${name}:\\s*(#[0-9a-fA-F]{6})`))
   expect(match, `Missing color token ${name}`).not.toBeNull()
+  return match?.[1] ?? '#000000'
+}
+
+const getSoftwareToken = (name: string) => {
+  const match = softwareStyles.match(new RegExp(`${name}:\\s*(#[0-9a-fA-F]{6})`))
+  expect(match, `Missing software color token ${name}`).not.toBeNull()
   return match?.[1] ?? '#000000'
 }
 
@@ -74,6 +96,39 @@ describe('portfolio CSS accessibility contracts', () => {
     expect(getRule('.button-link--primary')).toContain('background: var(--copper-surface)')
     expect(getRule('.case-study__link')).toContain('color: var(--copper-text)')
     expect(getRule('.contact .eyebrow')).toContain('color: var(--copper-on-dark)')
+  })
+
+  it('keeps faint Software metadata readable on every dark surface', () => {
+    const faint = getSoftwareToken('--software-faint')
+
+    for (const background of [
+      getSoftwareToken('--software-canvas'),
+      getSoftwareToken('--software-surface'),
+      getSoftwareToken('--software-surface-raised'),
+    ]) {
+      expect(contrastRatio(faint, background)).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  it('defers layout work for offscreen long-form Software chapters', () => {
+    for (const selector of [
+      '.software-about',
+      '.software-experience-chapter',
+      '.software-project-chapter',
+      '.software-capability-system',
+      '.software-contact',
+    ]) {
+      expect(getSoftwareRule(selector)).toContain('content-visibility: auto')
+      expect(getSoftwareRule(selector)).toContain('contain-intrinsic-size: auto')
+    }
+    expect(getSoftwareRule('.software-document .software-contact h2')).toContain(
+      "font-family: 'Space Grotesk Variable'",
+    )
+  })
+
+  it('lets the Fade plugin crossfade outgoing slides instead of hiding them immediately', () => {
+    expect(getGalleryRule('.portfolio-carousel__slide')).not.toContain('visibility: hidden')
+    expect(galleryStyles).not.toContain(".portfolio-carousel__slide[data-active='true']")
   })
 
   it('provides progressive liquid-glass navigation with readable fallbacks', () => {

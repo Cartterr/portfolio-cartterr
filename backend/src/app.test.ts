@@ -65,6 +65,23 @@ describe('portfolio API', () => {
     expect(independentClient.status).toBe(200)
   })
 
+  it('groups rotating IPv6 addresses from the same client /56', async () => {
+    const app = createApp()
+    const firstAddress = '2001:db8:1234:cd11::1'
+    const rotatedAddress = '2001:db8:1234:cd22::2'
+
+    for (let requestNumber = 0; requestNumber < 100; requestNumber += 1) {
+      const response = await request(app).get('/api/health').set('X-Forwarded-For', firstAddress)
+      expect(response.status).toBe(200)
+    }
+
+    const rotatedRequest = await request(app)
+      .get('/api/health')
+      .set('X-Forwarded-For', rotatedAddress)
+
+    expect(rotatedRequest.status).toBe(429)
+  })
+
   it('allows the production origin and rejects an unknown CORS origin safely', async () => {
     const app = createApp()
     const allowed = await request(app).get('/api/health').set('Origin', 'https://josecarter.dev')
@@ -410,7 +427,7 @@ describe('portfolio API', () => {
         const app = createApp({ frontendDist })
         const software = await request(app).get('/')
         const visual = await request(app).get('/visual')
-        const visualWithSlash = await request(app).get('/visual/')
+        const visualWithSlash = await request(app).get('/visual/?source=slash')
         const unknownDocument = await request(app).get('/unknown-project')
         const missingAsset = await request(app).get('/assets/missing-abcdef123456.js')
 
@@ -419,12 +436,14 @@ describe('portfolio API', () => {
         expect(software.text).not.toContain('VISUAL_DOCUMENT')
         expect(software.headers['cache-control']).toBe('public, max-age=0, must-revalidate')
 
-        for (const response of [visual, visualWithSlash]) {
-          expect(response.status).toBe(200)
-          expect(response.text).toContain('VISUAL_DOCUMENT')
-          expect(response.text).not.toContain('SOFTWARE_DOCUMENT')
-          expect(response.headers['cache-control']).toBe('public, max-age=0, must-revalidate')
-        }
+        expect(visual.status).toBe(200)
+        expect(visual.text).toContain('VISUAL_DOCUMENT')
+        expect(visual.text).not.toContain('SOFTWARE_DOCUMENT')
+        expect(visual.headers['cache-control']).toBe('public, max-age=0, must-revalidate')
+
+        expect(visualWithSlash.status).toBe(308)
+        expect(visualWithSlash.headers.location).toBe('/visual?source=slash')
+        expect(visualWithSlash.text).not.toContain('VISUAL_DOCUMENT')
 
         expect(unknownDocument.status).toBe(404)
         expect(unknownDocument.text).toContain('Page not found')

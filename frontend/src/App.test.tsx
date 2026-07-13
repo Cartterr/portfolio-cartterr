@@ -122,6 +122,9 @@ describe('dual portfolio shell', () => {
     render(<App />)
 
     const page = getPortfolio('software')
+    expect(screen.getByRole('link', { name: `José Carter — ${page.hero.eyebrow}` })).toHaveClass(
+      'site-identity',
+    )
     const primaryNavigation = screen.getByRole('navigation', { name: 'Primary navigation' })
     const navigationLabels = within(primaryNavigation)
       .getAllByRole('link')
@@ -145,9 +148,20 @@ describe('dual portfolio shell', () => {
     render(<App />)
 
     const target = document.querySelector('#software-work')
+    const heading = screen.getByRole('heading', { level: 2, name: 'Evidence, not a second résumé.' })
     await waitFor(() => expect(scrollIntoView).toHaveBeenCalled())
     expect(scrollIntoView).toHaveBeenCalledWith()
     expect(target).toBeInTheDocument()
+    expect(heading).toHaveFocus()
+  })
+
+  it('ignores a malformed percent-encoded hash without breaking the portfolio', () => {
+    setPath('/#%E0%A4%A')
+
+    expect(() => render(<App />)).not.toThrow()
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      getPortfolio('software').hero.title,
+    )
   })
 
   it('switches mode with History API, resets scroll, updates metadata, focuses h1, and announces', async () => {
@@ -173,6 +187,35 @@ describe('dual portfolio shell', () => {
       'content',
       visual.meta.description,
     )
+    expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
+      'href',
+      visual.meta.canonical,
+    )
+    expect(document.querySelector('meta[name="theme-color"]')).toHaveAttribute(
+      'content',
+      visual.meta.themeColor,
+    )
+    expect(document.querySelector('meta[property="og:title"]')).toHaveAttribute(
+      'content',
+      visual.meta.title,
+    )
+    expect(document.querySelector('meta[property="og:url"]')).toHaveAttribute(
+      'content',
+      visual.meta.canonical,
+    )
+    expect(document.querySelector('meta[name="twitter:card"]')).toHaveAttribute(
+      'content',
+      visual.meta.twitterCard,
+    )
+    expect(document.querySelector('meta[name="twitter:title"]')).toHaveAttribute(
+      'content',
+      visual.meta.title,
+    )
+    const structuredData = JSON.parse(
+      document.querySelector<HTMLScriptElement>('script[type="application/ld+json"]')?.textContent ??
+        '{}',
+    )
+    expect(structuredData['@graph'][0].url).toBe(visual.meta.canonical)
     expect(screen.getByText('Visual portfolio loaded')).toHaveAttribute('aria-live', 'polite')
   })
 
@@ -252,6 +295,23 @@ describe('dual portfolio shell', () => {
     await user.keyboard('{Escape}')
     expect(menu).toHaveAttribute('aria-expanded', 'false')
     expect(menu).toHaveFocus()
+  })
+
+  it('moves focus to the destination heading after mobile same-page navigation', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: /open navigation/i }))
+    const mobileNavigation = screen.getByRole('navigation', { name: 'Mobile navigation' })
+    await user.click(within(mobileNavigation).getByRole('link', { name: 'Work' }))
+
+    await waitFor(() => {
+      expect(window.location.hash).toBe('#software-work')
+      expect(
+        screen.getByRole('heading', { level: 2, name: 'Evidence, not a second résumé.' }),
+      ).toHaveFocus()
+    })
+    expect(screen.queryByRole('navigation', { name: 'Mobile navigation' })).not.toBeInTheDocument()
   })
 
   it('moves keyboard focus to the stable main shell from the skip link', async () => {

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest'
 import {
   evaluateRuntimeStall,
   evaluateRuntimeWindow,
+  calculateHeroScrollProgress,
+  shouldTickScene,
   selectSceneVisibilityPolicy,
   type RuntimeStallState,
   type RuntimeWindowState,
@@ -24,6 +26,19 @@ const evaluateTwoWindows = (targetFps: number, averageDeltaSeconds: number) => {
 }
 
 describe('Visual hero runtime policy', () => {
+  it('maps only the first hero scroll segment into a bounded 0-1 progress value', () => {
+    expect(calculateHeroScrollProgress(80, 800, 1000)).toBe(0)
+    expect(calculateHeroScrollProgress(-400, 800, 1000)).toBe(0.5)
+    expect(calculateHeroScrollProgress(-1200, 800, 1000)).toBe(1)
+  })
+
+  it('fully idles demand rendering outside bounded entrance, pointer, and scroll windows', () => {
+    expect(shouldTickScene(true, true, true)).toBe(true)
+    expect(shouldTickScene(true, true, false)).toBe(false)
+    expect(shouldTickScene(false, true, true)).toBe(false)
+    expect(shouldTickScene(true, false, true)).toBe(false)
+  })
+
   it.each([
     { targetFps: 28, observedDeltaSeconds: 1 / 20 },
     { targetFps: 18, observedDeltaSeconds: 1 / 15 },

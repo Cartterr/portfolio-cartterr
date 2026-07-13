@@ -4,6 +4,7 @@ export type PortfolioLink = {
   label: string
   href: string
   external?: boolean
+  download?: boolean
 }
 
 export type PortfolioMetric = {
@@ -118,6 +119,11 @@ export type PortfolioPage = {
   meta: {
     title: string
     description: string
+    canonical: string
+    themeColor: string
+    socialImage: string
+    socialImageAlt: string
+    twitterCard: 'summary' | 'summary_large_image'
   }
   navigation: Array<{ label: string; href: string }>
   sections: PortfolioSection[]

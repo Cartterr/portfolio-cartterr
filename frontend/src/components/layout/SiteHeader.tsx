@@ -19,7 +19,7 @@ export function SiteHeader({ mode, navigateMode, navigation, roleLabel }: SiteHe
   return (
     <header className="site-header">
       <div className="site-header__inner">
-        <a className="site-identity" href="#main">
+        <a aria-label={`José Carter — ${roleLabel}`} className="site-identity" href="#main">
           <img alt="" className="site-identity__avatar" height="160" src={brandAvatar} width="160" />
           <span className="site-identity__text">
             <span className="wordmark">José Carter</span>

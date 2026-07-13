@@ -1,55 +1,38 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$ROOT"
+
 BACKEND_PORT="${BACKEND_PORT:-5000}"
 FRONTEND_PORT="${FRONTEND_PORT:-3000}"
 BACKEND_URL="http://localhost:${BACKEND_PORT}"
 FRONTEND_URL="http://localhost:${FRONTEND_PORT}"
 API_URL="${API_URL:-${BACKEND_URL}/api}"
+export NODE_ENV=development
+export PORT="$BACKEND_PORT"
+export FRONTEND_PORT
+export FRONTEND_URL
 
-if command -v yarn >/dev/null 2>&1; then PM="yarn"; elif command -v pnpm >/dev/null 2>&1; then PM="pnpm"; else PM="npm"; fi
+command -v npm >/dev/null 2>&1 || {
+  echo "❌ npm is required. Install Node.js 24 and npm 10 or newer."
+  exit 1
+}
 
 echo ""
 echo "🎯  cartterr portfolio"
 echo "🌈✨ Booting full stack dev services"
 echo "🚀 Backend: ${BACKEND_URL}  |  🔗 API: ${API_URL}"
 echo "🖥️  Frontend: ${FRONTEND_URL}"
+echo "🧰 npm workspaces  |  📂 ROOT=${ROOT}"
 echo ""
 
-cleanup() {
-  echo "🛑 Stopping services"
-  set +e
-  if [[ -n "${BACKEND_PID:-}" ]]; then kill "$BACKEND_PID" 2>/dev/null || true; fi
-  if [[ -n "${FRONTEND_PID:-}" ]]; then kill "$FRONTEND_PID" 2>/dev/null || true; fi
-  wait 2>/dev/null || true
-  echo "👋 Bye"
-}
-trap cleanup EXIT INT TERM
+if [ ! -x "$ROOT/node_modules/.bin/concurrently" ]; then
+  echo "📦 Installing the authoritative npm workspace lockfile"
+  npm install
+fi
 
-(
-  cd backend
-  export NODE_ENV=development
-  export PORT="${BACKEND_PORT}"
-  export FRONTEND_URL="${FRONTEND_URL}"
-  if [ "$PM" = "npm" ]; then npm run dev; else "$PM" dev; fi
-) &
-BACKEND_PID=$!
-echo "✅ Backend starting on ${BACKEND_URL} (pid ${BACKEND_PID}) 💡 try ${API_URL}/health"
-
-(
-  cd frontend
-  export NODE_ENV=development
-  if [ "$PM" = "npm" ]; then npm run dev; else "$PM" dev; fi
-) &
-FRONTEND_PID=$!
-echo "✅ Frontend starting on ${FRONTEND_URL} (pid ${FRONTEND_PID}) ✨ open ${FRONTEND_URL}"
-
-echo ""
-echo "🌐 Access: 🖥️  ${FRONTEND_URL}   |   🧭 API: ${API_URL}"
-echo "📦 Using: ${PM}  |  🧰 NODE_ENV=development"
-echo "🟢 Both services are launching. Logs follow below. Press Ctrl+C to stop."
-echo ""
-
-wait
+echo "🧪 Running both services through the root npm workspace"
+npm run dev
 
 

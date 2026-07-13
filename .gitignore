@@ -131,3 +131,10 @@ ssl/
 
 # Local agent progress and review artifacts
 .superpowers/
+
+# Private dashboard captures replaced by public-safe portfolio media
+frontend/src/assets/images/flair4.png
+frontend/src/assets/images/optimized/flair4-main.webp
+frontend/src/assets/images/optimized/flair4-thumb.webp
+frontend/src/assets/images/optimized/gridworks2-main.webp
+frontend/src/assets/images/optimized/gridworks2-thumb.webp

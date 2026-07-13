@@ -182,9 +182,15 @@ export const visualPortfolio = {
   mode: 'visual',
   path: '/visual',
   meta: {
-    title: 'José Ernesto Carter Arriagada — VFX, 3D & Visual Computing',
+    title: 'José Carter — Visual Computing, Real-Time 3D & Simulation',
     description:
-      'Visual computing across real-time 3D, scientific visualization, simulation, and spatial autonomy.',
+      'José Carter builds real-time 3D tools, scientific visualization, simulation, and spatial computing systems.',
+    canonical: 'https://josecarter.dev/visual',
+    themeColor: '#11100f',
+    socialImage: 'https://josecarter.dev/og-jose-carter.png',
+    socialImageAlt:
+      "José Carter's visual computing portfolio for real-time 3D, simulation, and spatial systems",
+    twitterCard: 'summary_large_image',
   },
   navigation: sharedNavigation,
   sections: sectionOrder,
@@ -217,6 +223,6 @@ export const visualPortfolio = {
     body:
       'For interactive 3D, graphics prototypes, simulation visuals, spatial interfaces, or visual-computing collaboration, email me or find me online.',
     subject: 'Visual computing project',
-    links: [sharedLinks.email, sharedLinks.github, sharedLinks.linkedIn],
+    links: [sharedLinks.cv, sharedLinks.email, sharedLinks.github, sharedLinks.linkedIn],
   },
 } satisfies PortfolioPage
