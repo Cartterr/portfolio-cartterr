@@ -321,7 +321,7 @@ export function VisualPortfolio() {
       <Laboratories />
       <SelectedWork />
       <Pipeline />
-      <Contact content={visualPortfolio.contact} />
+      <Contact content={visualPortfolio.contact} portfolioMode="visual" />
     </div>
   )
 }

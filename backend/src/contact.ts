@@ -5,7 +5,10 @@ export type ValidContactMessage = {
   name: string
   email: string
   message: string
+  portfolioMode?: PortfolioMode
 }
+
+export type PortfolioMode = 'software' | 'visual'
 
 export type SendContactEmail = (message: ValidContactMessage) => Promise<void>
 
@@ -17,8 +20,12 @@ type ContactValidationResult =
   | { valid: true; value: ValidatedContactBody }
   | { valid: false }
 
-const allowedContactFields = new Set(['name', 'email', 'message', 'website'])
+const allowedContactFields = new Set(['name', 'email', 'message', 'website', 'portfolioMode'])
 const basicEmailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u
+const portfolioSubjectLabels: Record<PortfolioMode, string> = {
+  software: 'Software portfolio',
+  visual: 'Visual portfolio',
+}
 
 export const CONTACT_SUCCESS_MESSAGE = 'Thanks for reaching out. Your message has been received.'
 export const CONTACT_VALIDATION_MESSAGE = 'Please provide a valid name, email, and message.'
@@ -34,7 +41,15 @@ export function validateContactBody(body: unknown): ContactValidationResult {
     return { valid: false }
   }
 
-  const { website = '' } = body
+  const { portfolioMode, website = '' } = body
+  if (
+    portfolioMode !== undefined &&
+    portfolioMode !== 'software' &&
+    portfolioMode !== 'visual'
+  ) {
+    return { valid: false }
+  }
+
   if (typeof website !== 'string' || website.length > 200) {
     return { valid: false }
   }
@@ -52,10 +67,13 @@ export function validateContactBody(body: unknown): ContactValidationResult {
     return { valid: false }
   }
 
-  const normalized = {
+  const normalized: ValidContactMessage = {
     name: name.trim(),
     email: email.trim(),
     message: message.trim(),
+  }
+  if (portfolioMode !== undefined) {
+    normalized.portfolioMode = portfolioMode
   }
 
   if (
@@ -98,11 +116,14 @@ export function buildContactMail(
 ): SendMailOptions {
   const safeName = normalizeHeaderValue(message.name)
   const htmlMessage = escapeHtml(message.message).replace(/\r\n?|\n/g, '<br/>')
+  const subjectPrefix = message.portfolioMode
+    ? `[${portfolioSubjectLabels[message.portfolioMode]}] `
+    : ''
 
   return {
     from: { name: 'Portfolio Contact', address: smtpUser },
     to: smtpUser,
-    subject: `New portfolio message from ${safeName}`,
+    subject: `${subjectPrefix}New portfolio message from ${safeName}`,
     replyTo: { name: safeName, address: message.email },
     text: `From: ${message.name} <${message.email}>\n\n${message.message}`,
     html: `<p><strong>From:</strong> ${escapeHtml(message.name)} &lt;${escapeHtml(message.email)}&gt;</p><p>${htmlMessage}</p>`,

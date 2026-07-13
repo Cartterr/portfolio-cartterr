@@ -1,10 +1,11 @@
 import { type ChangeEvent, type FormEvent, useEffect, useRef, useState } from 'react'
 import { ArrowLink } from '../components/ui/ArrowLink'
-import type { PortfolioContent } from '../data/portfolio'
+import type { PortfolioContent, PortfolioMode } from '../data/portfolio'
 
 type ContactProps = {
   content: PortfolioContent['contact']
   id?: string
+  portfolioMode: PortfolioMode
 }
 
 type FormValues = {
@@ -29,7 +30,7 @@ const successMessage = 'Thanks for reaching out. Your message has been received.
 const errorMessage =
   'I couldn’t send your message. Please try again or use one of the direct links below.'
 
-export function Contact({ content, id = 'contact' }: ContactProps) {
+export function Contact({ content, id = 'contact', portfolioMode }: ContactProps) {
   const [values, setValues] = useState<FormValues>(emptyForm)
   const [status, setStatus] = useState<SubmissionStatus>({ state: 'idle', message: '' })
   const statusRef = useRef<HTMLParagraphElement>(null)
@@ -56,7 +57,7 @@ export function Contact({ content, id = 'contact' }: ContactProps) {
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, portfolioMode }),
       })
 
       if (!response.ok) throw new Error('Contact request failed')

@@ -85,6 +85,52 @@ test('portfolio metadata uses one aligned canonical identity and real social ass
   }
 })
 
+test('Visual route metadata and structured data describe only the Visual portfolio', () => {
+  const html = readText('frontend', 'visual', 'index.html')
+  const expectedTitle = 'José Carter — Visual Computing, Real-Time 3D & Simulation'
+  const expectedDescription =
+    'José Carter builds real-time 3D tools, scientific visualization, simulation, and spatial computing systems.'
+  const canonicalLinks = tags(html, 'link').filter(
+    (tag) => attribute(tag, 'rel') === 'canonical',
+  )
+
+  assert.deepEqual(html.match(/<title>[^<]*<\/title>/gi) ?? [], [`<title>${expectedTitle}</title>`])
+  assert.equal(attribute(singleMeta(html, 'name', 'description'), 'content'), expectedDescription)
+  assert.equal(canonicalLinks.length, 1)
+  assert.equal(attribute(canonicalLinks[0], 'href'), 'https://josecarter.dev/visual/')
+  assert.equal(attribute(singleMeta(html, 'property', 'og:title'), 'content'), expectedTitle)
+  assert.equal(
+    attribute(singleMeta(html, 'property', 'og:description'), 'content'),
+    expectedDescription,
+  )
+  assert.equal(attribute(singleMeta(html, 'property', 'og:url'), 'content'), 'https://josecarter.dev/visual/')
+  assert.equal(
+    attribute(singleMeta(html, 'property', 'og:image'), 'content'),
+    'https://josecarter.dev/favicon.webp',
+  )
+  assert.equal(attribute(singleMeta(html, 'property', 'og:image:width'), 'content'), '160')
+  assert.equal(attribute(singleMeta(html, 'property', 'og:image:height'), 'content'), '160')
+  assert.equal(attribute(singleMeta(html, 'name', 'twitter:card'), 'content'), 'summary')
+
+  const scripts = [
+    ...html.matchAll(/<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi),
+  ]
+  assert.equal(scripts.length, 1)
+  const structuredData = JSON.parse(scripts[0][1])
+  assert.equal(structuredData['@context'], 'https://schema.org')
+  assert.deepEqual(
+    structuredData['@graph'].map((entity) => entity['@type']),
+    ['ProfilePage', 'Person'],
+  )
+  const [profilePage, person] = structuredData['@graph']
+  assert.equal(profilePage.url, 'https://josecarter.dev/visual/')
+  assert.deepEqual(profilePage.mainEntity, { '@id': 'https://josecarter.dev/#person' })
+  assert.equal(person.name, 'José Carter Arriagada')
+  assert.equal(person.url, 'https://josecarter.dev/')
+  assert.equal(person.jobTitle, 'Software Engineer and Visual Computing Developer')
+  assert.doesNotMatch(JSON.stringify(structuredData), /birthDate|telephone|streetAddress|document|RUN/i)
+})
+
 test('frontend build externalizes fonts and does not publish source maps', () => {
   const buildCommand =
     process.platform === 'win32'
@@ -163,6 +209,7 @@ test('native npm workspace owns the modern dual-entry frontend', () => {
   const visualHtmlPath = fromRoot('frontend', 'visual', 'index.html')
 
   assert.deepEqual(rootPackage.workspaces, ['frontend', 'backend'])
+  assert.equal(rootPackage.engines.node, '24.x')
   assert.equal(existsSync(fromRoot('package-lock.json')), true)
   assert.equal(existsSync(fromRoot('yarn.lock')), false)
   assert.equal(existsSync(fromRoot('frontend', 'yarn.lock')), false)
@@ -263,6 +310,8 @@ test('obsolete container and deploy artifacts are absent', () => {
   ]
   const maintainedText = maintainedEntryPoints.map((filePath) => readText(filePath)).join('\n')
   assert.doesNotMatch(maintainedText, /Docker|docker-compose|nginx/i)
+  assert.doesNotMatch(maintainedText, /\byarn\b/i)
+  assert.match(readText('scripts', 'setup.js'), /majorVersion\s*!==\s*24/)
   assert.match(readText('.gitignore'), /^\.tmp-lighthouse-\*\.json$/m)
   assert.match(readText('.gitignore'), /^frontend\/vite\.config\.ts\.timestamp-\*\.mjs$/m)
 })

@@ -114,6 +114,29 @@ describe('portfolio API', () => {
     })
   })
 
+  it.each(['software', 'visual'] as const)(
+    'accepts the validated %s portfolio context for contact delivery',
+    async (portfolioMode) => {
+      const sendContactEmail = vi.fn().mockResolvedValue(undefined)
+      const response = await request(createApp({ sendContactEmail }))
+        .post('/api/contact')
+        .send({
+          name: 'Ada',
+          email: 'ada@example.com',
+          message: 'Hello',
+          portfolioMode,
+        })
+
+      expect(response.status).toBe(200)
+      expect(sendContactEmail).toHaveBeenCalledWith({
+        name: 'Ada',
+        email: 'ada@example.com',
+        message: 'Hello',
+        portfolioMode,
+      })
+    },
+  )
+
   it.each([
     ['missing field', { name: 'Ada', email: 'ada@example.com' }],
     ['non-string field', { name: ['Ada'], email: 'ada@example.com', message: 'Hello' }],
@@ -128,6 +151,14 @@ describe('portfolio API', () => {
     [
       'unexpected field',
       { name: 'Ada', email: 'ada@example.com', message: 'Hello', company: 'Analytical Engines' },
+    ],
+    [
+      'unknown portfolio mode',
+      { name: 'Ada', email: 'ada@example.com', message: 'Hello', portfolioMode: 'admin' },
+    ],
+    [
+      'non-string portfolio mode',
+      { name: 'Ada', email: 'ada@example.com', message: 'Hello', portfolioMode: ['visual'] },
     ],
   ])('rejects an invalid submission: %s', async (_label, body) => {
     const sendContactEmail = vi.fn().mockResolvedValue(undefined)
@@ -334,12 +365,12 @@ describe('portfolio API', () => {
     })
   })
 
-  it('uses immutable caching for hashed Vite assets and no-store for HTML', async () => {
+  it('uses immutable caching for hashed Vite assets and revalidates HTML', async () => {
     await withTemporaryFrontendDist(async (frontendDist) => {
       const assetsDirectory = path.join(frontendDist, 'assets')
       fs.mkdirSync(assetsDirectory, { recursive: true })
       fs.writeFileSync(
-        path.join(assetsDirectory, 'contract-abcdef123456.js'),
+        path.join(assetsDirectory, 'contract-BQKOHs0Q.js'),
         'export const contract = true',
       )
       fs.writeFileSync(
@@ -349,7 +380,7 @@ describe('portfolio API', () => {
 
       await withNodeEnvironment('production', async () => {
         const app = createApp({ frontendDist })
-        const hashedAsset = await request(app).get('/assets/contract-abcdef123456.js')
+        const hashedAsset = await request(app).get('/assets/contract-BQKOHs0Q.js')
         const html = await request(app).get('/cache-contract.html')
 
         expect(hashedAsset.status).toBe(200)
@@ -357,7 +388,52 @@ describe('portfolio API', () => {
           'public, max-age=31536000, immutable',
         )
         expect(html.status).toBe(200)
-        expect(html.headers['cache-control']).toBe('no-store')
+        expect(html.headers['cache-control']).toBe('public, max-age=0, must-revalidate')
+      })
+    })
+  })
+
+  it('serves only the explicit Software and Visual documents and returns real 404s', async () => {
+    await withTemporaryFrontendDist(async (frontendDist) => {
+      const visualDirectory = path.join(frontendDist, 'visual')
+      fs.mkdirSync(visualDirectory, { recursive: true })
+      fs.writeFileSync(
+        path.join(frontendDist, 'index.html'),
+        '<!doctype html><title>Software route</title><main>SOFTWARE_DOCUMENT</main>',
+      )
+      fs.writeFileSync(
+        path.join(visualDirectory, 'index.html'),
+        '<!doctype html><title>Visual route</title><main>VISUAL_DOCUMENT</main>',
+      )
+
+      await withNodeEnvironment('production', async () => {
+        const app = createApp({ frontendDist })
+        const software = await request(app).get('/')
+        const visual = await request(app).get('/visual')
+        const visualWithSlash = await request(app).get('/visual/')
+        const unknownDocument = await request(app).get('/unknown-project')
+        const missingAsset = await request(app).get('/assets/missing-abcdef123456.js')
+
+        expect(software.status).toBe(200)
+        expect(software.text).toContain('SOFTWARE_DOCUMENT')
+        expect(software.text).not.toContain('VISUAL_DOCUMENT')
+        expect(software.headers['cache-control']).toBe('public, max-age=0, must-revalidate')
+
+        for (const response of [visual, visualWithSlash]) {
+          expect(response.status).toBe(200)
+          expect(response.text).toContain('VISUAL_DOCUMENT')
+          expect(response.text).not.toContain('SOFTWARE_DOCUMENT')
+          expect(response.headers['cache-control']).toBe('public, max-age=0, must-revalidate')
+        }
+
+        expect(unknownDocument.status).toBe(404)
+        expect(unknownDocument.text).toContain('Page not found')
+        expect(unknownDocument.text).not.toContain('SOFTWARE_DOCUMENT')
+        expect(unknownDocument.headers['cache-control']).toBe('no-store')
+
+        expect(missingAsset.status).toBe(404)
+        expect(missingAsset.text).not.toContain('SOFTWARE_DOCUMENT')
+        expect(missingAsset.text).not.toContain('VISUAL_DOCUMENT')
       })
     })
   })
@@ -415,6 +491,8 @@ describe('portfolio API', () => {
       expect(policy).toContain("connect-src 'self'")
       expect(policy).toContain("font-src 'self'")
       expect(policy).toContain("img-src 'self' data:")
+      expect(policy).toContain("style-src 'self'")
+      expect(policy).toContain("style-src-attr 'unsafe-inline'")
       expect(policy).not.toContain('http:')
       expect(policy).not.toContain('https:')
       expect(policy).not.toContain('*')

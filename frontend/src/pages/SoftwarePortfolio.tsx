@@ -50,7 +50,11 @@ export function SoftwarePortfolio() {
         id="software-capabilities"
         projects={softwarePortfolio.projects}
       />
-      <Contact content={softwarePortfolio.contact} id="software-contact" />
+      <Contact
+        content={softwarePortfolio.contact}
+        id="software-contact"
+        portfolioMode="software"
+      />
     </div>
   )
 }

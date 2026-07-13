@@ -6,7 +6,7 @@ A case-study-led portfolio for José Carter, a software engineer building reliab
 
 ```text
 portfolio-cartterr/
-├── frontend/       React 18, TypeScript, Vite, self-hosted fonts, static media
+├── frontend/       React 19, TypeScript, Vite, self-hosted fonts, static media
 ├── backend/        Express, TypeScript, health endpoint, contact delivery
 ├── scripts/        Native setup and production contract checks
 ├── railway.json    Railway start and health-check contract
@@ -15,25 +15,25 @@ portfolio-cartterr/
 
 The production server serves the compiled frontend and the same-origin API from one process. The public endpoints are:
 
+- `GET /` — Software portfolio
+- `GET /visual` or `GET /visual/` — Visual portfolio
 - `GET /api/health`
 - `POST /api/contact`
 
-The Vite application under `frontend/` is the only website source. The obsolete standalone root page, generated local audit captures, and retired deployment artifacts are intentionally not tracked.
+The Vite application under `frontend/` builds separate Software and Visual HTML documents. Express serves only those explicit document routes, known static files, and the same-origin API; unknown documents and missing assets return real `404` responses.
 
 ## Native Windows setup
 
 Prerequisites:
 
-- Node.js 18 or newer
-- npm 8 or newer
-- Yarn Classic available on `PATH`
+- Node.js 24.x
+- npm 10 or newer
 - PowerShell
 
 From PowerShell in the repository root:
 
 ```powershell
 npm install
-npm run install:all
 npm run dev
 ```
 

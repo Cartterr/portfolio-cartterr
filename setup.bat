@@ -13,6 +13,13 @@ if %errorlevel% neq 0 (
 echo ✅ Node.js is installed
 echo.
 
+for /f "tokens=1 delims=." %%v in ('node -p "process.versions.node"') do set NODE_MAJOR=%%v
+if not "%NODE_MAJOR%"=="24" (
+    echo ❌ Node.js version 24 is required
+    pause
+    exit /b 1
+)
+
 REM Install root dependencies
 echo 📦 Installing root dependencies...
 npm install
@@ -32,30 +39,6 @@ if not exist "backend\.env" (
     echo FRONTEND_URL=http://localhost:3000>> backend\.env
     echo ✅ Created backend\.env
 )
-
-REM Install frontend dependencies
-echo 📱 Installing frontend dependencies...
-cd frontend
-call yarn install
-if %errorlevel% neq 0 (
-    echo ❌ Failed to install frontend dependencies
-    cd ..
-    pause
-    exit /b 1
-)
-cd ..
-
-REM Install backend dependencies
-echo 🔧 Installing backend dependencies...
-cd backend
-call yarn install
-if %errorlevel% neq 0 (
-    echo ❌ Failed to install backend dependencies
-    cd ..
-    pause
-    exit /b 1
-)
-cd ..
 
 echo.
 echo 🎉 Setup complete!
