@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom'
-import { useEffect, useId, useRef, type RefObject } from 'react'
+import { useCallback, useEffect, useId, useRef, type RefObject } from 'react'
 import type { PortfolioMedia } from '../../data/types'
 import '../../styles/gallery.css'
 import { MediaFrame } from './MediaFrame'
@@ -42,6 +42,7 @@ export function LightboxDialog({
   indexRef.current = index
   onCloseRef.current = onClose
   onIndexChangeRef.current = onIndexChange
+  const restoreFocus = useCallback(() => returnFocusRef.current?.focus(), [returnFocusRef])
 
   useEffect(() => {
     if (!open || media.length === 0) return
@@ -55,7 +56,6 @@ export function LightboxDialog({
       wasInert: element.hasAttribute('inert'),
     }))
     const previousOverflow = document.body.style.overflow
-    const returnFocusElement = returnFocusRef.current
 
     document.body.style.overflow = 'hidden'
     for (const background of backgroundElements) background.setAttribute('inert', '')
@@ -105,9 +105,9 @@ export function LightboxDialog({
       for (const { element, wasInert } of inertState) {
         if (!wasInert) element.removeAttribute('inert')
       }
-      returnFocusElement?.focus()
+      restoreFocus()
     }
-  }, [media.length, open, returnFocusRef])
+  }, [media.length, open, restoreFocus])
 
   if (!open || media.length === 0) return null
 

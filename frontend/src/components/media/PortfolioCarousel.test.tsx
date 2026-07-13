@@ -126,7 +126,7 @@ describe('PortfolioCarousel', () => {
     expect(screen.getByText('1 of 3')).toBeInTheDocument()
   })
 
-  it('opens the active image in the lightbox and restores focus when closed', async () => {
+  it('restores focus to the current slide after navigating in the lightbox', async () => {
     const user = userEvent.setup()
     render(<PortfolioCarousel id="expand" label="Expanded gallery" media={media.slice(0, 3)} />)
     activateGallery()
@@ -137,9 +137,15 @@ describe('PortfolioCarousel', () => {
     await user.click(expand)
     expect(screen.getByRole('dialog', { name: 'Expanded media viewer' })).toBeInTheDocument()
 
-    await user.click(screen.getByRole('button', { name: 'Close expanded view' }))
+    await user.keyboard('{ArrowRight}')
+    const currentExpand = screen.getByRole('button', {
+      name: 'Open Portfolio photograph 2 in expanded view',
+    })
+    expect(expand).not.toBeInTheDocument()
+
+    await user.keyboard('{Escape}')
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-    expect(expand).toHaveFocus()
+    expect(currentExpand).toHaveFocus()
   })
 
   it('omits full-size sources while dormant and loads only active and adjacent slides nearby', () => {

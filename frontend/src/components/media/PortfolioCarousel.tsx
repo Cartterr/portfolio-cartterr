@@ -41,6 +41,7 @@ export function PortfolioCarousel({
   const [autoplayStopped, setAutoplayStopped] = useState(prefersReducedMotion)
   const [lightboxOpen, setLightboxOpen] = useState(false)
   const expandButtonRef = useRef<HTMLButtonElement>(null)
+  const pointerSelectionPendingRef = useRef(false)
   const [nearViewportRef, isNearViewport] = useNearViewport<HTMLDivElement>()
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: media.length > 1, duration: 28 },
@@ -80,13 +81,21 @@ export function PortfolioCarousel({
   useEffect(() => {
     if (!emblaApi) return
     const syncSelectedSlide = () => setActiveIndex(emblaApi.selectedScrollSnap())
-    emblaApi.on('select', syncSelectedSlide)
+    const handleSelection = () => {
+      const selectedIndex = emblaApi.selectedScrollSnap()
+      setActiveIndex(selectedIndex)
+      if (pointerSelectionPendingRef.current) {
+        setAnnouncement(`Image ${selectedIndex + 1} of ${total}`)
+        pointerSelectionPendingRef.current = false
+      }
+    }
+    emblaApi.on('select', handleSelection)
     emblaApi.on('reInit', syncSelectedSlide)
     return () => {
-      emblaApi.off('select', syncSelectedSlide)
+      emblaApi.off('select', handleSelection)
       emblaApi.off('reInit', syncSelectedSlide)
     }
-  }, [emblaApi])
+  }, [emblaApi, total])
 
   useEffect(() => {
     if (!autoplayMs || autoplayMs <= 0 || autoplayStopped || !isNearViewport || total < 2) {
@@ -146,7 +155,10 @@ export function PortfolioCarousel({
       onFocusCapture={stopAutoplay}
       onKeyDown={handleKeyDown}
       onMouseEnter={stopAutoplay}
-      onPointerDown={stopAutoplay}
+      onPointerDown={() => {
+        pointerSelectionPendingRef.current = true
+        stopAutoplay()
+      }}
       role="region"
       >
         <div className="portfolio-carousel__viewport" ref={viewportRef}>
