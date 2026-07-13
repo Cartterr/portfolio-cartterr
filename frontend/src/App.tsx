@@ -7,6 +7,7 @@ import { Metric } from './components/ui/Metric'
 import { getPortfolio, type PortfolioPage } from './data/portfolio'
 import type { PortfolioSection } from './data/types'
 import { usePortfolioRoute } from './hooks/usePortfolioRoute'
+import { SoftwarePortfolio } from './pages/SoftwarePortfolio'
 import { About } from './sections/About'
 import { Capabilities } from './sections/Capabilities'
 import { Contact } from './sections/Contact'
@@ -19,7 +20,7 @@ const renderSection = (section: PortfolioSection, page: PortfolioPage) => {
     case 'hero':
       return (
         <div id={section.id}>
-          <Hero content={page.hero} image={page.projects[0]} />
+          <Hero content={page.hero} />
           <section aria-label="Selected outcomes" className="metrics-strip">
             <div className="metrics-strip__inner">
               {page.metrics.map((metric) => (
@@ -73,9 +74,13 @@ function PortfolioShell() {
             key={mode}
             transition={{ duration: 0.18, ease: 'easeOut' }}
           >
-            {page.sections.map((section) => (
-              <Fragment key={section.id}>{renderSection(section, page)}</Fragment>
-            ))}
+            {mode === 'software' ? (
+              <SoftwarePortfolio />
+            ) : (
+              page.sections.map((section) => (
+                <Fragment key={section.id}>{renderSection(section, page)}</Fragment>
+              ))
+            )}
           </m.div>
         </AnimatePresence>
       </main>

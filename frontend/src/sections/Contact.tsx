@@ -4,6 +4,7 @@ import type { PortfolioContent } from '../data/portfolio'
 
 type ContactProps = {
   content: PortfolioContent['contact']
+  id?: string
 }
 
 type FormValues = {
@@ -28,7 +29,7 @@ const successMessage = 'Thanks for reaching out. Your message has been received.
 const errorMessage =
   'I couldn’t send your message. Please try again or use one of the direct links below.'
 
-export function Contact({ content }: ContactProps) {
+export function Contact({ content, id = 'contact' }: ContactProps) {
   const [values, setValues] = useState<FormValues>(emptyForm)
   const [status, setStatus] = useState<SubmissionStatus>({ state: 'idle', message: '' })
   const statusRef = useRef<HTMLParagraphElement>(null)
@@ -68,11 +69,16 @@ export function Contact({ content }: ContactProps) {
   }
 
   return (
-    <section aria-labelledby="contact-title" className="contact" id="contact">
+    <section
+      aria-labelledby={`${id}-title`}
+      className="contact software-contact"
+      data-testid={id.startsWith('software-') ? 'software-section' : undefined}
+      id={id}
+    >
       <div className="contact__inner">
         <div className="contact__intro">
           <p className="eyebrow">Contact</p>
-          <h2 id="contact-title">{content.heading}</h2>
+          <h2 id={`${id}-title`}>{content.heading}</h2>
           <p>{content.body}</p>
           <ul aria-label="Direct contact links" className="contact__links">
             {content.links.map((link) => (
@@ -83,7 +89,12 @@ export function Contact({ content }: ContactProps) {
           </ul>
         </div>
 
-        <form aria-busy={isPending} className="contact-form" onSubmit={handleSubmit}>
+        <form
+          aria-busy={isPending}
+          aria-label={id.startsWith('software-') ? 'Software project inquiry' : 'Contact form'}
+          className="contact-form"
+          onSubmit={handleSubmit}
+        >
           <div className="contact-form__field">
             <label htmlFor="contact-name">Name</label>
             <input

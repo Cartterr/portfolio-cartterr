@@ -262,7 +262,12 @@ const softwareCapabilities = [
   },
 ] satisfies CapabilityStory[]
 
-const aboutMediaIds = ['profile15', 'profile1', 'profile6-alt']
+const aboutMediaIds = mediaIdsFor('profile')
+
+const softwareNavigation = sharedNavigation.map((item) => ({
+  ...item,
+  href: `#software-${item.href.slice(1)}`,
+}))
 
 export const softwarePortfolio = {
   mode: 'software',
@@ -272,7 +277,7 @@ export const softwarePortfolio = {
     description:
       'Software engineering across reliable AI, data infrastructure, scientific computing, and autonomous systems.',
   },
-  navigation: sharedNavigation,
+  navigation: softwareNavigation,
   sections: sectionOrder,
   hero: {
     name: portfolioOwner.name,
@@ -281,7 +286,7 @@ export const softwarePortfolio = {
     summary:
       'I build production software across AI systems, data infrastructure, scientific computing, and autonomous planning.',
     location: portfolioOwner.location,
-    primaryCta: { label: 'Explore selected work', href: '#work' },
+    primaryCta: { label: 'View Work', href: '#software-work' },
     secondaryCta: sharedLinks.cv,
   },
   metrics: sharedMetrics,
@@ -293,7 +298,7 @@ export const softwarePortfolio = {
       'I am especially interested in applying AI to satellite data, simulation, and aerospace problems.',
     ],
     mediaIds: aboutMediaIds,
-    images: aboutImages(aboutMediaIds.slice(0, 2)),
+    images: aboutImages(aboutMediaIds),
   },
   experience: softwareExperience,
   projects: softwareProjects,

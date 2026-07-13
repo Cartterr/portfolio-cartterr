@@ -1,29 +1,53 @@
-import type { ExperienceItem } from '../data/portfolio'
+import {
+  ExperienceChapter,
+  type ExperienceLayout,
+} from '../components/story/ExperienceChapter'
+import type { ExperienceStory, PortfolioMedia } from '../data/types'
 
 type ExperienceProps = {
-  items: ExperienceItem[]
+  id?: string
+  items: ExperienceStory[]
+  media?: PortfolioMedia[]
 }
 
-export function Experience({ items }: ExperienceProps) {
-  return (
-    <section aria-labelledby="experience-title" className="section experience" id="experience">
-      <div className="section-heading section-heading--split">
-        <p className="eyebrow">Experience</p>
-        <h2 id="experience-title">From product delivery to research infrastructure.</h2>
-      </div>
+const layoutByStory: Record<string, ExperienceLayout> = {
+  dily: 'flagship-split',
+  gridworks: 'systems-row',
+  flair: 'alternating-chapter',
+  notreDame: 'field-sticky',
+  politiktok: 'research-pinned',
+  teaching: 'compact-timeline',
+  geoscience: 'visual-finale',
+}
 
-      <ol className="timeline">
-        {items.map((item) => (
-          <li className="timeline__item" key={`${item.company}-${item.period}`}>
-            <p className="timeline__period">{item.period}</p>
-            <div className="timeline__role">
-              <h3>{item.title}</h3>
-              <p>{item.company}</p>
-            </div>
-            <p className="timeline__summary">{item.summary}</p>
-          </li>
+export function Experience({ id = 'experience', items, media = [] }: ExperienceProps) {
+  return (
+    <section
+      aria-labelledby={`${id}-title`}
+      className="software-section software-experience"
+      data-testid={id.startsWith('software-') ? 'software-section' : undefined}
+      id={id}
+    >
+      <header className="software-section-heading software-section-heading--wide">
+        <p className="software-kicker">Experience · 02</p>
+        <h2 id={`${id}-title`}>Seven chapters. One systems practice.</h2>
+        <p>
+          Product delivery, research engineering, technical teaching, and scientific computing—
+          each shaped around the constraints that made the work matter.
+        </p>
+      </header>
+
+      <div className="software-experience__chapters">
+        {items.map((story, index) => (
+          <ExperienceChapter
+            index={index}
+            key={story.id}
+            layout={layoutByStory[story.id] ?? 'alternating-chapter'}
+            media={media.filter((item) => item.storyId === story.id)}
+            story={story}
+          />
         ))}
-      </ol>
+      </div>
     </section>
   )
 }

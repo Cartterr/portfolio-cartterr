@@ -1,34 +1,70 @@
-import type { PortfolioContent } from '../data/portfolio'
+import { PortfolioCarousel } from '../components/media/PortfolioCarousel'
+import type { PortfolioMedia, PortfolioPage } from '../data/types'
 
 type AboutProps = {
-  content: PortfolioContent['about']
+  content: PortfolioPage['about']
+  id?: string
+  media?: PortfolioMedia[]
 }
 
-export function About({ content }: AboutProps) {
+export function About({ content, id = 'about', media }: AboutProps) {
   return (
-    <section aria-labelledby="about-title" className="section about" id="about">
-      <div className="about__copy">
-        <p className="eyebrow">About</p>
-        <h2 id="about-title">{content.heading}</h2>
-        {content.paragraphs.slice(0, 2).map((paragraph) => (
-          <p key={paragraph}>{paragraph}</p>
-        ))}
+    <section
+      aria-labelledby={`${id}-title`}
+      className="software-section software-about"
+      data-layout="asymmetric-about"
+      data-testid={id.startsWith('software-') ? 'software-section' : undefined}
+      id={id}
+    >
+      <div className="software-about__media">
+        {media ? (
+          <PortfolioCarousel
+            autoplayMs={7000}
+            featured
+            id="software-profile-gallery"
+            label="Profile gallery"
+            media={media}
+          />
+        ) : (
+          <div className="software-about__compatibility-media">
+            {content.images.map((image) => (
+              <img
+                alt={image.alt}
+                height={image.height}
+                key={image.src}
+                loading="lazy"
+                src={image.src}
+                width={image.width}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
-      <div className="about__media">
-        {content.images.map((image) => (
-          <figure key={image.src}>
-            <img
-              alt=""
-              decoding="async"
-              height={image.height}
-              loading="lazy"
-              src={image.src}
-              width={image.width}
-            />
-            <figcaption>{image.alt}</figcaption>
-          </figure>
-        ))}
+      <div className="software-about__copy">
+        <p className="software-kicker">About · 01</p>
+        <h2 id={`${id}-title`}>{content.heading}</h2>
+        <div className="software-about__paragraphs">
+          {content.paragraphs.map((paragraph, index) => (
+            <p className={index === 0 ? 'software-about__lead' : undefined} key={paragraph}>
+              {paragraph}
+            </p>
+          ))}
+        </div>
+        <dl className="software-about__principles">
+          <div>
+            <dt>Build</dt>
+            <dd>Maintainable product and platform systems.</dd>
+          </div>
+          <div>
+            <dt>Investigate</dt>
+            <dd>Research questions translated into repeatable infrastructure.</dd>
+          </div>
+          <div>
+            <dt>Operate</dt>
+            <dd>Software designed for imperfect, real-world conditions.</dd>
+          </div>
+        </dl>
       </div>
     </section>
   )

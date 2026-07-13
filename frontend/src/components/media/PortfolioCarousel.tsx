@@ -150,6 +150,7 @@ export function PortfolioCarousel({
       aria-label={label}
       aria-roledescription="carousel"
       className="portfolio-carousel"
+      data-autoplay-ms={autoplayMs}
       data-featured={featured || undefined}
       id={id}
       onFocusCapture={stopAutoplay}

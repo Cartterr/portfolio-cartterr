@@ -1,44 +1,49 @@
-import { ArrowLink } from '../components/ui/ArrowLink'
-import type { CaseStudy, PortfolioContent } from '../data/portfolio'
+import type { PortfolioPage } from '../data/types'
 
 type HeroProps = {
-  content: PortfolioContent['hero']
-  image: Pick<CaseStudy, 'image' | 'imageAlt' | 'imageWidth' | 'imageHeight'>
+  content: PortfolioPage['hero']
+  id?: string
 }
 
-const highPriorityImage = { fetchpriority: 'high' }
-
-export function Hero({ content, image }: HeroProps) {
+export function Hero({ content, id }: HeroProps) {
   return (
-    <section aria-labelledby="hero-title" className="hero">
-      <div className="hero__inner">
-        <div className="hero__copy">
-          <p className="eyebrow hero__eyebrow">
-            {content.name} <span aria-hidden="true">·</span> {content.location}
-          </p>
-          <h1 id="hero-title">{content.title}</h1>
-          <p className="hero__summary">{content.summary}</p>
-          <div className="hero__actions">
-            <ArrowLink className="button-link button-link--primary" {...content.primaryCta} />
-            <a className="button-link button-link--secondary" download href={content.secondaryCta.href}>
+    <section
+      aria-labelledby="software-hero-title"
+      className="software-hero"
+      data-testid={id ? 'software-section' : undefined}
+      id={id}
+    >
+      <div className="software-hero__inner">
+        <div className="software-hero__signal">
+          <p className="software-kicker">Santiago, Chile · Systems under real constraints</p>
+          <span className="software-hero__signal-line" aria-hidden="true" />
+          <p>Production software · research infrastructure · autonomous planning</p>
+        </div>
+
+        <div className="software-hero__copy">
+          <p className="software-hero__name">{content.name}</p>
+          <h1 id="software-hero-title">{content.title}</h1>
+          <p className="software-hero__summary">{content.summary}</p>
+          <div aria-label="Software portfolio actions" className="software-hero__actions" role="group">
+            <a className="software-button software-button--primary" href={content.primaryCta.href}>
+              <span>{content.primaryCta.label}</span>
+              <span aria-hidden="true">↘</span>
+            </a>
+            <a
+              className="software-button software-button--secondary"
+              download
+              href={content.secondaryCta.href}
+            >
               <span>{content.secondaryCta.label}</span>
               <span aria-hidden="true">↓</span>
             </a>
           </div>
         </div>
 
-        <figure className="hero__media">
-          <img
-            {...highPriorityImage}
-            alt={image.imageAlt}
-            decoding="sync"
-            height={image.imageHeight}
-            loading="eager"
-            src={image.image}
-            width={image.imageWidth}
-          />
-          <figcaption>Autonomous aircraft prepared for an emergency-response field test.</figcaption>
-        </figure>
+        <aside className="software-hero__note" aria-label="Current engineering direction">
+          <p className="software-kicker">Current direction</p>
+          <p>Applying AI to satellite data, scientific simulation, and aerospace systems.</p>
+        </aside>
       </div>
     </section>
   )
