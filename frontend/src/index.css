@@ -1,8 +1,6 @@
 @import '@fontsource-variable/manrope';
 @import '@fontsource-variable/newsreader';
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import 'tailwindcss';
 
 :root {
   --paper: #f4f1ea;

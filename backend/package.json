@@ -36,10 +36,7 @@
     "ts-node": "^10.9.1",
     "tsx": "4.21.0",
     "typescript": "5.9.3",
-    "vitest": "0.34.6"
-  },
-  "resolutions": {
-    "qs": "6.15.2"
+    "vitest": "4.1.10"
   },
   "keywords": [
     "portfolio",

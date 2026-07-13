@@ -88,8 +88,8 @@ test('portfolio metadata uses one aligned canonical identity and real social ass
 test('frontend build externalizes fonts and does not publish source maps', () => {
   const buildCommand =
     process.platform === 'win32'
-      ? { executable: 'cmd.exe', arguments: ['/d', '/s', '/c', 'yarn build'] }
-      : { executable: 'yarn', arguments: ['build'] }
+      ? { executable: 'cmd.exe', arguments: ['/d', '/s', '/c', 'npm run build'] }
+      : { executable: 'npm', arguments: ['run', 'build'] }
   const build = spawnSync(buildCommand.executable, buildCommand.arguments, {
     cwd: fromRoot('frontend'),
     encoding: 'utf8',
@@ -156,30 +156,59 @@ test('Railway deploy contract is health-gated and contains no identifiers or sec
   assert.doesNotMatch(JSON.stringify(railway), /token|secret|projectId|serviceId/i)
 })
 
-test('package managers and root scripts have one authority per workspace', () => {
+test('native npm workspace owns the modern dual-entry frontend', () => {
   const rootPackage = readJson('package.json')
   const frontendPackage = readJson('frontend', 'package.json')
   const backendPackage = readJson('backend', 'package.json')
+  const visualHtmlPath = fromRoot('frontend', 'visual', 'index.html')
 
+  assert.deepEqual(rootPackage.workspaces, ['frontend', 'backend'])
   assert.equal(existsSync(fromRoot('package-lock.json')), true)
   assert.equal(existsSync(fromRoot('yarn.lock')), false)
-  assert.equal(existsSync(fromRoot('frontend', 'yarn.lock')), true)
+  assert.equal(existsSync(fromRoot('frontend', 'yarn.lock')), false)
   assert.equal(existsSync(fromRoot('frontend', 'package-lock.json')), false)
-  assert.equal(existsSync(fromRoot('backend', 'yarn.lock')), true)
+  assert.equal(existsSync(fromRoot('backend', 'yarn.lock')), false)
   assert.equal(
-    rootPackage.devDependencies.yarn,
-    '1.22.22',
-    'the npm-selected Railway build must install the Yarn binary used by nested workspace scripts',
+    [rootPackage, frontendPackage, backendPackage].some((packageJson) =>
+      Object.values(packageJson.scripts).some((script) => /\byarn\b/i.test(script)),
+    ),
+    false,
   )
-  const rootLock = readJson('package-lock.json')
-  assert.equal(rootLock.packages['node_modules/yarn']?.version, '1.22.22')
+
+  assert.equal(frontendPackage.dependencies.react, '19.2.7')
+  assert.equal(frontendPackage.dependencies['react-dom'], '19.2.7')
+  assert.equal(frontendPackage.devDependencies.vite, '8.1.4')
+  assert.equal(frontendPackage.devDependencies.vitest, '4.1.10')
+  assert.equal(frontendPackage.devDependencies['@testing-library/react'], '16.3.2')
+  assert.equal(frontendPackage.devDependencies['@testing-library/dom'], '10.4.1')
+  assert.equal(frontendPackage.devDependencies['@testing-library/user-event'], '14.6.1')
+  assert.equal(frontendPackage.devDependencies.jsdom, '29.1.1')
+
+  assert.equal(existsSync(fromRoot('frontend', 'index.html')), true)
+  assert.equal(existsSync(visualHtmlPath), true)
+  if (existsSync(visualHtmlPath)) {
+    const visualHtml = readFileSync(visualHtmlPath, 'utf8')
+    assert.match(visualHtml, /<html\b[^>]*data-portfolio-mode=["']visual["']/i)
+    assert.match(visualHtml, /<link\b[^>]*rel=["']canonical["'][^>]*href=["']https:\/\/josecarter\.dev\/visual\/["']/i)
+    assert.match(visualHtml, /<meta\b[^>]*property=["']og:url["'][^>]*content=["']https:\/\/josecarter\.dev\/visual\/["']/i)
+    assert.match(visualHtml, /<script\b[^>]*src=["']\/src\/main\.tsx["']/i)
+    assert.match(visualHtml, /<noscript>[\s\S]*(?:mailto:|CV)[\s\S]*<\/noscript>/i)
+  }
+
   assert.equal(frontendPackage.scripts['type-check'], 'tsc --noEmit')
   assert.equal(
     rootPackage.scripts.test,
-    'node --test scripts/production-contract.test.mjs && npm run test:backend && npm run test:frontend',
+    'node --test scripts/production-contract.test.mjs && npm run test --workspace backend && npm run test --workspace frontend',
   )
-  assert.equal(rootPackage.scripts.lint, 'npm run lint:frontend')
-  assert.equal(rootPackage.scripts['type-check'], 'npm run type-check:frontend && npm run type-check:backend')
+  assert.equal(rootPackage.scripts.lint, 'npm run lint --workspace frontend')
+  assert.equal(
+    rootPackage.scripts['type-check'],
+    'npm run type-check --workspace frontend && npm run type-check --workspace backend',
+  )
+  assert.equal(
+    rootPackage.scripts.build,
+    'npm run build --workspace backend && npm run build --workspace frontend',
+  )
   assert.equal(rootPackage.repository.url, 'https://github.com/Cartterr/portfolio-cartterr.git')
   assert.ok(!Object.keys(rootPackage.scripts).some((name) => name.startsWith('docker:')))
   assert.equal('deploy' in rootPackage.scripts, false)

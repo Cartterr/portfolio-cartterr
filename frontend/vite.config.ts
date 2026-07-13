@@ -1,9 +1,10 @@
 import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   test: {
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts'
@@ -23,6 +24,12 @@ export default defineConfig({
         drop_console: true,
         drop_debugger: true
       }
+    },
+    rollupOptions: {
+      input: {
+        software: path.resolve(__dirname, 'index.html'),
+        visual: path.resolve(__dirname, 'visual/index.html'),
+      },
     }
   },
   server: {
