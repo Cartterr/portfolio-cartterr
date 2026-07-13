@@ -15,8 +15,10 @@ import {
 import { SpectralField } from './SpectralField'
 import { TerrainLens } from './TerrainLens'
 import {
+  evaluateRuntimeStall,
   evaluateRuntimeWindow,
   selectSceneVisibilityPolicy,
+  type RuntimeStallState,
   type RuntimeWindowState,
 } from './runtimePolicy'
 
@@ -72,12 +74,14 @@ function DemandTicker({ active, fps }: { active: boolean; fps: number }) {
 }
 
 function RuntimeGovernor({
+  active,
   capability,
   targetFps,
-}: VisualHeroSceneProps & { targetFps: number }) {
+}: VisualHeroSceneProps & { active: boolean; targetFps: number }) {
   const sampleRef = useRef({
     count: 0,
     elapsed: 0,
+    stall: { consecutiveLongFrames: 0 } satisfies RuntimeStallState,
     window: { slowWindows: 0 } satisfies RuntimeWindowState,
   })
 
@@ -85,13 +89,23 @@ function RuntimeGovernor({
     sampleRef.current = {
       count: 0,
       elapsed: 0,
+      stall: { consecutiveLongFrames: 0 },
       window: { slowWindows: 0 },
     }
-  }, [capability, targetFps])
+  }, [active, capability, targetFps])
 
   useFrame((_state, delta) => {
-    if (delta > 0.25) return
+    if (!active) return
     const sample = sampleRef.current
+    const stallEvaluation = evaluateRuntimeStall(sample.stall, delta)
+    sample.stall = stallEvaluation.state
+    if (stallEvaluation.shouldFallbackToPoster) {
+      requestGraphicsFallback('poster')
+      sample.stall = { consecutiveLongFrames: 0 }
+      return
+    }
+    if (delta > 0.25) return
+
     sample.count += 1
     sample.elapsed += delta
     if (sample.count < 72) return
@@ -130,7 +144,7 @@ function SceneContents({ active, capability, interactive }: VisualHeroSceneProps
       <TerrainLens quality={capability} />
       <SpectralField quality={capability} />
       <DemandTicker active={active} fps={fps} />
-      <RuntimeGovernor capability={capability} targetFps={fps} />
+      <RuntimeGovernor active={active} capability={capability} targetFps={fps} />
     </>
   )
 }

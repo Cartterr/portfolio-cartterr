@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
+  evaluateRuntimeStall,
   evaluateRuntimeWindow,
   selectSceneVisibilityPolicy,
+  type RuntimeStallState,
   type RuntimeWindowState,
 } from './runtimePolicy'
 
@@ -39,5 +41,29 @@ describe('Visual hero runtime policy', () => {
   it('chooses poster fallback when viewport visibility cannot be observed', () => {
     expect(selectSceneVisibilityPolicy(false)).toBe('poster')
     expect(selectSceneVisibilityPolicy(true)).toBe('observe')
+  })
+
+  it('falls back to the poster after repeated long visible-frame stalls', () => {
+    let state: RuntimeStallState = { consecutiveLongFrames: 0 }
+
+    const first = evaluateRuntimeStall(state, 0.3)
+    expect(first.shouldFallbackToPoster).toBe(false)
+    state = first.state
+
+    const second = evaluateRuntimeStall(state, 0.31)
+    expect(second.shouldFallbackToPoster).toBe(true)
+  })
+
+  it('resets an isolated long-frame stall after a normal visible frame', () => {
+    const isolated = evaluateRuntimeStall({ consecutiveLongFrames: 0 }, 0.3)
+    expect(isolated.shouldFallbackToPoster).toBe(false)
+
+    const recovered = evaluateRuntimeStall(isolated.state, 1 / 20)
+    expect(recovered).toEqual({
+      state: { consecutiveLongFrames: 0 },
+      shouldFallbackToPoster: false,
+    })
+
+    expect(evaluateRuntimeStall(recovered.state, 0.32).shouldFallbackToPoster).toBe(false)
   })
 })

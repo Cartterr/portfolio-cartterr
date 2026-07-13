@@ -117,3 +117,38 @@ Observed failures:
 - `git diff --check`: no whitespace errors.
 
 The existing raw graphics-chunk warning remains unchanged in nature; the isolated scene stays below the approved `400 kB` gzip budget.
+
+## Final Long-Frame Stall Hardening
+
+The final runtime review found that `RuntimeGovernor` returned immediately for every visible frame delta above `0.25s`. This excluded isolated tab or scheduler pauses from cadence sampling, but also made repeated severe visible stalls invisible to the runtime fallback forever.
+
+### Stall RED
+
+Command:
+
+```text
+npm run test --workspace frontend -- src/visual/VisualHeroRuntimePolicy.test.ts
+```
+
+Observed failure: both new long-frame tests failed because `evaluateRuntimeStall` did not exist. The regressions separately require two consecutive `>0.25s` visible deltas to fall back and a normal frame to reset an isolated long delta.
+
+### Stall Fix
+
+- Added deterministic consecutive-long-frame state to the pure runtime policy.
+- Two consecutive frame deltas above `0.25s` now request the sticky poster ceiling directly.
+- Any normal frame resets the long-frame counter, so isolated scheduling pauses do not demote the scene.
+- The stall evaluator runs only while the scene is active; hidden and offscreen frames remain outside runtime judgment.
+- Long frames remain excluded from the cadence-window average, preserving the existing quantization-safe 28fps and 18fps policy.
+
+### Stall Verification
+
+- Focused capability/runtime suites: 13/13 passed across 2 files.
+- ESLint: passed with zero warnings.
+- TypeScript type-check: passed.
+- TypeScript and Vite production build: passed; 1,141 modules transformed.
+- Shared application JavaScript: `403.30 kB` raw / `125.31 kB` gzip.
+- Lazy `VisualHeroScene` graphics chunk: `913.60 kB` raw / `240.88 kB` gzip.
+- Neither generated HTML entry preloads the scene; the shared main bundle retains only its dynamic import edge.
+- `git diff --check`: no whitespace errors.
+
+The existing raw graphics-chunk warning is unchanged in nature and the scene remains within the approved gzip budget.
