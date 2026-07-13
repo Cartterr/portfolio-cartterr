@@ -134,6 +134,22 @@ describe('dual portfolio shell', () => {
     expect(screen.getByRole('link', { name: /skip to content/i })).toHaveAttribute('href', '#main')
   })
 
+  it('honors an initial section hash after the portfolio document mounts', async () => {
+    setPath('/#software-work')
+    const scrollIntoView = vi.fn()
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: scrollIntoView,
+    })
+
+    render(<App />)
+
+    const target = document.querySelector('#software-work')
+    await waitFor(() => expect(scrollIntoView).toHaveBeenCalled())
+    expect(scrollIntoView).toHaveBeenCalledWith()
+    expect(target).toBeInTheDocument()
+  })
+
   it('switches mode with History API, resets scroll, updates metadata, focuses h1, and announces', async () => {
     const user = userEvent.setup()
     const pushState = vi.spyOn(window.history, 'pushState')

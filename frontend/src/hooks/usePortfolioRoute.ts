@@ -8,7 +8,7 @@ type PortfolioRouteHistory = {
 
 type PendingRoute = PortfolioRouteHistory & {
   hash: string
-  kind: 'popstate' | 'switch'
+  kind: 'initial' | 'popstate' | 'switch'
   revision: number
 }
 
@@ -61,7 +61,17 @@ export function usePortfolioRoute() {
   }))
   const [announcement, setAnnouncement] = useState('')
   const modeRef = useRef(route.mode)
-  const pendingRouteRef = useRef<PendingRoute | null>(null)
+  const pendingRouteRef = useRef<PendingRoute | null>(
+    window.location.hash
+      ? {
+          mode: route.mode,
+          scrollY: 0,
+          hash: window.location.hash,
+          kind: 'initial',
+          revision: route.revision,
+        }
+      : null,
+  )
 
   modeRef.current = route.mode
 
@@ -158,10 +168,10 @@ export function usePortfolioRoute() {
         if (!heading) return false
         heading.tabIndex = -1
         heading.focus({ preventScroll: true })
-        setAnnouncement(announceMode(pending.mode, 'loaded'))
-      } else {
-        setAnnouncement(announceMode(pending.mode, 'restored'))
       }
+      setAnnouncement(
+        announceMode(pending.mode, pending.kind === 'popstate' ? 'restored' : 'loaded'),
+      )
 
       pendingRouteRef.current = null
       observer?.disconnect()
