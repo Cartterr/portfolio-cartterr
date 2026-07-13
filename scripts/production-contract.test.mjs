@@ -271,7 +271,7 @@ test('native npm workspace owns the modern dual-entry frontend', () => {
   assert.equal(frontendPackage.scripts['type-check'], 'tsc --noEmit')
   assert.equal(
     rootPackage.scripts.test,
-    'node --test scripts/production-contract.test.mjs && npm run test --workspace backend && npm run test --workspace frontend && npm run build:backend && npm run smoke:compiled --workspace backend',
+    'node --test scripts/production-contract.test.mjs && npm run test --workspace backend && npm run test --workspace frontend && npm run build && npm run smoke:compiled --workspace backend',
   )
   assert.equal(rootPackage.scripts.lint, 'npm run lint --workspace frontend')
   assert.equal(
