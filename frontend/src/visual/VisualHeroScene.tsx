@@ -14,6 +14,11 @@ import {
 } from '../hooks/useGraphicsCapability'
 import { SpectralField } from './SpectralField'
 import { TerrainLens } from './TerrainLens'
+import {
+  evaluateRuntimeWindow,
+  selectSceneVisibilityPolicy,
+  type RuntimeWindowState,
+} from './runtimePolicy'
 
 type VisualHeroSceneProps = {
   capability: Exclude<GraphicsCapability, 'poster'>
@@ -66,8 +71,23 @@ function DemandTicker({ active, fps }: { active: boolean; fps: number }) {
   return null
 }
 
-function RuntimeGovernor({ capability }: VisualHeroSceneProps) {
-  const sampleRef = useRef({ count: 0, elapsed: 0, slowWindows: 0 })
+function RuntimeGovernor({
+  capability,
+  targetFps,
+}: VisualHeroSceneProps & { targetFps: number }) {
+  const sampleRef = useRef({
+    count: 0,
+    elapsed: 0,
+    window: { slowWindows: 0 } satisfies RuntimeWindowState,
+  })
+
+  useEffect(() => {
+    sampleRef.current = {
+      count: 0,
+      elapsed: 0,
+      window: { slowWindows: 0 },
+    }
+  }, [capability, targetFps])
 
   useFrame((_state, delta) => {
     if (delta > 0.25) return
@@ -77,14 +97,17 @@ function RuntimeGovernor({ capability }: VisualHeroSceneProps) {
     if (sample.count < 72) return
 
     const averageDelta = sample.elapsed / sample.count
-    const threshold = capability === 'full' ? 0.034 : 0.055
-    sample.slowWindows = averageDelta > threshold ? sample.slowWindows + 1 : 0
+    const evaluation = evaluateRuntimeWindow(sample.window, {
+      averageDeltaSeconds: averageDelta,
+      targetFps,
+    })
+    sample.window = evaluation.state
     sample.count = 0
     sample.elapsed = 0
 
-    if (sample.slowWindows >= 2) {
+    if (evaluation.shouldDowngrade) {
       requestGraphicsFallback(capability === 'full' ? 'low' : 'poster')
-      sample.slowWindows = 0
+      sample.window = { slowWindows: 0 }
     }
   })
 
@@ -107,14 +130,17 @@ function SceneContents({ active, capability, interactive }: VisualHeroSceneProps
       <TerrainLens quality={capability} />
       <SpectralField quality={capability} />
       <DemandTicker active={active} fps={fps} />
-      <RuntimeGovernor capability={capability} />
+      <RuntimeGovernor capability={capability} targetFps={fps} />
     </>
   )
 }
 
 export default function VisualHeroScene({ capability }: VisualHeroSceneProps) {
+  const visibilityPolicy = selectSceneVisibilityPolicy(
+    typeof IntersectionObserver !== 'undefined',
+  )
   const containerRef = useRef<HTMLDivElement>(null)
-  const [nearViewport, setNearViewport] = useState(true)
+  const [nearViewport, setNearViewport] = useState(visibilityPolicy === 'observe')
   const [documentVisible, setDocumentVisible] = useState(() =>
     typeof document === 'undefined' ? false : document.visibilityState !== 'hidden',
   )
@@ -123,14 +149,19 @@ export default function VisualHeroScene({ capability }: VisualHeroSceneProps) {
 
   useEffect(() => {
     const element = containerRef.current
-    if (!element || typeof IntersectionObserver === 'undefined') return
+    if (visibilityPolicy === 'poster') {
+      setNearViewport(false)
+      requestGraphicsFallback('poster')
+      return
+    }
+    if (!element) return
     const observer = new IntersectionObserver(
       ([entry]) => setNearViewport(entry.isIntersecting),
       { rootMargin: '80px 0px', threshold: 0.02 },
     )
     observer.observe(element)
     return () => observer.disconnect()
-  }, [])
+  }, [visibilityPolicy])
 
   useEffect(() => {
     const handleVisibilityChange = () => setDocumentVisible(document.visibilityState !== 'hidden')

@@ -27,6 +27,12 @@ const capabilityRank: Record<GraphicsCapability, number> = {
   full: 2,
 }
 
+const minimumCapability = (
+  first: GraphicsCapability,
+  second: GraphicsCapability,
+): GraphicsCapability =>
+  capabilityRank[first] <= capabilityRank[second] ? first : second
+
 export function classifyGraphicsCapability({
   reducedMotion,
   saveData,
@@ -89,23 +95,22 @@ export function requestGraphicsFallback(capability: Exclude<GraphicsCapability, 
 }
 
 export function useGraphicsCapability(): GraphicsCapability {
-  const [capability, setCapability] = useState<GraphicsCapability>(() =>
+  const [baselineCapability, setBaselineCapability] = useState<GraphicsCapability>(() =>
     classifyGraphicsCapability(readGraphicsSignals()),
   )
+  const [runtimeCeiling, setRuntimeCeiling] = useState<GraphicsCapability>('full')
 
   useEffect(() => {
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     const graphicsNavigator = navigator as NavigatorWithGraphicsHints
     const connection = graphicsNavigator.connection
     const refreshCapability = () => {
-      setCapability(classifyGraphicsCapability(readGraphicsSignals()))
+      setBaselineCapability(classifyGraphicsCapability(readGraphicsSignals()))
     }
     const handleRuntimeFallback = (event: Event) => {
       const requested = (event as CustomEvent<unknown>).detail
       if (!isGraphicsCapability(requested)) return
-      setCapability((current) =>
-        capabilityRank[requested] < capabilityRank[current] ? requested : current,
-      )
+      setRuntimeCeiling((current) => minimumCapability(current, requested))
     }
 
     motionQuery.addEventListener?.('change', refreshCapability)
@@ -119,5 +124,5 @@ export function useGraphicsCapability(): GraphicsCapability {
     }
   }, [])
 
-  return capability
+  return minimumCapability(baselineCapability, runtimeCeiling)
 }

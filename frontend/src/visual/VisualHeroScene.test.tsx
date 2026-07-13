@@ -72,4 +72,50 @@ describe('graphics capability gate', () => {
     })
     expect(result.current).toBe('poster')
   })
+
+  it('keeps runtime and context fallback sticky through signal refreshes', () => {
+    const motionListeners = new Set<EventListener>()
+    let reducedMotion = false
+    const motionQuery = {
+      get matches() {
+        return reducedMotion
+      },
+      media: '(prefers-reduced-motion: reduce)',
+      addEventListener: (_type: string, listener: EventListener) => motionListeners.add(listener),
+      removeEventListener: (_type: string, listener: EventListener) =>
+        motionListeners.delete(listener),
+    }
+    const connection = new EventTarget() as EventTarget & { saveData: boolean }
+    connection.saveData = false
+    Object.defineProperty(window, 'matchMedia', {
+      configurable: true,
+      value: vi.fn().mockReturnValue(motionQuery),
+    })
+    setNavigatorValue('connection', connection)
+
+    const { result } = renderHook(() => useGraphicsCapability())
+    expect(result.current).toBe('full')
+
+    act(() => {
+      window.dispatchEvent(new CustomEvent(GRAPHICS_FALLBACK_EVENT, { detail: 'low' }))
+    })
+    expect(result.current).toBe('low')
+
+    act(() => {
+      connection.saveData = true
+      connection.dispatchEvent(new Event('change'))
+      connection.saveData = false
+      connection.dispatchEvent(new Event('change'))
+    })
+    expect(result.current).toBe('low')
+
+    act(() => {
+      window.dispatchEvent(new CustomEvent(GRAPHICS_FALLBACK_EVENT, { detail: 'poster' }))
+      reducedMotion = true
+      motionListeners.forEach((listener) => listener(new Event('change')))
+      reducedMotion = false
+      motionListeners.forEach((listener) => listener(new Event('change')))
+    })
+    expect(result.current).toBe('poster')
+  })
 })
