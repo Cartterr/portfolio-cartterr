@@ -160,7 +160,8 @@ describe('PortfolioCarousel', () => {
     render(<PortfolioCarousel id="load" label="Loading gallery" media={media} />)
 
     for (let number = 1; number <= media.length; number += 1) {
-      expect(mainImage('load', number)).not.toHaveAttribute('src')
+      expect(mainImage('load', number)).toHaveAttribute('src', `/media-${number}-thumb.jpg`)
+      expect(mainImage('load', number)).toHaveAttribute('data-placeholder', 'true')
       expect(document.querySelector(`#load-slide-${number} source`)).not.toHaveAttribute('srcset')
     }
 
@@ -169,14 +170,14 @@ describe('PortfolioCarousel', () => {
     expect(mainImage('load', 1)).toHaveAttribute('src', '/media-1.jpg')
     expect(mainImage('load', 2)).toHaveAttribute('src', '/media-2.jpg')
     expect(mainImage('load', 5)).toHaveAttribute('src', '/media-5.jpg')
-    expect(mainImage('load', 3)).not.toHaveAttribute('src')
-    expect(mainImage('load', 4)).not.toHaveAttribute('src')
+    expect(mainImage('load', 3)).toHaveAttribute('src', '/media-3-thumb.jpg')
+    expect(mainImage('load', 4)).toHaveAttribute('src', '/media-4-thumb.jpg')
 
     fireEvent.click(screen.getByRole('button', { name: 'Next image' }))
     expect(mainImage('load', 1)).toHaveAttribute('src', '/media-1.jpg')
     expect(mainImage('load', 2)).toHaveAttribute('src', '/media-2.jpg')
     expect(mainImage('load', 3)).toHaveAttribute('src', '/media-3.jpg')
-    expect(mainImage('load', 5)).not.toHaveAttribute('src')
+    expect(mainImage('load', 5)).toHaveAttribute('src', '/media-5-thumb.jpg')
   })
 
   it('keeps the carousel engine dormant until the gallery is near the viewport', () => {
@@ -254,7 +255,11 @@ describe('PortfolioCarousel', () => {
 
     moveGalleryOffscreen()
     for (let number = 1; number <= 3; number += 1) {
-      expect(mainImage('offscreen-auto', number)).not.toHaveAttribute('src')
+      expect(mainImage('offscreen-auto', number)).toHaveAttribute(
+        'src',
+        `/media-${number}-thumb.jpg`,
+      )
+      expect(mainImage('offscreen-auto', number)).toHaveAttribute('data-placeholder', 'true')
     }
     expect(firstSlide).toHaveStyle({ transform: 'translateX(0px)' })
 

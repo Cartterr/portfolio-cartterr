@@ -1,26 +1,12 @@
-import {
-  ExperienceChapter,
-  type ExperienceLayout,
-} from '../components/story/ExperienceChapter'
-import type { ExperienceStory, PortfolioMedia } from '../data/types'
+import { ExperienceChapter } from '../components/story/ExperienceChapter'
+import type { ExperienceStory } from '../data/types'
 
 type ExperienceProps = {
   id?: string
   items: ExperienceStory[]
-  media?: PortfolioMedia[]
 }
 
-const layoutByStory: Record<string, ExperienceLayout> = {
-  dily: 'flagship-split',
-  gridworks: 'systems-row',
-  flair: 'alternating-chapter',
-  notreDame: 'field-sticky',
-  politiktok: 'research-pinned',
-  teaching: 'compact-timeline',
-  geoscience: 'visual-finale',
-}
-
-export function Experience({ id = 'experience', items, media = [] }: ExperienceProps) {
+export function Experience({ id = 'experience', items }: ExperienceProps) {
   return (
     <section
       aria-labelledby={`${id}-title`}
@@ -30,22 +16,16 @@ export function Experience({ id = 'experience', items, media = [] }: ExperienceP
     >
       <header className="software-section-heading software-section-heading--wide">
         <p className="software-kicker">Experience · 02</p>
-        <h2 id={`${id}-title`}>Seven chapters. One systems practice.</h2>
+        <h2 id={`${id}-title`}>Seven roles. One systems practice.</h2>
         <p>
-          Product delivery, research engineering, technical teaching, and scientific computing—
-          each shaped around the constraints that made the work matter.
+          Product delivery, research engineering, technical teaching, and scientific computing —
+          the career line at a glance. The deep dives live in Selected Work below.
         </p>
       </header>
 
       <div className="software-experience__chapters">
         {items.map((story, index) => (
-          <ExperienceChapter
-            index={index}
-            key={story.id}
-            layout={layoutByStory[story.id] ?? 'alternating-chapter'}
-            media={media.filter((item) => item.storyId === story.id)}
-            story={story}
-          />
+          <ExperienceChapter index={index} key={story.id} story={story} />
         ))}
       </div>
     </section>

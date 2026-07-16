@@ -19,20 +19,6 @@ const mediaIdsFor = (storyId: string) => getMediaForStory(storyId).map(({ id }) 
 
 const softwareExperience = [
   {
-    id: 'dily',
-    period: 'Sep 2025 - Present',
-    title: 'Full Stack Developer',
-    company: 'Dily',
-    summary:
-      'Build fintech and lending software end to end with clear domain boundaries and testable product flows.',
-    contribution:
-      'Work across TypeScript and Node.js services, Angular delivery, and lending-domain design in a real monorepo.',
-    outcome:
-      'Product changes land through DDD and hexagonal boundaries that keep core lending behavior maintainable.',
-    technologies: ['TypeScript', 'Node.js', 'Express', 'Angular', 'Nx', 'MySQL', 'PostgreSQL', 'AWS'],
-    mediaIds: mediaIdsFor('dily'),
-  },
-  {
     id: 'gridworks',
     period: '2026 - Present',
     title: 'Lead Engineer, Alerting Platform Migration',
@@ -45,6 +31,20 @@ const softwareExperience = [
       'A disciplined modernization path that can replace legacy automation without abandoning live workflows.',
     technologies: ['Next.js', 'Node.js', 'Railway', 'MQTT', 'PostgreSQL'],
     mediaIds: mediaIdsFor('gridworks'),
+  },
+  {
+    id: 'dily',
+    period: 'Sep 2025 - Present',
+    title: 'Full Stack Developer',
+    company: 'Dily',
+    summary:
+      'Build fintech and lending software end to end with clear domain boundaries and testable product flows.',
+    contribution:
+      'Work across TypeScript and Node.js services, Angular delivery, and lending-domain design in a real monorepo.',
+    outcome:
+      'Product changes land through DDD and hexagonal boundaries that keep core lending behavior maintainable.',
+    technologies: ['TypeScript', 'Node.js', 'Express', 'Angular', 'Nx', 'MySQL', 'PostgreSQL', 'AWS'],
+    mediaIds: mediaIdsFor('dily'),
   },
   {
     id: 'flair',

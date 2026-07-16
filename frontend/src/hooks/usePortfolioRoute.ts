@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { getPortfolio, type PortfolioMode } from '../data/portfolio'
+import { forceScrollTo } from './forceScroll'
 
 type PortfolioRouteHistory = {
   mode: PortfolioMode
@@ -307,7 +308,7 @@ export function usePortfolioRoute() {
           focusTarget.focus({ preventScroll: true })
         }
       } else {
-        window.scrollTo({ behavior: 'auto', left: 0, top: pending.scrollY })
+        forceScrollTo(pending.scrollY)
       }
 
       if (pending.kind === 'switch') {

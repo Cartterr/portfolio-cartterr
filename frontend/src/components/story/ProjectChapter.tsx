@@ -1,4 +1,6 @@
+import { getMedia } from '../../data/media'
 import type { ProjectStory } from '../../data/types'
+import { PortfolioCarousel } from '../media/PortfolioCarousel'
 
 type ProjectChapterProps = {
   index: number
@@ -7,29 +9,31 @@ type ProjectChapterProps = {
 
 export function ProjectChapter({ index, project }: ProjectChapterProps) {
   const titleId = `project-${project.id}-title`
+  const media = project.mediaIds.map(getMedia)
+  const autoplayMs = project.id === 'notre-dame-drone-response' ? 9000 : undefined
 
   return (
     <article
       aria-labelledby={titleId}
       className="software-project-chapter"
       data-direction={index % 2 === 0 ? 'media-first' : 'copy-first'}
+      data-media-count={media.length}
       data-testid="project-chapter"
       id={`project-${project.id}`}
     >
-      <figure className="software-project-chapter__media">
-        <img
-          alt={project.imageAlt}
-          decoding="async"
-          height={project.imageHeight}
-          loading="lazy"
-          src={project.image}
-          width={project.imageWidth}
+      <div className="software-project-chapter__media">
+        <PortfolioCarousel
+          autoplayMs={autoplayMs}
+          featured={index === 0}
+          id={`project-${project.id}-gallery`}
+          label={`${project.title} gallery`}
+          media={media}
         />
-        <figcaption>
+        <p className="software-project-chapter__caption">
           <span>{project.eyebrow}</span>
           <span>{project.status}</span>
-        </figcaption>
-      </figure>
+        </p>
+      </div>
 
       <div className="software-project-chapter__copy" data-testid={`project-${project.id}`}>
         <div className="software-project-chapter__heading">

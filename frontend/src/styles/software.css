@@ -47,7 +47,7 @@
 .software-section {
   width: var(--software-frame);
   margin-inline: auto;
-  padding-block: clamp(7rem, 12vw, 12rem);
+  padding-block: clamp(4rem, 7vw, 7rem);
 }
 
 .software-section-heading {
@@ -336,64 +336,69 @@
 }
 
 .software-experience {
-  padding-top: clamp(8rem, 14vw, 14rem);
+  padding-top: clamp(4rem, 7vw, 7rem);
 }
 
 .software-experience__chapters {
   display: grid;
-  margin-top: clamp(5rem, 9vw, 9rem);
-  gap: clamp(8rem, 14vw, 15rem);
+  margin-top: clamp(2.5rem, 4vw, 4rem);
+  border-top: 1px solid var(--software-line-strong);
 }
 
 .software-experience-chapter {
   display: grid;
   content-visibility: auto;
-  contain-intrinsic-size: auto 1100px;
+  contain-intrinsic-size: auto 260px;
   min-width: 0;
-  grid-template-columns: minmax(20rem, 0.82fr) minmax(0, 1.18fr);
-  gap: clamp(2rem, 5vw, 6rem);
-  align-items: center;
+  border-bottom: 1px solid var(--software-line-strong);
 }
 
 .software-experience-chapter__copy {
   display: grid;
   min-width: 0;
-  gap: 1.65rem;
+  padding-block: clamp(1.75rem, 3vw, 2.75rem);
+  grid-template-columns: 3.8rem minmax(16rem, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(1.25rem, 3vw, 3rem);
+  align-items: start;
 }
 
-.software-experience-chapter__header {
-  display: grid;
-  grid-template-columns: 3.8rem minmax(0, 1fr);
-  gap: 1rem;
-}
-
-.software-experience-chapter__header .software-index {
+.software-experience-chapter .software-index {
   padding-top: 0.25rem;
   color: var(--software-faint);
 }
 
+.software-experience-chapter__role {
+  min-width: 0;
+}
+
 .software-experience-chapter h3 {
-  max-width: 14ch;
+  max-width: 22ch;
   margin-top: 0.4rem;
-  font-size: clamp(2.4rem, 4.7vw, 5.8rem);
+  font-size: clamp(1.6rem, 2.4vw, 2.6rem);
   font-weight: 530;
-  letter-spacing: -0.055em;
-  line-height: 0.94;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
 }
 
 .software-experience-chapter__company {
   max-width: 38rem;
-  margin-top: 0.7rem;
+  margin-top: 0.6rem;
   color: var(--software-orange);
-  font-size: 1rem;
+  font-size: 0.95rem;
   line-height: 1.5;
+}
+
+.software-experience-chapter__detail {
+  display: grid;
+  min-width: 0;
+  gap: 1.1rem;
 }
 
 .software-experience-chapter__summary {
   max-width: 40rem;
   color: #d5d0c8;
-  font-size: clamp(1rem, 1.45vw, 1.24rem);
-  line-height: 1.75;
+  font-size: clamp(0.98rem, 1.2vw, 1.08rem);
+  line-height: 1.7;
 }
 
 .software-evidence-list {
@@ -461,142 +466,14 @@
   color: var(--software-orange);
 }
 
-.software-experience-chapter__media {
-  min-width: 0;
-}
-
-.software-experience-chapter .portfolio-carousel {
-  border-color: var(--software-line-strong);
-  background: var(--software-surface-raised);
-  box-shadow: 0 2rem 7rem rgba(0, 0, 0, 0.38);
-}
-
-.software-experience-chapter .portfolio-carousel__media {
-  aspect-ratio: 16 / 10;
-  background: #0c0b0a;
-}
-
-.software-experience-chapter[data-layout='flagship-split'] {
-  padding-block: clamp(2rem, 4vw, 4rem);
-  border-top: 1px solid var(--software-line-strong);
-  border-bottom: 1px solid var(--software-line-strong);
-  grid-template-columns: minmax(19rem, 0.7fr) minmax(0, 1.3fr);
-}
-
-.software-experience-chapter[data-layout='flagship-split']
-  .software-experience-chapter__copy {
-  padding: clamp(0rem, 2vw, 2rem);
-}
-
-.software-experience-chapter[data-layout='systems-row'] {
-  grid-template-columns: minmax(0, 1.25fr) minmax(20rem, 0.75fr);
-  align-items: end;
-}
-
-.software-experience-chapter[data-layout='systems-row']
-  .software-experience-chapter__copy {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding: clamp(1.5rem, 3vw, 3rem);
-  border: 1px solid var(--software-line);
-  border-radius: 1.5rem;
-  background: var(--software-surface);
-}
-
-.software-experience-chapter[data-layout='systems-row']
-  .software-experience-chapter__header,
-.software-experience-chapter[data-layout='systems-row']
-  .software-experience-chapter__summary,
-.software-experience-chapter[data-layout='systems-row']
-  .software-chip-list,
-.software-experience-chapter[data-layout='systems-row']
-  .software-text-link {
-  grid-column: 1 / -1;
-}
-
-.software-experience-chapter[data-layout='systems-row'] .software-evidence-list {
-  grid-column: 1 / -1;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.software-experience-chapter[data-layout='systems-row'] .software-evidence-list > div {
-  grid-template-columns: 1fr;
-  padding-right: 1.25rem;
-}
-
-.software-experience-chapter[data-layout='alternating-chapter']
-  .software-experience-chapter__media {
-  order: -1;
-}
-
-.software-experience-chapter[data-layout='field-sticky'] {
-  align-items: start;
-  grid-template-columns: minmax(19rem, 0.64fr) minmax(0, 1.36fr);
-}
-
-.software-experience-chapter[data-layout='field-sticky']
-  .software-experience-chapter__media {
-  position: sticky;
-  top: 7.5rem;
-}
-
-.software-experience-chapter[data-layout='field-sticky'] .portfolio-carousel__media {
-  aspect-ratio: 16 / 9;
-}
-
-.software-experience-chapter[data-layout='research-pinned'] {
-  grid-template-columns: minmax(20rem, 0.6fr) minmax(0, 1.4fr);
-  align-items: start;
-}
-
-.software-experience-chapter[data-layout='research-pinned']
-  .software-experience-chapter__copy {
-  position: sticky;
-  top: 8.5rem;
-  padding-left: 1.5rem;
-  border-left: 1px solid var(--software-orange);
-}
-
-.software-experience-chapter[data-layout='compact-timeline'] {
-  width: min(100%, 74rem);
-  margin-inline: auto;
-  grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
-}
-
-.software-experience-chapter[data-layout='compact-timeline']
-  .software-experience-chapter__copy {
-  padding: clamp(1.5rem, 3vw, 3rem);
-  border-left: 1px solid var(--software-line-strong);
-}
-
-.software-experience-chapter[data-layout='compact-timeline'] h3 {
-  font-size: clamp(2.2rem, 4vw, 4.4rem);
-}
-
-.software-experience-chapter[data-layout='compact-timeline']
-  .portfolio-carousel__media {
-  aspect-ratio: 4 / 5;
-}
-
-.software-experience-chapter[data-layout='visual-finale'] {
-  display: grid;
-  padding-top: clamp(3rem, 6vw, 6rem);
-  grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
-  border-top: 1px solid var(--software-orange);
-}
-
-.software-experience-chapter[data-layout='visual-finale'] .portfolio-carousel__media {
-  aspect-ratio: 16 / 8.5;
-}
-
 .software-work {
-  padding-bottom: clamp(8rem, 13vw, 13rem);
+  padding-bottom: clamp(4.5rem, 7vw, 7rem);
 }
 
 .software-project-list {
   display: grid;
-  margin-top: clamp(5rem, 10vw, 10rem);
-  gap: clamp(7rem, 13vw, 13rem);
+  margin-top: clamp(3rem, 5vw, 5rem);
+  gap: clamp(4.5rem, 7vw, 7rem);
 }
 
 .software-project-chapter {
@@ -626,15 +503,12 @@
   box-shadow: 0 2rem 7rem rgba(0, 0, 0, 0.34);
 }
 
-.software-project-chapter__media img {
-  width: 100%;
+.software-project-chapter__media .portfolio-carousel__media {
   aspect-ratio: 16 / 10;
-  border-radius: 1rem;
   background: #0c0b0a;
-  object-fit: contain;
 }
 
-.software-project-chapter__media figcaption {
+.software-project-chapter__caption {
   display: flex;
   padding: 1rem 0.25rem 0.15rem;
   justify-content: space-between;
@@ -688,7 +562,7 @@
 
 .software-capability-list {
   display: grid;
-  margin-top: clamp(4rem, 8vw, 8rem);
+  margin-top: clamp(2.5rem, 4vw, 4rem);
   border-top: 1px solid var(--software-line-strong);
 }
 
@@ -761,7 +635,7 @@
 
 .software-contact .contact__inner {
   width: var(--software-frame);
-  padding-block: clamp(7rem, 12vw, 12rem);
+  padding-block: clamp(4rem, 7vw, 7rem);
   grid-template-columns: minmax(0, 0.86fr) minmax(24rem, 1.14fr);
   gap: clamp(4rem, 10vw, 10rem);
 }
@@ -834,14 +708,6 @@
     gap: 3.5rem;
   }
 
-  .software-experience-chapter,
-  .software-experience-chapter[data-layout='flagship-split'],
-  .software-experience-chapter[data-layout='field-sticky'],
-  .software-experience-chapter[data-layout='research-pinned'],
-  .software-experience-chapter[data-layout='visual-finale'] {
-    grid-template-columns: minmax(18rem, 0.85fr) minmax(0, 1.15fr);
-  }
-
   .software-capability-system {
     grid-template-columns: 4rem minmax(16rem, 0.85fr) minmax(0, 1.15fr);
   }
@@ -853,7 +719,7 @@
 
 @media (max-width: 820px) {
   .software-section {
-    padding-block: clamp(5.5rem, 15vw, 8rem);
+    padding-block: clamp(3.5rem, 10vw, 5rem);
   }
 
   .software-section-heading--wide {
@@ -907,39 +773,22 @@
     width: min(100%, 42rem);
   }
 
-  .software-experience__chapters,
   .software-project-list {
-    gap: clamp(6rem, 18vw, 10rem);
+    gap: clamp(3.5rem, 10vw, 6rem);
   }
 
-  .software-experience-chapter,
-  .software-experience-chapter[data-layout='flagship-split'],
-  .software-experience-chapter[data-layout='systems-row'],
-  .software-experience-chapter[data-layout='field-sticky'],
-  .software-experience-chapter[data-layout='research-pinned'],
-  .software-experience-chapter[data-layout='compact-timeline'],
-  .software-experience-chapter[data-layout='visual-finale'],
   .software-project-chapter,
   .software-project-chapter[data-direction='copy-first'] {
     width: 100%;
     grid-template-columns: 1fr;
   }
 
-  .software-experience-chapter[data-layout='systems-row']
-    .software-experience-chapter__copy {
-    grid-template-columns: 1fr;
+  .software-experience-chapter__copy {
+    grid-template-columns: 2.2rem minmax(0, 1fr);
   }
 
-  .software-experience-chapter[data-layout='field-sticky']
-    .software-experience-chapter__media,
-  .software-experience-chapter[data-layout='research-pinned']
-    .software-experience-chapter__copy {
-    position: static;
-  }
-
-  .software-experience-chapter[data-layout='alternating-chapter']
-    .software-experience-chapter__media {
-    order: 0;
+  .software-experience-chapter__detail {
+    grid-column: 2;
   }
 
   .software-project-chapter[data-direction='copy-first'] .software-project-chapter__media {
@@ -1005,9 +854,7 @@
   }
 
   .software-about__media .portfolio-carousel__media,
-  .software-experience-chapter .portfolio-carousel__media,
-  .software-experience-chapter[data-layout='field-sticky'] .portfolio-carousel__media,
-  .software-experience-chapter[data-layout='visual-finale'] .portfolio-carousel__media {
+  .software-project-chapter__media .portfolio-carousel__media {
     aspect-ratio: 4 / 3;
   }
 
@@ -1018,19 +865,23 @@
     gap: 0.45rem;
   }
 
-  .software-experience-chapter__header,
   .software-project-chapter__heading {
     grid-template-columns: 2.2rem minmax(0, 1fr);
   }
 
-  .software-experience-chapter[data-layout='systems-row']
-    .software-experience-chapter__copy,
-  .software-experience-chapter[data-layout='compact-timeline']
-    .software-experience-chapter__copy {
-    padding: 1.2rem;
+  .software-experience-chapter__copy {
+    grid-template-columns: 1fr;
   }
 
-  .software-project-chapter__media figcaption {
+  .software-experience-chapter .software-index {
+    display: none;
+  }
+
+  .software-experience-chapter__detail {
+    grid-column: auto;
+  }
+
+  .software-project-chapter__caption {
     display: grid;
     gap: 0.4rem;
   }
@@ -1061,8 +912,6 @@
   .software-document,
   .software-proof-rail,
   .software-contact,
-  .software-experience-chapter[data-layout='systems-row']
-    .software-experience-chapter__copy,
   .software-project-chapter__media {
     background: Canvas;
     color: CanvasText;

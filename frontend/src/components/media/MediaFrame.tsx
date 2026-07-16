@@ -47,12 +47,15 @@ export function MediaFrame({
       ))}
       <img
         alt={media.alt}
+        data-placeholder={sourceEnabled ? undefined : 'true'}
         decoding="async"
         fetchPriority={priority && active ? 'high' : 'auto'}
         height={media.height}
         loading={priority && active ? 'eager' : 'lazy'}
-        src={sourceEnabled ? media.src : undefined}
-        style={style}
+        src={sourceEnabled ? media.src : media.thumbnail}
+        style={
+          sourceEnabled ? style : { ...style, filter: 'blur(14px)', transform: 'scale(1.04)' }
+        }
         width={media.width}
       />
     </picture>

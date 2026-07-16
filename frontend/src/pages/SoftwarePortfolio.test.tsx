@@ -13,24 +13,13 @@ const sectionIds = [
   'software-contact',
 ]
 
-const experienceLayouts = {
-  dily: 'flagship-split',
-  gridworks: 'systems-row',
-  flair: 'alternating-chapter',
-  notreDame: 'field-sticky',
-  politiktok: 'research-pinned',
-  teaching: 'compact-timeline',
-  geoscience: 'visual-finale',
-} as const
-
-const legacyGalleryCounts = {
-  dily: 3,
-  gridworks: 2,
-  flair: 4,
-  notreDame: 9,
-  politiktok: 12,
-  teaching: 5,
-  geoscience: 9,
+const projectGalleryCounts = {
+  'gridworks-alerting-platform': 2,
+  'notre-dame-drone-response': 9,
+  'politiktok-research-infrastructure': 12,
+  'geoscience-simulation': 9,
+  'dily-fintech-systems': 3,
+  'flair-energy-systems': 4,
 } as const
 
 beforeEach(() => {
@@ -102,7 +91,7 @@ describe('SoftwarePortfolio', () => {
     expect(gallery.querySelectorAll('.portfolio-carousel__slide')).toHaveLength(13)
   })
 
-  it('maps seven Experience stories to distinct layouts and exact legacy galleries', () => {
+  it('renders seven Experience stories as a compact timeline without duplicate galleries', () => {
     render(<SoftwarePortfolio />)
 
     const experience = document.getElementById('software-experience')!
@@ -111,23 +100,16 @@ describe('SoftwarePortfolio', () => {
 
     for (const story of softwarePortfolio.experience) {
       const chapter = within(experience).getByTestId(`experience-${story.id}`)
-      expect(chapter).toHaveAttribute('data-layout', experienceLayouts[story.id as keyof typeof experienceLayouts])
-      expect(chapter).toHaveAttribute(
-        'data-media-count',
-        String(legacyGalleryCounts[story.id as keyof typeof legacyGalleryCounts]),
-      )
       expect(within(chapter).getByText(story.period)).toBeInTheDocument()
-      expect(within(chapter).getByText(story.contribution)).toBeInTheDocument()
-      expect(within(chapter).getByText(story.outcome)).toBeInTheDocument()
+      expect(within(chapter).getByText(story.company)).toBeInTheDocument()
+      expect(within(chapter).getByText(story.summary)).toBeInTheDocument()
     }
 
-    const notreDameGallery = within(experience).getByRole('region', {
-      name: 'Drone Response, University of Notre Dame gallery',
-    })
-    expect(notreDameGallery).toHaveAttribute('data-autoplay-ms', '9000')
+    expect(experience.querySelectorAll('.portfolio-carousel')).toHaveLength(0)
+    expect(softwarePortfolio.experience[0].id).toBe('gridworks')
   })
 
-  it('renders six evidence-rich projects and four capability systems with linked proof', () => {
+  it('renders six evidence-rich projects with legacy galleries and four capability systems with linked proof', () => {
     render(<SoftwarePortfolio />)
 
     const work = document.getElementById('software-work')!
@@ -139,7 +121,21 @@ describe('SoftwarePortfolio', () => {
       expect(within(chapter).getByText(project.contribution)).toBeInTheDocument()
       expect(within(chapter).getByText(project.outcome)).toBeInTheDocument()
       expect(within(chapter).queryByText(project.summary)).not.toBeInTheDocument()
+
+      const article = document.getElementById(`project-${project.id}`)!
+      expect(article).toHaveAttribute(
+        'data-media-count',
+        String(projectGalleryCounts[project.id as keyof typeof projectGalleryCounts]),
+      )
+      expect(article.querySelectorAll('.portfolio-carousel__slide')).toHaveLength(
+        projectGalleryCounts[project.id as keyof typeof projectGalleryCounts],
+      )
     })
+
+    const notreDameGallery = within(work).getByRole('region', {
+      name: 'Autonomous drone mission planning gallery',
+    })
+    expect(notreDameGallery).toHaveAttribute('data-autoplay-ms', '9000')
 
     const capabilities = document.getElementById('software-capabilities')!
     const systems = within(capabilities).getAllByTestId('capability-system')

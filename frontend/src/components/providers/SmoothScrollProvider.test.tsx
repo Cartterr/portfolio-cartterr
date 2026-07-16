@@ -8,6 +8,7 @@ vi.mock('lenis/react', () => ({
   ReactLenis: ({ children }: PropsWithChildren) => (
     <div data-testid="lenis-controller">{children}</div>
   ),
+  useLenis: () => null,
 }))
 
 type MediaController = {
