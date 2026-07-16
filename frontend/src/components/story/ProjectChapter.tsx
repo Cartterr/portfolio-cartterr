@@ -1,6 +1,7 @@
 import { getMedia } from '../../data/media'
 import type { ProjectStory } from '../../data/types'
 import { PortfolioCarousel } from '../media/PortfolioCarousel'
+import { LinkGroup } from '../ui/LinkGroup'
 
 type ProjectChapterProps = {
   index: number
@@ -69,18 +70,7 @@ export function ProjectChapter({ index, project }: ProjectChapterProps) {
           ))}
         </ul>
 
-        {project.link ? (
-          <a
-            className="software-text-link"
-            href={project.link.href}
-            rel={project.link.external ? 'noreferrer' : undefined}
-            target={project.link.external ? '_blank' : undefined}
-          >
-            {project.link.label}
-            <span aria-hidden="true"> ↗</span>
-            {project.link.external ? <span className="sr-only"> (opens in a new tab)</span> : null}
-          </a>
-        ) : null}
+        <LinkGroup label={`${project.title} links`} links={project.links} />
       </div>
     </article>
   )

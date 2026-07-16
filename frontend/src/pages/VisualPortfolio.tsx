@@ -50,7 +50,11 @@ function VisualHeroStage() {
   const capability = useGraphicsCapability()
 
   return (
-    <div className="visual-hero-stage" data-graphics-capability={capability}>
+    <div
+      className="visual-hero-stage"
+      data-background-field="true"
+      data-graphics-capability={capability}
+    >
       <VisualHeroPoster capability={capability} />
       {capability !== 'poster' ? (
         <VisualHeroErrorBoundary fallback={null}>
@@ -65,9 +69,6 @@ function VisualHeroStage() {
           </Suspense>
         </VisualHeroErrorBoundary>
       ) : null}
-      <p className="visual-hero-stage__mode" aria-hidden="true">
-        {capability === 'poster' ? 'Static terrain study' : `${capability} realtime field`}
-      </p>
     </div>
   )
 }
@@ -75,6 +76,8 @@ function VisualHeroStage() {
 function Hero() {
   return (
     <section aria-labelledby="visual-title" className="visual-hero" id="hero">
+      <VisualHeroStage />
+
       <div className="visual-hero__copy">
         <p className="visual-kicker">{visualPortfolio.hero.eyebrow}</p>
         <h1 id="visual-title">{visualPortfolio.hero.title}</h1>
@@ -90,8 +93,6 @@ function Hero() {
           </a>
         </div>
       </div>
-
-      <VisualHeroStage />
 
       <ol aria-label="Visual practice evidence" className="visual-proof-rail">
         {visualPortfolio.metrics.map((metric, index) => (
@@ -239,16 +240,24 @@ function SelectedWork() {
                     <li key={technology}>{technology}</li>
                   ))}
                 </ul>
-                {project.link ? (
-                  <a
-                    className="visual-story__link"
-                    href={project.link.href}
-                    rel={project.link.external ? 'noreferrer' : undefined}
-                    target={project.link.external ? '_blank' : undefined}
-                  >
-                    {project.link.label}
-                    <span aria-hidden="true"> ↗</span>
-                  </a>
+                {project.links?.length ? (
+                  <div aria-label={`${project.title} links`} className="visual-story__links" role="group">
+                    {project.links.map((link) => (
+                      <a
+                        className="visual-story__link"
+                        href={link.href}
+                        key={`${link.label}-${link.href}`}
+                        rel={link.external ? 'noreferrer' : undefined}
+                        target={link.external ? '_blank' : undefined}
+                      >
+                        {link.label}
+                        {link.external ? <span aria-hidden="true"> ↗</span> : null}
+                        {link.external ? (
+                          <span className="sr-only"> (opens in a new tab)</span>
+                        ) : null}
+                      </a>
+                    ))}
+                  </div>
                 ) : null}
               </div>
               <div className="visual-story__media">

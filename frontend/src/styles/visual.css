@@ -56,7 +56,6 @@
 .visual-kicker,
 .visual-story__meta,
 .visual-proof-rail__index,
-.visual-hero-stage__mode,
 .visual-hero-stage__status {
   font-family: 'IBM Plex Mono', monospace;
 }
@@ -72,13 +71,15 @@
 
 .visual-hero {
   display: grid;
-  width: var(--visual-frame);
+  width: 100%;
   min-height: 100svh;
   margin-inline: auto;
-  padding-block: clamp(7rem, 13vh, 10rem) clamp(3rem, 6vw, 5.5rem);
-  grid-template-columns: minmax(0, 0.82fr) minmax(28rem, 1.18fr);
+  padding: clamp(7rem, 13vh, 10rem) max(1rem, calc((100% - 1520px) / 2)) clamp(3rem, 6vw, 5.5rem);
+  grid-template-columns: minmax(0, 1fr);
   gap: clamp(2rem, 5vw, 6rem);
   align-items: center;
+  isolation: isolate;
+  overflow: hidden;
 }
 
 .visual-hero::after {
@@ -99,12 +100,13 @@
   position: relative;
   z-index: 3;
   display: grid;
+  width: min(100%, 70rem);
   gap: 1.5rem;
 }
 
 .visual-hero h1 {
-  max-width: 12ch;
-  font-size: clamp(3.5rem, 7.2vw, 8.2rem);
+  max-width: 13ch;
+  font-size: clamp(3.5rem, 6.4vw, 7.4rem);
   font-weight: 510;
   letter-spacing: -0.07em;
   line-height: 0.88;
@@ -158,14 +160,15 @@
 }
 
 .visual-hero-stage {
-  position: relative;
+  position: absolute;
+  z-index: 0;
+  inset: 0;
   min-width: 0;
-  aspect-ratio: 1.08 / 1;
   overflow: hidden;
-  border: 1px solid var(--visual-line);
-  border-radius: clamp(1.5rem, 3vw, 3.5rem);
+  border: 0;
+  border-radius: 0;
   background: #09080b;
-  box-shadow: 0 3rem 9rem rgba(0, 0, 0, 0.42);
+  box-shadow: none;
   isolation: isolate;
 }
 
@@ -179,19 +182,13 @@
 
 .visual-hero-stage::before {
   inset: 0;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: inherit;
-  box-shadow: inset 0 0 0 1px rgba(122, 231, 239, 0.04);
+  background:
+    linear-gradient(90deg, rgba(11, 9, 11, 0.98) 0%, rgba(11, 9, 11, 0.88) 32%, rgba(11, 9, 11, 0.36) 66%, rgba(11, 9, 11, 0.62) 100%),
+    linear-gradient(180deg, rgba(11, 9, 11, 0.46), transparent 38%, rgba(11, 9, 11, 0.86));
 }
 
 .visual-hero-stage::after {
-  top: 1.25rem;
-  right: 1.25rem;
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 999px;
-  background: var(--visual-cyan);
-  box-shadow: 0 0 1.4rem rgba(122, 231, 239, 0.8);
+  display: none;
 }
 
 .visual-hero-poster,
@@ -219,8 +216,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 49% center;
-  filter: saturate(0.76) contrast(1.08) brightness(0.74);
+  object-position: 62% center;
+  filter: saturate(0.82) contrast(1.08) brightness(0.7);
 }
 
 .visual-hero-poster figcaption {
@@ -229,7 +226,7 @@
   right: 1.25rem;
   bottom: 1.25rem;
   left: 1.25rem;
-  display: flex;
+  display: none;
   justify-content: space-between;
   gap: 1rem;
   color: rgba(242, 242, 237, 0.72);
@@ -249,8 +246,7 @@
   height: 100% !important;
 }
 
-.visual-hero-stage__status,
-.visual-hero-stage__mode {
+.visual-hero-stage__status {
   position: absolute;
   z-index: 5;
   top: 1.1rem;
@@ -261,14 +257,13 @@
 }
 
 .visual-hero-stage__status {
-  left: 1.25rem;
-}
-
-.visual-hero-stage__mode {
-  right: 2.4rem;
+  right: max(1rem, calc((100% - 1520px) / 2));
+  left: auto;
 }
 
 .visual-proof-rail {
+  position: relative;
+  z-index: 3;
   display: grid;
   padding-top: clamp(1.5rem, 4vw, 3.5rem);
   grid-column: 1 / -1;
@@ -574,6 +569,13 @@
   text-transform: uppercase;
 }
 
+.visual-story__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  align-items: center;
+}
+
 .visual-story .portfolio-carousel__media {
   aspect-ratio: 16 / 10;
 }
@@ -705,7 +707,6 @@
 }
 
 @media (max-width: 1120px) {
-  .visual-hero,
   .visual-profile {
     grid-template-columns: minmax(0, 1fr) minmax(24rem, 0.95fr);
   }
@@ -759,7 +760,7 @@
   }
 
   .visual-hero-stage {
-    aspect-ratio: 16 / 11;
+    inset: 0;
   }
 
   .visual-section-heading--split {
@@ -786,8 +787,8 @@
 
 @media (max-width: 640px) {
   .visual-hero {
-    width: min(calc(100% - 1.25rem), 1520px);
-    padding-block: 7rem 3rem;
+    width: 100%;
+    padding: 7rem 0.625rem 3rem;
   }
 
   .visual-hero h1 {
@@ -800,15 +801,6 @@
 
   .visual-actions a {
     width: 100%;
-  }
-
-  .visual-hero-stage {
-    aspect-ratio: 4 / 5;
-    border-radius: 1.5rem;
-  }
-
-  .visual-hero-poster figcaption {
-    display: grid;
   }
 
   .visual-proof-rail {

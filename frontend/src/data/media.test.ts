@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { legacyMedia, portfolioMedia, visualMedia } from './media'
+import { getMedia, legacyMedia, portfolioMedia, visualMedia } from './media'
 
 const forbiddenPrivateAssetPaths = [
   'src/assets/images/flair4.png',
@@ -30,11 +30,11 @@ describe('portfolio media manifest', () => {
   })
 
   it('restores every legacy gallery entry to its original story', () => {
-    expect(legacyMedia).toHaveLength(57)
+    expect(legacyMedia).toHaveLength(58)
     expect(countByStory(legacyMedia)).toEqual({
       profile: 13,
       dily: 3,
-      gridworks: 2,
+      gridworks: 3,
       flair: 4,
       notreDame: 9,
       politiktok: 12,
@@ -76,20 +76,44 @@ describe('portfolio media manifest', () => {
     }
   })
 
-  it('keeps private dashboard originals out of the public manifest', () => {
+  it('uses three approved GridWorks dashboard captures in the public manifest', () => {
     const mediaById = new Map(legacyMedia.map((entry) => [entry.id, entry]))
-    const gridWorksIdentity = mediaById.get('gridworks1')
-    const gridWorksReplacement = mediaById.get('gridworks2')
+    const gridWorksCaptures = legacyMedia.filter(({ storyId }) => storyId === 'gridworks')
+
+    expect(gridWorksCaptures.map(({ id }) => id)).toEqual([
+      'gridworks-sensors-overview',
+      'gridworks-analytics-history',
+      'gridworks-health-monitoring',
+    ])
+    expect(gridWorksCaptures.every(({ rights }) => rights.clearance === 'cleared-project-capture'))
+      .toBe(true)
+    expect(
+      gridWorksCaptures.every(({ caption }) =>
+        !caption.toLowerCase().includes(['private', 'dashboard'].join(' ')),
+      ),
+    ).toBe(true)
+
     const flairIdentity = mediaById.get('flair1')
     const flairReplacement = mediaById.get('flair4')
-
-    expect(gridWorksReplacement?.src).toBe(gridWorksIdentity?.src)
     expect(flairReplacement?.src).toBe(flairIdentity?.src)
-    expect(gridWorksReplacement?.rights.clearance).toBe('privacy-safe-replacement')
     expect(flairReplacement?.rights.clearance).toBe('privacy-safe-replacement')
   })
 
-  it('keeps private dashboard source files out of the repository checkout', () => {
+  it('keeps raw authenticated source files out of the repository checkout', () => {
     expect(forbiddenPrivateAssetPaths.filter((path) => existsSync(path))).toEqual([])
+  })
+
+  it('registers the self-authored SIGGRAPH announcement image as approved profile evidence', () => {
+    const siggraph = getMedia('siggraph-2026')
+
+    expect(siggraph.storyId).toBe('profile')
+    expect(siggraph.publication).toBe('approved')
+    expect(siggraph.rights).toMatchObject({
+      owner: 'José Ernesto Carter Arriagada',
+      source: 'Self-authored SIGGRAPH 2026 LinkedIn post',
+      clearance: 'previously-published',
+    })
+    expect(siggraph.width).toBeGreaterThan(0)
+    expect(siggraph.height).toBeGreaterThan(0)
   })
 })

@@ -20,6 +20,11 @@ export const sharedLinks = {
     href: 'https://linkedin.com/in/jose-carter-arriagada',
     external: true,
   },
+  leetCode: {
+    label: 'LeetCode',
+    href: 'https://leetcode.com/u/Cartterr/',
+    external: true,
+  },
 } satisfies Record<string, PortfolioLink>
 
 export const sharedMetrics = [

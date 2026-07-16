@@ -1,4 +1,5 @@
 import type { ExperienceStory } from '../../data/types'
+import { LinkGroup } from '../ui/LinkGroup'
 
 type ExperienceChapterProps = {
   index: number
@@ -32,18 +33,7 @@ export function ExperienceChapter({ index, story }: ExperienceChapterProps) {
               <li key={technology}>{technology}</li>
             ))}
           </ul>
-          {story.link ? (
-            <a
-              className="software-text-link"
-              href={story.link.href}
-              rel={story.link.external ? 'noreferrer' : undefined}
-              target={story.link.external ? '_blank' : undefined}
-            >
-              {story.link.label}
-              <span aria-hidden="true"> ↗</span>
-              {story.link.external ? <span className="sr-only"> (opens in a new tab)</span> : null}
-            </a>
-          ) : null}
+          <LinkGroup label={`${story.company} links`} links={story.links} />
         </div>
       </div>
     </article>

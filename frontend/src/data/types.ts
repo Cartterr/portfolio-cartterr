@@ -66,7 +66,7 @@ export type ExperienceStory = {
   outcome: string
   technologies: string[]
   mediaIds: string[]
-  link?: PortfolioLink
+  links?: PortfolioLink[]
 }
 
 export type ProjectStory = {
@@ -87,7 +87,7 @@ export type ProjectStory = {
   imageAlt: string
   imageWidth: number
   imageHeight: number
-  link?: PortfolioLink
+  links?: PortfolioLink[]
   private?: boolean
 }
 
@@ -99,9 +99,29 @@ export type CapabilityStory = {
   proofStoryIds: string[]
 }
 
+export type ServiceStory = {
+  id: string
+  title: string
+  summary: string
+  items: string[]
+}
+
+export type MilestoneStory = {
+  id: string
+  category: 'Education' | 'Publication & communication' | 'Recognition & community'
+  period: string
+  title: string
+  issuer: string
+  summary: string
+  skills?: string[]
+  mediaId?: string
+  links: PortfolioLink[]
+}
+
 export type PortfolioSectionKind =
   | 'hero'
   | 'about'
+  | 'milestones'
   | 'experience'
   | 'work'
   | 'capabilities'
@@ -143,9 +163,11 @@ export type PortfolioPage = {
     mediaIds: string[]
     images: Array<{ src: string; alt: string; width: number; height: number }>
   }
+  milestones?: MilestoneStory[]
   experience: ExperienceStory[]
   projects: ProjectStory[]
   capabilities: CapabilityStory[]
+  services?: ServiceStory[]
   contact: {
     heading: string
     body: string

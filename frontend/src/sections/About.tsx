@@ -13,6 +13,7 @@ export function About({ content, id = 'about', media }: AboutProps) {
       aria-labelledby={`${id}-title`}
       className="software-section software-about"
       data-layout="asymmetric-about"
+      data-responsive-layout="stack-before-1100"
       data-testid={id.startsWith('software-') ? 'software-section' : undefined}
       id={id}
     >

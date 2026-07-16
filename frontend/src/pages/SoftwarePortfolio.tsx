@@ -4,6 +4,7 @@ import { Experience } from '../sections/Experience'
 import { FeaturedWork } from '../sections/FeaturedWork'
 import { Capabilities } from '../sections/Capabilities'
 import { Contact } from '../sections/Contact'
+import { Milestones } from '../sections/Milestones'
 import { legacyMedia } from '../data/media'
 import { softwarePortfolio } from '../data/software'
 import '../styles/software.css'
@@ -39,12 +40,14 @@ export function SoftwarePortfolio() {
       <Hero content={softwarePortfolio.hero} id="software-home" />
       <ProofRail />
       <About content={softwarePortfolio.about} id="software-about" media={profileMedia} />
+      <Milestones id="software-milestones" items={softwarePortfolio.milestones} />
       <Experience id="software-experience" items={softwarePortfolio.experience} />
       <FeaturedWork caseStudies={softwarePortfolio.projects} id="software-work" />
       <Capabilities
         groups={softwarePortfolio.capabilities}
         id="software-capabilities"
         projects={softwarePortfolio.projects}
+        services={softwarePortfolio.services}
       />
       <Contact
         content={softwarePortfolio.contact}

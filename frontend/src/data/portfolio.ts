@@ -19,6 +19,8 @@ export type {
   PortfolioMetric,
   PortfolioMode,
   PortfolioPage,
+  MilestoneStory,
+  ServiceStory,
   PortfolioVideoMedia,
   ProjectStory,
 } from './types'

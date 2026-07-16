@@ -86,11 +86,27 @@ describe('VisualPortfolio', () => {
     const { container } = render(<VisualPortfolio />)
     const copy = container.textContent ?? ''
 
-    expect(copy).not.toMatch(/SIGGRAPH/i)
+    expect(copy).toMatch(/SIGGRAPH 2026 Student Volunteer/i)
     expect(copy).not.toMatch(/demo reel|film credits?|visual effects supervisor|feature film artist/i)
     expect(copy).toMatch(/scientific visualization/i)
     expect(copy).toMatch(/parametric/i)
     expect(copy).toMatch(/spatial autonomy/i)
+  })
+
+  it('uses the realtime field as an unframed hero background', () => {
+    const { container } = render(<VisualPortfolio />)
+    const stage = container.querySelector('.visual-hero-stage')
+
+    expect(stage).toHaveAttribute('data-background-field', 'true')
+    expect(within(container).queryByText(/realtime field/i)).not.toBeInTheDocument()
+  })
+
+  it('does not render unresolved same-page links', () => {
+    const { container } = render(<VisualPortfolio />)
+
+    container.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((link) => {
+      expect(container.querySelector(link.hash)).not.toBeNull()
+    })
   })
 
   it('keeps the designed poster path available when the lazy scene rejects', () => {

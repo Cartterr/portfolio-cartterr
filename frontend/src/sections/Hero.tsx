@@ -1,3 +1,4 @@
+import heroBackdrop from '../assets/images/optimized/geoscience7-main.webp'
 import type { PortfolioPage } from '../data/types'
 
 type HeroProps = {
@@ -15,6 +16,9 @@ export function Hero({ content, id }: HeroProps) {
       data-testid={id ? 'software-section' : undefined}
       id={id}
     >
+      <div aria-hidden="true" className="software-hero__backdrop">
+        <img alt="" decoding="async" fetchPriority="high" src={heroBackdrop} />
+      </div>
       <div className="software-hero__inner">
         <div className="software-hero__signal">
           <p className="software-kicker">Santiago, Chile · Systems under real constraints</p>

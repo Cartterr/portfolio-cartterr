@@ -16,13 +16,22 @@ describe('dual portfolio content', () => {
     ])
   })
 
-  it('defines two complete portfolio trees without conference branding', () => {
-    for (const page of [softwarePortfolio, visualPortfolio]) {
-      expect(page.sections.map((section) => section.kind)).toEqual(sectionOrder)
-      expect(JSON.stringify(page)).not.toMatch(/siggraph/i)
-    }
+  it('defines two complete portfolio trees with software milestones and current conference evidence', () => {
+    expect(softwarePortfolio.sections.map((section) => section.kind)).toEqual([
+      'hero',
+      'about',
+      'milestones',
+      'experience',
+      'work',
+      'capabilities',
+      'contact',
+    ])
+    expect(visualPortfolio.sections.map((section) => section.kind)).toEqual(sectionOrder)
+    expect(JSON.stringify(softwarePortfolio)).toMatch(/siggraph 2026/i)
+    expect(JSON.stringify(visualPortfolio)).toMatch(/siggraph 2026/i)
 
-    expect(softwarePortfolio.experience).toHaveLength(7)
+    expect(softwarePortfolio.experience).toHaveLength(8)
+    expect(softwarePortfolio.milestones).toHaveLength(8)
     expect(softwarePortfolio.projects).toHaveLength(6)
     expect(softwarePortfolio.capabilities).toHaveLength(4)
     expect(visualPortfolio.projects).toHaveLength(3)

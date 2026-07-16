@@ -1,4 +1,4 @@
-import type { MediaFit, PortfolioImageMedia, PortfolioMedia } from './types'
+import type { MediaFit, MediaRights, PortfolioImageMedia, PortfolioMedia } from './types'
 
 const legacyMainAssets = import.meta.glob<string>(
   [
@@ -72,6 +72,8 @@ const readAsset = (assets: Record<string, string>, path: string) => {
 type LegacyMediaDefinition = {
   name: string
   sourceName?: string
+  source?: string
+  clearance?: MediaRights['clearance']
   width: number
   height: number
   alt: string
@@ -107,12 +109,16 @@ const legacyStory = (
       objectPosition: definition.objectPosition ?? '50% 50%',
       rights: {
         owner,
-        source: isReplacement
-          ? 'Public-safe duplicate of an existing approved project identity asset'
-          : 'Previously published portfolio media from commit c94ed511',
-        clearance: isReplacement ? 'privacy-safe-replacement' : 'previously-published',
+        source:
+          definition.source ??
+          (isReplacement
+            ? 'Public-safe duplicate of an existing approved project identity asset'
+            : 'Previously published portfolio media from commit c94ed511'),
+        clearance:
+          definition.clearance ??
+          (isReplacement ? 'privacy-safe-replacement' : 'previously-published'),
         ...(isReplacement
-          ? { replacementFor: `${definition.name} private authenticated dashboard` }
+          ? { replacementFor: `${definition.name} original authenticated capture` }
           : {}),
       },
       publication: 'approved',
@@ -226,6 +232,19 @@ const profileMedia = legacyStory('profile', 'José Ernesto Carter Arriagada', [
   },
 ])
 
+const evidenceMedia = legacyStory('profile', 'José Ernesto Carter Arriagada', [
+  {
+    name: 'siggraph-2026',
+    width: 800,
+    height: 207,
+    alt: 'SIGGRAPH 2026 Los Angeles event mark with dates July 19 to 23',
+    caption: 'Selected as a SIGGRAPH 2026 Student Volunteer in Los Angeles.',
+    fit: 'contain',
+    source: 'Self-authored SIGGRAPH 2026 LinkedIn post',
+    clearance: 'previously-published',
+  },
+])
+
 const dilyMedia = legacyStory('dily', 'Dily', [
   {
     name: 'dily1',
@@ -255,21 +274,31 @@ const dilyMedia = legacyStory('dily', 'Dily', [
 
 const gridWorksMedia = legacyStory('gridworks', 'GridWorks', [
   {
-    name: 'gridworks1',
-    width: 1024,
-    height: 1024,
-    alt: 'GridWorks project wordmark and connected-systems symbol',
-    caption: 'Public-safe GridWorks project identity for the industrial alerting platform.',
-    fit: 'contain',
+    name: 'gridworks-sensors-overview',
+    width: 1900,
+    height: 1050,
+    alt: 'GridWorks sensor monitoring workspace with live status cards and temperature trend charts',
+    caption: 'Sensor monitoring workspace combining live status, alert indicators, and recent temperature trends.',
+    source: 'Owner-authorized GridWorks project capture prepared for the public portfolio.',
+    clearance: 'cleared-project-capture',
   },
   {
-    name: 'gridworks2',
-    sourceName: 'gridworks1',
-    width: 1024,
-    height: 1024,
-    alt: 'Public-safe GridWorks project identity',
-    caption: 'Privacy-safe replacement for a private authenticated operational dashboard.',
-    fit: 'contain',
+    name: 'gridworks-analytics-history',
+    width: 1900,
+    height: 1050,
+    alt: 'GridWorks operational analytics with multiple sensor signals displayed as time-series charts',
+    caption: 'Operations analytics that brings multiple sensor signals into one comparative time-series view.',
+    source: 'Owner-authorized GridWorks project capture prepared for the public portfolio.',
+    clearance: 'cleared-project-capture',
+  },
+  {
+    name: 'gridworks-health-monitoring',
+    width: 1900,
+    height: 1050,
+    alt: 'GridWorks health monitoring workspace with daily operational trend cards',
+    caption: 'Operational health monitoring through compact daily trend cards designed for fast review.',
+    source: 'Owner-authorized GridWorks project capture prepared for the public portfolio.',
+    clearance: 'cleared-project-capture',
   },
 ])
 
@@ -680,7 +709,7 @@ export const visualMedia: PortfolioImageMedia[] = visualDefinitions.map((definit
   }
 })
 
-export const portfolioMedia: PortfolioMedia[] = [...legacyMedia, ...visualMedia]
+export const portfolioMedia: PortfolioMedia[] = [...legacyMedia, ...evidenceMedia, ...visualMedia]
 
 const mediaById = new Map(portfolioMedia.map((media) => [media.id, media]))
 

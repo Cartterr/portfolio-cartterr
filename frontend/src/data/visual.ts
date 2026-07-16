@@ -82,7 +82,7 @@ const visualExperience = [
       'A field-connected planning system demonstrated in an international NASA- and NSF-backed research environment.',
     technologies: ['Python', 'Spatial Algorithms', 'MQTT', 'Angular', 'Java Spring'],
     mediaIds: mediaIdsFor('notreDame'),
-    link: { label: 'Visit Drone Response', href: 'https://droneresponse.ai/', external: true },
+    links: [{ label: 'Visit Drone Response', href: 'https://droneresponse.ai/', external: true }],
   },
 ] satisfies ExperienceStory[]
 
@@ -141,7 +141,7 @@ const visualProjects = [
     outcome: 'Delivered planning logic connected to real aircraft and field-testing workflows.',
     technologies: ['Python', 'Algorithms', 'MQTT', 'Angular', 'OpenAI API'],
     mediaIds: mediaIdsFor('notreDame'),
-    link: { label: 'Visit Drone Response', href: 'https://droneresponse.ai/', external: true },
+    links: [{ label: 'Visit Drone Response', href: 'https://droneresponse.ai/', external: true }],
   }),
 ] satisfies ProjectStory[]
 
@@ -196,7 +196,7 @@ export const visualPortfolio = {
   sections: sectionOrder,
   hero: {
     name: portfolioOwner.name,
-    eyebrow: 'VFX, 3D & Visual Computing',
+    eyebrow: 'SIGGRAPH 2026 Student Volunteer · VFX, 3D & Visual Computing',
     title: 'Creative technologist building real-time graphics, simulation, and interactive 3D systems.',
     summary:
       'I connect computer science, spatial data, and visual tooling to make complex systems explorable and useful.',
@@ -223,6 +223,12 @@ export const visualPortfolio = {
     body:
       'For interactive 3D, graphics prototypes, simulation visuals, spatial interfaces, or visual-computing collaboration, email me or find me online.',
     subject: 'Visual computing project',
-    links: [sharedLinks.cv, sharedLinks.email, sharedLinks.github, sharedLinks.linkedIn],
+    links: [
+      sharedLinks.cv,
+      sharedLinks.email,
+      sharedLinks.github,
+      sharedLinks.linkedIn,
+      sharedLinks.leetCode,
+    ],
   },
 } satisfies PortfolioPage
