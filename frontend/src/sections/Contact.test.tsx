@@ -9,7 +9,7 @@ const errorMessage =
   'I couldn’t send your message. Please try again or use one of the direct links below.'
 
 function renderContact() {
-  render(<Contact content={portfolioContent.contact} />)
+  render(<Contact content={portfolioContent.contact} portfolioMode="software" />)
 
   return {
     name: screen.getByRole('textbox', { name: 'Name' }),
@@ -55,6 +55,7 @@ describe('Contact', () => {
         email: 'ada@example.com',
         message: 'Build reliable systems.',
         website: '',
+        portfolioMode: 'software',
       }),
     })
     const confirmation = await screen.findByText(successMessage)
@@ -62,6 +63,22 @@ describe('Contact', () => {
     expect(fields.email).toHaveValue('')
     expect(fields.message).toHaveValue('')
     expect(confirmation).toHaveFocus()
+  })
+
+  it('posts Visual portfolio context from the Visual contact form', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true })
+    vi.stubGlobal('fetch', fetchMock)
+    const user = userEvent.setup()
+    render(<Contact content={portfolioContent.contact} portfolioMode="visual" />)
+
+    await user.type(screen.getByRole('textbox', { name: 'Name' }), 'Ada')
+    await user.type(screen.getByRole('textbox', { name: 'Email' }), 'ada@example.com')
+    await user.type(screen.getByRole('textbox', { name: 'Message' }), 'Build a spatial tool.')
+    await user.click(screen.getByRole('button', { name: 'Send message' }))
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledOnce())
+    const request = fetchMock.mock.calls[0]?.[1] as RequestInit
+    expect(JSON.parse(String(request.body))).toMatchObject({ portfolioMode: 'visual' })
   })
 
   it('announces failure and preserves entered values', async () => {

@@ -43,8 +43,8 @@ function checkNodeVersion() {
   const nodeVersion = process.version;
   const majorVersion = parseInt(nodeVersion.slice(1).split('.')[0]);
   
-  if (majorVersion < 18) {
-    console.error('❌ Node.js version 18 or higher is required');
+  if (majorVersion !== 24) {
+    console.error('❌ Node.js version 24 is required');
     console.error(`Current version: ${nodeVersion}`);
     process.exit(1);
   }
@@ -54,28 +54,9 @@ function checkNodeVersion() {
 
 function installDependencies() {
   console.log('📦 Installing dependencies...\n');
-  
-  // Install root dependencies
-  console.log('📦 Installing root dependencies...');
+
+  // npm installs the root and both declared workspaces from the authoritative lockfile.
   runCommand('npm install');
-  
-  // Install frontend dependencies
-  console.log('📱 Installing frontend dependencies...');
-  const frontendPath = path.join(process.cwd(), 'frontend');
-  if (!fs.existsSync(path.join(frontendPath, 'node_modules'))) {
-    runCommand('yarn install', frontendPath);
-  } else {
-    console.log('✅ Frontend dependencies already installed\n');
-  }
-  
-  // Install backend dependencies
-  console.log('🔧 Installing backend dependencies...');
-  const backendPath = path.join(process.cwd(), 'backend');
-  if (!fs.existsSync(path.join(backendPath, 'node_modules'))) {
-    runCommand('yarn install', backendPath);
-  } else {
-    console.log('✅ Backend dependencies already installed\n');
-  }
 }
 
 function setupComplete() {

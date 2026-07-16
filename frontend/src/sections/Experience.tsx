@@ -1,29 +1,33 @@
-import type { ExperienceItem } from '../data/portfolio'
+import { ExperienceChapter } from '../components/story/ExperienceChapter'
+import type { ExperienceStory } from '../data/types'
 
 type ExperienceProps = {
-  items: ExperienceItem[]
+  id?: string
+  items: ExperienceStory[]
 }
 
-export function Experience({ items }: ExperienceProps) {
+export function Experience({ id = 'experience', items }: ExperienceProps) {
   return (
-    <section aria-labelledby="experience-title" className="section experience" id="experience">
-      <div className="section-heading section-heading--split">
-        <p className="eyebrow">Experience</p>
-        <h2 id="experience-title">From product delivery to research infrastructure.</h2>
-      </div>
+    <section
+      aria-labelledby={`${id}-title`}
+      className="software-section software-experience"
+      data-testid={id.startsWith('software-') ? 'software-section' : undefined}
+      id={id}
+    >
+      <header className="software-section-heading software-section-heading--wide">
+        <p className="software-kicker">Experience · 02</p>
+        <h2 id={`${id}-title`}>Seven roles. One systems practice.</h2>
+        <p>
+          Product delivery, research engineering, technical teaching, and scientific computing —
+          the career line at a glance. The deep dives live in Selected Work below.
+        </p>
+      </header>
 
-      <ol className="timeline">
-        {items.map((item) => (
-          <li className="timeline__item" key={`${item.company}-${item.period}`}>
-            <p className="timeline__period">{item.period}</p>
-            <div className="timeline__role">
-              <h3>{item.title}</h3>
-              <p>{item.company}</p>
-            </div>
-            <p className="timeline__summary">{item.summary}</p>
-          </li>
+      <div className="software-experience__chapters">
+        {items.map((story, index) => (
+          <ExperienceChapter index={index} key={story.id} story={story} />
         ))}
-      </ol>
+      </div>
     </section>
   )
 }

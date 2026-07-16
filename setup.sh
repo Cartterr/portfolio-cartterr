@@ -12,6 +12,12 @@ fi
 echo "✅ Node.js version: $(node --version)"
 echo ""
 
+NODE_MAJOR=$(node -p "process.versions.node.split('.')[0]")
+if [ "$NODE_MAJOR" != "24" ]; then
+    echo "❌ Node.js version 24 is required"
+    exit 1
+fi
+
 # Install root dependencies
 echo "📦 Installing root dependencies..."
 npm install
@@ -32,26 +38,6 @@ FRONTEND_URL=http://localhost:3000
 EOF
     echo "✅ Created backend/.env"
 fi
-
-# Install frontend dependencies
-echo "📱 Installing frontend dependencies..."
-cd frontend
-yarn install
-if [ $? -ne 0 ]; then
-    echo "❌ Failed to install frontend dependencies"
-    exit 1
-fi
-cd ..
-
-# Install backend dependencies
-echo "🔧 Installing backend dependencies..."
-cd backend
-yarn install
-if [ $? -ne 0 ]; then
-    echo "❌ Failed to install backend dependencies"
-    exit 1
-fi
-cd ..
 
 echo ""
 echo "🎉 Setup complete!"

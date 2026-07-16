@@ -16,7 +16,7 @@ function tags(html, tagName) {
 }
 
 function attribute(tag, name) {
-  return tag.match(new RegExp(`\\b${name}=["']([^"']+)["']`, 'i'))?.[1]
+  return tag.match(new RegExp(`\\b${name}=(["'])(.*?)\\1`, 'i'))?.[2]
 }
 
 function singleMeta(html, attributeName, attributeValue) {
@@ -85,11 +85,103 @@ test('portfolio metadata uses one aligned canonical identity and real social ass
   }
 })
 
+test('Visual route metadata and structured data describe only the Visual portfolio', () => {
+  const html = readText('frontend', 'visual', 'index.html')
+  const expectedTitle = 'José Carter — Visual Computing, Real-Time 3D & Simulation'
+  const expectedDescription =
+    'José Carter builds real-time 3D tools, scientific visualization, simulation, and spatial computing systems.'
+  const expectedSocialImage = 'https://josecarter.dev/og-jose-carter-visual.png'
+  const expectedSocialImageAlt =
+    "José Carter's visual computing portfolio for real-time 3D, simulation, and spatial systems"
+  const canonicalLinks = tags(html, 'link').filter(
+    (tag) => attribute(tag, 'rel') === 'canonical',
+  )
+
+  assert.deepEqual(html.match(/<title>[^<]*<\/title>/gi) ?? [], [`<title>${expectedTitle}</title>`])
+  assert.equal(attribute(singleMeta(html, 'name', 'description'), 'content'), expectedDescription)
+  assert.equal(canonicalLinks.length, 1)
+  assert.equal(attribute(canonicalLinks[0], 'href'), 'https://josecarter.dev/visual')
+  assert.equal(attribute(singleMeta(html, 'property', 'og:title'), 'content'), expectedTitle)
+  assert.equal(
+    attribute(singleMeta(html, 'property', 'og:description'), 'content'),
+    expectedDescription,
+  )
+  assert.equal(attribute(singleMeta(html, 'property', 'og:url'), 'content'), 'https://josecarter.dev/visual')
+  assert.equal(
+    attribute(singleMeta(html, 'property', 'og:image'), 'content'),
+    expectedSocialImage,
+  )
+  assert.equal(
+    attribute(singleMeta(html, 'property', 'og:image:secure_url'), 'content'),
+    expectedSocialImage,
+  )
+  assert.equal(
+    attribute(singleMeta(html, 'property', 'og:image:alt'), 'content'),
+    expectedSocialImageAlt,
+  )
+  assert.equal(attribute(singleMeta(html, 'property', 'og:image:width'), 'content'), '1200')
+  assert.equal(attribute(singleMeta(html, 'property', 'og:image:height'), 'content'), '630')
+  assert.equal(attribute(singleMeta(html, 'name', 'twitter:card'), 'content'), 'summary_large_image')
+  assert.equal(attribute(singleMeta(html, 'name', 'twitter:image'), 'content'), expectedSocialImage)
+  assert.equal(
+    attribute(singleMeta(html, 'name', 'twitter:image:alt'), 'content'),
+    expectedSocialImageAlt,
+  )
+
+  const socialImage = readFileSync(
+    fromRoot('frontend', 'public', 'og-jose-carter-visual.png'),
+  )
+  assert.equal(socialImage.toString('ascii', 1, 4), 'PNG')
+  assert.equal(socialImage.readUInt32BE(16), 1200)
+  assert.equal(socialImage.readUInt32BE(20), 630)
+
+  const scripts = [
+    ...html.matchAll(/<script\s+type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi),
+  ]
+  assert.equal(scripts.length, 1)
+  const structuredData = JSON.parse(scripts[0][1])
+  assert.equal(structuredData['@context'], 'https://schema.org')
+  assert.deepEqual(
+    structuredData['@graph'].map((entity) => entity['@type']),
+    ['ProfilePage', 'Person'],
+  )
+  const [profilePage, person] = structuredData['@graph']
+  assert.equal(profilePage.url, 'https://josecarter.dev/visual')
+  assert.deepEqual(profilePage.mainEntity, { '@id': 'https://josecarter.dev/#person' })
+  assert.equal(person.name, 'José Carter Arriagada')
+  assert.equal(person.url, 'https://josecarter.dev/')
+  assert.equal(person.jobTitle, 'Software Engineer and Visual Computing Developer')
+  assert.doesNotMatch(JSON.stringify(structuredData), /birthDate|telephone|streetAddress|document|RUN/i)
+})
+
+test('both static entries keep useful, reciprocal, high-contrast no-JavaScript fallbacks', () => {
+  const entries = [
+    {
+      html: readText('frontend', 'index.html'),
+      reciprocalHref: '/visual',
+    },
+    {
+      html: readText('frontend', 'visual', 'index.html'),
+      reciprocalHref: '/',
+    },
+  ]
+
+  for (const { html, reciprocalHref } of entries) {
+    const fallback = html.match(/<noscript>([\s\S]*?)<\/noscript>/i)?.[1] ?? ''
+    assert.notEqual(fallback, '')
+    assert.match(fallback, new RegExp(`href=["']${reciprocalHref.replace('/', '\\/')}["']`, 'i'))
+    assert.match(fallback, /href=["']mailto:/i)
+    assert.match(fallback, /href=["']\/Jose_Carter_CV_Eng\.pdf["']/i)
+    assert.match(fallback, /background:\s*#090909/i)
+    assert.match(fallback, /color:\s*#f8f5ec/i)
+  }
+})
+
 test('frontend build externalizes fonts and does not publish source maps', () => {
   const buildCommand =
     process.platform === 'win32'
-      ? { executable: 'cmd.exe', arguments: ['/d', '/s', '/c', 'yarn build'] }
-      : { executable: 'yarn', arguments: ['build'] }
+      ? { executable: 'cmd.exe', arguments: ['/d', '/s', '/c', 'npm run build'] }
+      : { executable: 'npm', arguments: ['run', 'build'] }
   const build = spawnSync(buildCommand.executable, buildCommand.arguments, {
     cwd: fromRoot('frontend'),
     encoding: 'utf8',
@@ -147,6 +239,9 @@ test('Railway deploy contract is health-gated and contains no identifiers or sec
   const railway = readJson('railway.json')
   assert.deepEqual(railway, {
     $schema: 'https://railway.com/railway.schema.json',
+    build: {
+      builder: 'RAILPACK',
+    },
     deploy: {
       startCommand: 'npm run start',
       healthcheckPath: '/api/health',
@@ -156,30 +251,60 @@ test('Railway deploy contract is health-gated and contains no identifiers or sec
   assert.doesNotMatch(JSON.stringify(railway), /token|secret|projectId|serviceId/i)
 })
 
-test('package managers and root scripts have one authority per workspace', () => {
+test('native npm workspace owns the modern dual-entry frontend', () => {
   const rootPackage = readJson('package.json')
   const frontendPackage = readJson('frontend', 'package.json')
   const backendPackage = readJson('backend', 'package.json')
+  const visualHtmlPath = fromRoot('frontend', 'visual', 'index.html')
 
+  assert.deepEqual(rootPackage.workspaces, ['frontend', 'backend'])
+  assert.equal(rootPackage.engines.node, '24.x')
   assert.equal(existsSync(fromRoot('package-lock.json')), true)
   assert.equal(existsSync(fromRoot('yarn.lock')), false)
-  assert.equal(existsSync(fromRoot('frontend', 'yarn.lock')), true)
+  assert.equal(existsSync(fromRoot('frontend', 'yarn.lock')), false)
   assert.equal(existsSync(fromRoot('frontend', 'package-lock.json')), false)
-  assert.equal(existsSync(fromRoot('backend', 'yarn.lock')), true)
+  assert.equal(existsSync(fromRoot('backend', 'yarn.lock')), false)
   assert.equal(
-    rootPackage.devDependencies.yarn,
-    '1.22.22',
-    'the npm-selected Railway build must install the Yarn binary used by nested workspace scripts',
+    [rootPackage, frontendPackage, backendPackage].some((packageJson) =>
+      Object.values(packageJson.scripts).some((script) => /\byarn\b/i.test(script)),
+    ),
+    false,
   )
-  const rootLock = readJson('package-lock.json')
-  assert.equal(rootLock.packages['node_modules/yarn']?.version, '1.22.22')
+
+  assert.equal(frontendPackage.dependencies.react, '19.2.7')
+  assert.equal(frontendPackage.dependencies['react-dom'], '19.2.7')
+  assert.equal(frontendPackage.devDependencies.vite, '8.1.4')
+  assert.equal(frontendPackage.devDependencies.vitest, '4.1.10')
+  assert.equal(frontendPackage.devDependencies['@testing-library/react'], '16.3.2')
+  assert.equal(frontendPackage.devDependencies['@testing-library/dom'], '10.4.1')
+  assert.equal(frontendPackage.devDependencies['@testing-library/user-event'], '14.6.1')
+  assert.equal(frontendPackage.devDependencies.jsdom, '29.1.1')
+
+  assert.equal(existsSync(fromRoot('frontend', 'index.html')), true)
+  assert.equal(existsSync(visualHtmlPath), true)
+  if (existsSync(visualHtmlPath)) {
+    const visualHtml = readFileSync(visualHtmlPath, 'utf8')
+    assert.match(visualHtml, /<html\b[^>]*data-portfolio-mode=["']visual["']/i)
+    assert.match(visualHtml, /<link\b[^>]*rel=["']canonical["'][^>]*href=["']https:\/\/josecarter\.dev\/visual["']/i)
+    assert.match(visualHtml, /<meta\b[^>]*property=["']og:url["'][^>]*content=["']https:\/\/josecarter\.dev\/visual["']/i)
+    assert.match(visualHtml, /<script\b[^>]*src=["']\/src\/main\.tsx["']/i)
+    assert.match(visualHtml, /<noscript>[\s\S]*(?:mailto:|CV)[\s\S]*<\/noscript>/i)
+  }
+
   assert.equal(frontendPackage.scripts['type-check'], 'tsc --noEmit')
   assert.equal(
     rootPackage.scripts.test,
-    'node --test scripts/production-contract.test.mjs && npm run test:backend && npm run test:frontend',
+    'node --test scripts/production-contract.test.mjs && npm run test --workspace backend && npm run test --workspace frontend && npm run build && npm run smoke:compiled --workspace backend',
   )
-  assert.equal(rootPackage.scripts.lint, 'npm run lint:frontend')
-  assert.equal(rootPackage.scripts['type-check'], 'npm run type-check:frontend && npm run type-check:backend')
+  assert.equal(rootPackage.scripts.lint, 'npm run lint --workspace frontend')
+  assert.equal(
+    rootPackage.scripts['type-check'],
+    'npm run type-check --workspace frontend && npm run type-check --workspace backend',
+  )
+  assert.equal(
+    rootPackage.scripts.build,
+    'npm run build --workspace backend && npm run build --workspace frontend',
+  )
   assert.equal(rootPackage.repository.url, 'https://github.com/Cartterr/portfolio-cartterr.git')
   assert.ok(!Object.keys(rootPackage.scripts).some((name) => name.startsWith('docker:')))
   assert.equal('deploy' in rootPackage.scripts, false)
@@ -231,9 +356,16 @@ test('obsolete container and deploy artifacts are absent', () => {
     'scripts/setup.js',
     'setup.bat',
     'setup.sh',
+    'start.bat',
+    'start.sh',
   ]
   const maintainedText = maintainedEntryPoints.map((filePath) => readText(filePath)).join('\n')
   assert.doesNotMatch(maintainedText, /Docker|docker-compose|nginx/i)
+  assert.doesNotMatch(maintainedText, /\byarn\b/i)
+  assert.doesNotMatch(maintainedText, /\bpnpm\b/i)
+  assert.doesNotMatch(maintainedText, /Nixpacks/i)
+  assert.match(readText('README.md'), /Railpack/)
+  assert.match(readText('scripts', 'setup.js'), /majorVersion\s*!==\s*24/)
   assert.match(readText('.gitignore'), /^\.tmp-lighthouse-\*\.json$/m)
   assert.match(readText('.gitignore'), /^frontend\/vite\.config\.ts\.timestamp-\*\.mjs$/m)
 })

@@ -108,6 +108,7 @@ export function createApp(options: CreateAppOptions = {}) {
               scriptSrc: ["'self'"],
               scriptSrcAttr: ["'none'"],
               styleSrc: ["'self'"],
+              styleSrcAttr: ["'unsafe-inline'"],
             },
           }
         : false,
@@ -172,20 +173,41 @@ export function createApp(options: CreateAppOptions = {}) {
   if (isProduction) {
     const frontendDist = options.frontendDist ?? path.join(__dirname, '../../frontend/dist')
 
+    const redirectPortfolioEntry = (canonicalPath: string): RequestHandler =>
+      (request, response) => {
+        const query = new URL(request.originalUrl, 'http://localhost').search
+        response.redirect(308, `${canonicalPath}${query}`)
+      }
+
+    app.get('/index.html', redirectPortfolioEntry('/'))
+    app.get('/visual/index.html', redirectPortfolioEntry('/visual'))
+    app.use((request, response, next) => {
+      if (request.path !== '/visual/') {
+        next()
+        return
+      }
+      redirectPortfolioEntry('/visual')(request, response, next)
+    })
+
     app.use(
       express.static(frontendDist, {
+        index: false,
+        redirect: false,
         setHeaders: (response, filePath) => {
           if (filePath.endsWith('.html')) {
-            response.setHeader('Cache-Control', 'no-store')
+            response.setHeader('Cache-Control', 'public, max-age=0, must-revalidate')
             return
           }
 
-          if (/[/\\]assets[/\\][^/\\]+-[0-9a-f]{8,}\.[^/\\]+$/i.test(filePath)) {
+          if (/[/\\]assets[/\\][^/\\]+-[a-z0-9_-]{8,}\.[^/\\]+$/i.test(filePath)) {
             response.setHeader('Cache-Control', 'public, max-age=31536000, immutable')
             return
           }
 
-          if (/\.pdf$/i.test(filePath) || path.basename(filePath) === 'og-jose-carter.png') {
+          if (
+            /\.pdf$/i.test(filePath) ||
+            /^og-jose-carter(?:-visual)?\.png$/i.test(path.basename(filePath))
+          ) {
             response.setHeader('Cache-Control', 'public, max-age=86400, must-revalidate')
             return
           }
@@ -195,9 +217,38 @@ export function createApp(options: CreateAppOptions = {}) {
       }),
     )
 
-    app.get('*', (_request, response) => {
+    const sendPortfolioDocument = (relativePath: string): RequestHandler =>
+      (_request, response) => {
+        response.setHeader('Cache-Control', 'public, max-age=0, must-revalidate')
+        response.sendFile(path.join(frontendDist, relativePath))
+      }
+
+    app.get('/', sendPortfolioDocument('index.html'))
+    app.get('/visual', sendPortfolioDocument(path.join('visual', 'index.html')))
+
+    app.get('*', (request, response) => {
       response.setHeader('Cache-Control', 'no-store')
-      response.sendFile(path.join(frontendDist, 'index.html'))
+      if (request.path.startsWith('/assets/') || path.extname(request.path)) {
+        response.status(404).type('text/plain').send('Resource not found.')
+        return
+      }
+
+      response.status(404).type('html').send(`<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>Page not found | José Carter</title>
+  </head>
+  <body>
+    <main>
+      <h1>Page not found</h1>
+      <p>The page you requested does not exist.</p>
+      <p><a href="/">Software portfolio</a> · <a href="/visual">Visual portfolio</a></p>
+    </main>
+  </body>
+</html>`)
     })
   }
 

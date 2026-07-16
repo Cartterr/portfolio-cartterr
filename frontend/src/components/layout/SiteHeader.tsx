@@ -1,78 +1,62 @@
-import { useEffect, useRef, useState } from 'react'
+import brandAvatar from '../../assets/images/optimized/brand-avatar.webp'
+import { useMemo } from 'react'
+import type { PortfolioMode, PortfolioPage } from '../../data/portfolio'
+import { useScrollSpy } from '../../hooks/useScrollSpy'
+import { MobileNavigation } from './MobileNavigation'
+import { ModeLink } from './ModeLink'
 
 type SiteHeaderProps = {
-  cvHref: string
+  mode: PortfolioMode
+  navigateMode: (mode: PortfolioMode) => void
+  navigation: PortfolioPage['navigation']
+  roleLabel: string
 }
 
-const navigationItems = [
-  { label: 'Work', href: '#work' },
-  { label: 'Experience', href: '#experience' },
-  { label: 'About', href: '#about' },
-  { label: 'Contact', href: '#contact' },
-]
-
-export function SiteHeader({ cvHref }: SiteHeaderProps) {
-  const [isOpen, setIsOpen] = useState(false)
-  const menuButtonRef = useRef<HTMLButtonElement>(null)
-
-  useEffect(() => {
-    if (!isOpen) return undefined
-
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return
-      setIsOpen(false)
-      menuButtonRef.current?.focus()
-    }
-
-    window.addEventListener('keydown', closeOnEscape)
-    return () => window.removeEventListener('keydown', closeOnEscape)
-  }, [isOpen])
-
-  const closeNavigation = () => setIsOpen(false)
+export function SiteHeader({ mode, navigateMode, navigation, roleLabel }: SiteHeaderProps) {
+  const hrefs = useMemo(() => navigation.map(({ href }) => href), [navigation])
+  const { activeHref, progress } = useScrollSpy(hrefs, mode)
 
   return (
     <header className="site-header">
       <div className="site-header__inner">
-        <a className="wordmark" href="#main" onClick={closeNavigation}>
-          José Carter
+        <a aria-label={`José Carter — ${roleLabel}`} className="site-identity" href="#main">
+          <img alt="" className="site-identity__avatar" height="160" src={brandAvatar} width="160" />
+          <span className="site-identity__text">
+            <span className="wordmark">José Carter</span>
+            <span className="site-role">{roleLabel}</span>
+          </span>
         </a>
 
-        <button
-          aria-controls="primary-navigation"
-          aria-expanded={isOpen}
-          aria-label={isOpen ? 'Close navigation' : 'Open navigation'}
-          className="menu-button"
-          onClick={() => setIsOpen((open) => !open)}
-          ref={menuButtonRef}
-          type="button"
-        >
-          <span aria-hidden="true" className="menu-button__lines">
-            <span />
-            <span />
-          </span>
-        </button>
-
-        <nav
-          aria-label="Primary navigation"
-          className="site-nav"
-          data-open={isOpen ? 'true' : 'false'}
-          id="primary-navigation"
-        >
+        <nav aria-label="Primary navigation" className="site-nav">
           <ul>
-            {navigationItems.map((item) => (
+            {navigation.map((item) => (
               <li key={item.href}>
-                <a href={item.href} onClick={closeNavigation}>
+                <a
+                  aria-current={activeHref === item.href ? 'location' : undefined}
+                  href={item.href}
+                >
                   {item.label}
                 </a>
               </li>
             ))}
-            <li>
-              <a className="site-nav__cv" download href={cvHref} onClick={closeNavigation}>
-                CV
-              </a>
-            </li>
           </ul>
         </nav>
+
+        <div className="site-header__controls">
+          <nav aria-label="Portfolio mode" className="mode-switch">
+            <ModeLink currentMode={mode} mode="software" navigateMode={navigateMode}>
+              Software
+            </ModeLink>
+            <ModeLink currentMode={mode} mode="visual" navigateMode={navigateMode}>
+              Visual
+            </ModeLink>
+          </nav>
+          <MobileNavigation activeHref={activeHref} items={navigation} routeKey={mode} />
+        </div>
+
+        <span aria-hidden="true" className="site-header__progress">
+          <span style={{ transform: `scaleX(${progress})` }} />
+        </span>
       </div>
     </header>
   )

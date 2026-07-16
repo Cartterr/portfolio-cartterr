@@ -3,31 +3,35 @@
   "version": "1.0.0",
   "description": "José Carter's portfolio for reliable AI, data, and autonomous systems",
   "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
     "setup": "node scripts/setup.js",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "dev:frontend": "cd frontend && yarn dev",
-    "dev:backend": "cd backend && yarn dev",
-    "test": "node --test scripts/production-contract.test.mjs && npm run test:backend && npm run test:frontend",
-    "test:frontend": "cd frontend && yarn test",
-    "test:backend": "cd backend && yarn test",
-    "lint": "npm run lint:frontend",
-    "lint:frontend": "cd frontend && yarn lint",
-    "build": "npm run build:backend && npm run build:frontend",
-    "build:frontend": "cd frontend && yarn install --production=false --non-interactive && yarn build",
-    "build:backend": "cd backend && yarn install --production=false --non-interactive && yarn build",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "dev:backend": "npm run dev --workspace backend",
+    "test": "node --test scripts/production-contract.test.mjs && npm run test --workspace backend && npm run test --workspace frontend && npm run build && npm run smoke:compiled --workspace backend",
+    "test:frontend": "npm run test --workspace frontend",
+    "test:backend": "npm run test --workspace backend",
+    "lint": "npm run lint --workspace frontend",
+    "lint:frontend": "npm run lint --workspace frontend",
+    "build": "npm run build --workspace backend && npm run build --workspace frontend",
+    "build:frontend": "npm run build --workspace frontend",
+    "build:backend": "npm run build --workspace backend",
     "start": "npm run start:backend",
-    "start:frontend": "cd frontend && yarn preview",
-    "start:backend": "cd backend && yarn start",
-    "install:all": "cd frontend && yarn install && cd ../backend && yarn install",
-    "type-check": "npm run type-check:frontend && npm run type-check:backend",
-    "type-check:frontend": "cd frontend && yarn type-check",
-    "type-check:backend": "cd backend && yarn type-check"
+    "start:frontend": "npm run preview --workspace frontend",
+    "start:backend": "npm run start --workspace backend",
+    "smoke:compiled": "npm run smoke:compiled --workspace backend",
+    "install:all": "npm install",
+    "type-check": "npm run type-check --workspace frontend && npm run type-check --workspace backend",
+    "type-check:frontend": "npm run type-check --workspace frontend",
+    "type-check:backend": "npm run type-check --workspace backend"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",
-    "cross-env": "^7.0.3",
-    "yarn": "1.22.22"
+    "cross-env": "^7.0.3"
   },
   "keywords": [
     "portfolio",
@@ -44,7 +48,7 @@
     "url": "https://github.com/Cartterr/portfolio-cartterr.git"
   },
   "engines": {
-    "node": ">=18.0.0",
-    "npm": ">=8.0.0"
+    "node": "24.x",
+    "npm": ">=10.0.0"
   }
 }

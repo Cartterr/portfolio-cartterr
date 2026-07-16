@@ -65,6 +65,23 @@ describe('portfolio API', () => {
     expect(independentClient.status).toBe(200)
   })
 
+  it('groups rotating IPv6 addresses from the same client /56', async () => {
+    const app = createApp()
+    const firstAddress = '2001:db8:1234:cd11::1'
+    const rotatedAddress = '2001:db8:1234:cd22::2'
+
+    for (let requestNumber = 0; requestNumber < 100; requestNumber += 1) {
+      const response = await request(app).get('/api/health').set('X-Forwarded-For', firstAddress)
+      expect(response.status).toBe(200)
+    }
+
+    const rotatedRequest = await request(app)
+      .get('/api/health')
+      .set('X-Forwarded-For', rotatedAddress)
+
+    expect(rotatedRequest.status).toBe(429)
+  })
+
   it('allows the production origin and rejects an unknown CORS origin safely', async () => {
     const app = createApp()
     const allowed = await request(app).get('/api/health').set('Origin', 'https://josecarter.dev')
@@ -114,6 +131,29 @@ describe('portfolio API', () => {
     })
   })
 
+  it.each(['software', 'visual'] as const)(
+    'accepts the validated %s portfolio context for contact delivery',
+    async (portfolioMode) => {
+      const sendContactEmail = vi.fn().mockResolvedValue(undefined)
+      const response = await request(createApp({ sendContactEmail }))
+        .post('/api/contact')
+        .send({
+          name: 'Ada',
+          email: 'ada@example.com',
+          message: 'Hello',
+          portfolioMode,
+        })
+
+      expect(response.status).toBe(200)
+      expect(sendContactEmail).toHaveBeenCalledWith({
+        name: 'Ada',
+        email: 'ada@example.com',
+        message: 'Hello',
+        portfolioMode,
+      })
+    },
+  )
+
   it.each([
     ['missing field', { name: 'Ada', email: 'ada@example.com' }],
     ['non-string field', { name: ['Ada'], email: 'ada@example.com', message: 'Hello' }],
@@ -128,6 +168,14 @@ describe('portfolio API', () => {
     [
       'unexpected field',
       { name: 'Ada', email: 'ada@example.com', message: 'Hello', company: 'Analytical Engines' },
+    ],
+    [
+      'unknown portfolio mode',
+      { name: 'Ada', email: 'ada@example.com', message: 'Hello', portfolioMode: 'admin' },
+    ],
+    [
+      'non-string portfolio mode',
+      { name: 'Ada', email: 'ada@example.com', message: 'Hello', portfolioMode: ['visual'] },
     ],
   ])('rejects an invalid submission: %s', async (_label, body) => {
     const sendContactEmail = vi.fn().mockResolvedValue(undefined)
@@ -334,12 +382,12 @@ describe('portfolio API', () => {
     })
   })
 
-  it('uses immutable caching for hashed Vite assets and no-store for HTML', async () => {
+  it('uses immutable caching for hashed Vite assets and revalidates HTML', async () => {
     await withTemporaryFrontendDist(async (frontendDist) => {
       const assetsDirectory = path.join(frontendDist, 'assets')
       fs.mkdirSync(assetsDirectory, { recursive: true })
       fs.writeFileSync(
-        path.join(assetsDirectory, 'contract-abcdef123456.js'),
+        path.join(assetsDirectory, 'contract-BQKOHs0Q.js'),
         'export const contract = true',
       )
       fs.writeFileSync(
@@ -349,7 +397,7 @@ describe('portfolio API', () => {
 
       await withNodeEnvironment('production', async () => {
         const app = createApp({ frontendDist })
-        const hashedAsset = await request(app).get('/assets/contract-abcdef123456.js')
+        const hashedAsset = await request(app).get('/assets/contract-BQKOHs0Q.js')
         const html = await request(app).get('/cache-contract.html')
 
         expect(hashedAsset.status).toBe(200)
@@ -357,23 +405,99 @@ describe('portfolio API', () => {
           'public, max-age=31536000, immutable',
         )
         expect(html.status).toBe(200)
-        expect(html.headers['cache-control']).toBe('no-store')
+        expect(html.headers['cache-control']).toBe('public, max-age=0, must-revalidate')
       })
     })
   })
 
-  it('gives the CV and social image one-day revalidation caching', async () => {
+  it('serves only the explicit Software and Visual documents and returns real 404s', async () => {
+    await withTemporaryFrontendDist(async (frontendDist) => {
+      const visualDirectory = path.join(frontendDist, 'visual')
+      fs.mkdirSync(visualDirectory, { recursive: true })
+      fs.writeFileSync(
+        path.join(frontendDist, 'index.html'),
+        '<!doctype html><title>Software route</title><main>SOFTWARE_DOCUMENT</main>',
+      )
+      fs.writeFileSync(
+        path.join(visualDirectory, 'index.html'),
+        '<!doctype html><title>Visual route</title><main>VISUAL_DOCUMENT</main>',
+      )
+
+      await withNodeEnvironment('production', async () => {
+        const app = createApp({ frontendDist })
+        const software = await request(app).get('/')
+        const visual = await request(app).get('/visual')
+        const visualWithSlash = await request(app).get('/visual/?source=slash')
+        const unknownDocument = await request(app).get('/unknown-project')
+        const missingAsset = await request(app).get('/assets/missing-abcdef123456.js')
+
+        expect(software.status).toBe(200)
+        expect(software.text).toContain('SOFTWARE_DOCUMENT')
+        expect(software.text).not.toContain('VISUAL_DOCUMENT')
+        expect(software.headers['cache-control']).toBe('public, max-age=0, must-revalidate')
+
+        expect(visual.status).toBe(200)
+        expect(visual.text).toContain('VISUAL_DOCUMENT')
+        expect(visual.text).not.toContain('SOFTWARE_DOCUMENT')
+        expect(visual.headers['cache-control']).toBe('public, max-age=0, must-revalidate')
+
+        expect(visualWithSlash.status).toBe(308)
+        expect(visualWithSlash.headers.location).toBe('/visual?source=slash')
+        expect(visualWithSlash.text).not.toContain('VISUAL_DOCUMENT')
+
+        expect(unknownDocument.status).toBe(404)
+        expect(unknownDocument.text).toContain('Page not found')
+        expect(unknownDocument.text).not.toContain('SOFTWARE_DOCUMENT')
+        expect(unknownDocument.headers['cache-control']).toBe('no-store')
+
+        expect(missingAsset.status).toBe(404)
+        expect(missingAsset.text).not.toContain('SOFTWARE_DOCUMENT')
+        expect(missingAsset.text).not.toContain('VISUAL_DOCUMENT')
+      })
+    })
+  })
+
+  it.each([
+    ['/index.html', '/'],
+    ['/visual/index.html', '/visual'],
+  ])('redirects the build entry %s to its canonical document route', async (entryPath, canonicalPath) => {
+    await withTemporaryFrontendDist(async (frontendDist) => {
+      const visualDirectory = path.join(frontendDist, 'visual')
+      fs.mkdirSync(visualDirectory, { recursive: true })
+      fs.writeFileSync(path.join(frontendDist, 'index.html'), '<main>SOFTWARE_DOCUMENT</main>')
+      fs.writeFileSync(path.join(visualDirectory, 'index.html'), '<main>VISUAL_DOCUMENT</main>')
+
+      await withNodeEnvironment('production', async () => {
+        const response = await request(createApp({ frontendDist })).get(`${entryPath}?source=entry`)
+
+        expect(response.status).toBe(308)
+        expect(response.headers.location).toBe(`${canonicalPath}?source=entry`)
+        expect(response.text).not.toContain('SOFTWARE_DOCUMENT')
+        expect(response.text).not.toContain('VISUAL_DOCUMENT')
+      })
+    })
+  })
+
+  it('gives the CV and both social images one-day revalidation caching', async () => {
     await withTemporaryFrontendDist(async (frontendDist) => {
       fs.writeFileSync(path.join(frontendDist, 'Jose_Carter_CV_Eng.pdf'), 'test CV')
       fs.writeFileSync(path.join(frontendDist, 'og-jose-carter.png'), 'test social image')
+      fs.writeFileSync(
+        path.join(frontendDist, 'og-jose-carter-visual.png'),
+        'test visual social image',
+      )
 
       await withNodeEnvironment('production', async () => {
         const app = createApp({ frontendDist })
         const cv = await request(app).get('/Jose_Carter_CV_Eng.pdf')
         const socialImage = await request(app).get('/og-jose-carter.png')
+        const visualSocialImage = await request(app).get('/og-jose-carter-visual.png')
 
         expect(cv.headers['cache-control']).toBe('public, max-age=86400, must-revalidate')
         expect(socialImage.headers['cache-control']).toBe(
+          'public, max-age=86400, must-revalidate',
+        )
+        expect(visualSocialImage.headers['cache-control']).toBe(
           'public, max-age=86400, must-revalidate',
         )
       })
@@ -415,6 +539,8 @@ describe('portfolio API', () => {
       expect(policy).toContain("connect-src 'self'")
       expect(policy).toContain("font-src 'self'")
       expect(policy).toContain("img-src 'self' data:")
+      expect(policy).toContain("style-src 'self'")
+      expect(policy).toContain("style-src-attr 'unsafe-inline'")
       expect(policy).not.toContain('http:')
       expect(policy).not.toContain('https:')
       expect(policy).not.toContain('*')

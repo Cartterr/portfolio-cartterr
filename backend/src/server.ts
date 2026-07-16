@@ -13,6 +13,8 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') })
 const port = Number(process.env.PORT || 5000)
 const app = createApp()
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`)
+const server = app.listen(port, () => {
+  const address = server.address()
+  const boundPort = typeof address === 'object' && address ? address.port : port
+  console.log(`Server running on port ${boundPort}`)
 })

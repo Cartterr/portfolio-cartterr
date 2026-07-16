@@ -39,4 +39,23 @@ describe('contact mail construction', () => {
     })
     expect(mail.subject).not.toMatch(/[\r\n]/u)
   })
+
+  it.each([
+    ['software', 'Software portfolio'],
+    ['visual', 'Visual portfolio'],
+  ] as const)('uses a fixed label for %s portfolio context only in the subject', (portfolioMode, label) => {
+    const mail = buildContactMail(
+      {
+        name: 'Ada',
+        email: 'ada@example.com',
+        message: 'Hello',
+        portfolioMode,
+      },
+      'portfolio@example.com',
+    )
+
+    expect(mail.subject).toBe(`[${label}] New portfolio message from Ada`)
+    expect(mail.text).not.toContain(portfolioMode)
+    expect(mail.html).not.toContain(portfolioMode)
+  })
 })
