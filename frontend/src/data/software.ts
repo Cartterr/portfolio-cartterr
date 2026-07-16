@@ -163,12 +163,20 @@ const softwareExperience = [
     title: 'Simulation Engineer',
     company: 'Pontificia Universidad Católica de Chile',
     summary:
-      'Developed GPU-accelerated scientific software for tectonic-plate modeling and seismic-risk analysis.',
+      'Developed GPU-accelerated scientific software for tectonic-plate modeling and seismic-risk analysis, contributing to my first published research at the 2023 Seismological Society of America Annual Meeting.',
     contribution:
       'Built Python and CUDA simulation workflows for predictive analysis and large scientific datasets.',
-    outcome: 'Optimized parallel algorithms to achieve a 15x performance improvement.',
+    outcome:
+      'Optimized parallel algorithms to achieve a 15x performance improvement and supported research on interactions between large offshore and onshore earthquakes.',
     technologies: ['Python', 'CUDA', 'Optimization', 'Data Pipelines', 'Simulation'],
     mediaIds: mediaIdsFor('geoscience'),
+    links: [
+      {
+        label: 'View the SSA 2023 publication',
+        href: 'https://meetings.seismosoc.org/wp-content/uploads/2023/03/SSA-Program-2023.pdf',
+        external: true,
+      },
+    ],
   },
 ] satisfies ExperienceStory[]
 
@@ -274,7 +282,8 @@ const softwareProjects = [
     role: 'Simulation Engineer',
     period: 'Jan 2023 - Jul 2024',
     status: 'Completed research project',
-    summary: 'GPU-accelerated scientific software for tectonic-plate modeling.',
+    summary:
+      'GPU-accelerated scientific software for tectonic-plate modeling that contributed to my first published research at the 2023 Seismological Society of America Annual Meeting.',
     problem:
       'Large scientific datasets and computationally intensive simulations needed efficient parallel processing.',
     contribution:
@@ -283,6 +292,11 @@ const softwareProjects = [
     technologies: ['Python', 'CUDA', 'Optimization', 'Data Pipelines', 'Simulation'],
     mediaIds: mediaIdsFor('geoscience'),
     links: [
+      {
+        label: 'View the SSA 2023 publication',
+        href: 'https://meetings.seismosoc.org/wp-content/uploads/2023/03/SSA-Program-2023.pdf',
+        external: true,
+      },
       {
         label: 'Explore the visual geoscience case study',
         href: '/visual#visual-project-geoscience-simulation',

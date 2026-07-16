@@ -96,7 +96,7 @@ const visualProjects = [
     period: 'Jan 2023 - Jul 2024',
     status: 'Completed research project',
     summary:
-      'A rendered terrain and subsurface system grounded in scientific simulation and GPU computing.',
+      'A rendered terrain and subsurface system grounded in scientific simulation and GPU computing, connected to my first research publication at the 2023 Seismological Society of America Annual Meeting.',
     problem:
       'Complex spatial data needed to become both computationally tractable and visually understandable.',
     contribution:
@@ -104,6 +104,13 @@ const visualProjects = [
     outcome: 'A 15x simulation speedup paired with a coherent set of 3D scientific visuals.',
     technologies: ['Python', 'CUDA', '3D Geometry', 'Simulation', 'Scientific Visualization'],
     mediaIds: mediaIdsFor('geoscience'),
+    links: [
+      {
+        label: 'View the SSA 2023 publication',
+        href: 'https://meetings.seismosoc.org/wp-content/uploads/2023/03/SSA-Program-2023.pdf',
+        external: true,
+      },
+    ],
   }),
   mediaBackedProject({
     id: 'parametric-configurator',

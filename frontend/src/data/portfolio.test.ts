@@ -45,6 +45,26 @@ describe('dual portfolio content', () => {
     ])
   })
 
+  it('links the Marga-Marga research to the 2023 Seismological Society of America publication', () => {
+    const publicationUrl =
+      'https://meetings.seismosoc.org/wp-content/uploads/2023/03/SSA-Program-2023.pdf'
+    const geoscienceStories = [
+      softwarePortfolio.experience.find(({ id }) => id === 'geoscience'),
+      softwarePortfolio.projects.find(({ id }) => id === 'geoscience-simulation'),
+      visualPortfolio.projects.find(({ id }) => id === 'geoscience-simulation'),
+    ]
+
+    for (const story of geoscienceStories) {
+      expect(story).toBeDefined()
+      expect(story?.links).toContainEqual({
+        label: 'View the SSA 2023 publication',
+        href: publicationUrl,
+        external: true,
+      })
+      expect(JSON.stringify(story)).toMatch(/first published research|first research publication/i)
+    }
+  })
+
   it('backs every published visual project with real media', () => {
     const publishedMediaIds = new Set(
       portfolioMedia.filter(({ publication }) => publication === 'approved').map(({ id }) => id),
