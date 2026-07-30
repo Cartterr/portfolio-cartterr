@@ -40,9 +40,12 @@ describe('VisualPortfolio', () => {
         .map(({ id }) => id),
     ).toEqual(['hero', 'about', 'experience', 'work', 'capabilities', 'contact'])
 
-    expect(within(page).getByRole('heading', { level: 1 })).toHaveTextContent(
-      visualPortfolio.hero.title,
-    )
+    const heroHeading = within(page).getByRole('heading', {
+      level: 1,
+      name: visualPortfolio.hero.title,
+    })
+    expect(heroHeading).toHaveTextContent(visualPortfolio.hero.title)
+    expect(heroHeading.querySelectorAll('.visual-hero__title-line')).toHaveLength(3)
     const heroActions = within(page).getByRole('group', { name: 'Visual portfolio actions' })
     expect(
       within(heroActions).getByRole('link', { name: visualPortfolio.hero.primaryCta.label }),

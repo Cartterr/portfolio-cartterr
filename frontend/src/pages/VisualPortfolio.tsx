@@ -18,6 +18,12 @@ import '../styles/visual.css'
 
 const LazyVisualHeroScene = lazy(() => import('../visual/VisualHeroScene'))
 
+const visualHeroTitleLines = [
+  'Production technology, ',
+  'technical tools, and ',
+  'simulation systems.',
+] as const
+
 type VisualHeroErrorBoundaryProps = {
   children: ReactNode
   fallback: ReactNode
@@ -68,6 +74,11 @@ function VisualHeroStage() {
       <p className="visual-hero-stage__mode" aria-hidden="true">
         {capability === 'poster' ? 'Static terrain study' : `${capability} realtime field`}
       </p>
+      <div className="visual-hero-stage__legend" aria-hidden="true">
+        <span>Simulation study · 01</span>
+        <strong>Marga-Marga terrain model</strong>
+        <span>Python · CUDA · 3D</span>
+      </div>
     </div>
   )
 }
@@ -77,29 +88,45 @@ function Hero() {
     <section aria-labelledby="visual-title" className="visual-hero" id="hero">
       <div className="visual-hero__copy">
         <p className="visual-kicker">{visualPortfolio.hero.eyebrow}</p>
-        <h1 id="visual-title">{visualPortfolio.hero.title}</h1>
+        <h1 aria-label={visualPortfolio.hero.title} id="visual-title">
+          {visualHeroTitleLines.map((line, index) => (
+            <span
+              aria-hidden="true"
+              className={
+                index === visualHeroTitleLines.length - 1
+                  ? 'visual-hero__title-line visual-hero__title-line--accent'
+                  : 'visual-hero__title-line'
+              }
+              key={line}
+            >
+              {line}
+            </span>
+          ))}
+        </h1>
         <p className="visual-hero__summary">{visualPortfolio.hero.summary}</p>
         <div aria-label="Visual portfolio actions" className="visual-actions" role="group">
           <a className="visual-actions__primary" href={visualPortfolio.hero.primaryCta.href}>
             {visualPortfolio.hero.primaryCta.label}
             <span aria-hidden="true">↘</span>
           </a>
-          <a href={visualPortfolio.hero.secondaryCta.href}>
+          <a className="visual-actions__secondary" href={visualPortfolio.hero.secondaryCta.href}>
             {visualPortfolio.hero.secondaryCta.label}
             <span aria-hidden="true">→</span>
           </a>
-          <a
-            href="https://linkedin.com/in/jose-carter-arriagada"
-            rel="noreferrer"
-            target="_blank"
-          >
-            LinkedIn
-            <span aria-hidden="true">↗</span>
-          </a>
-          <a href="#contact">
-            Contact
-            <span aria-hidden="true">↓</span>
-          </a>
+          <div className="visual-actions__links">
+            <a
+              href="https://linkedin.com/in/jose-carter-arriagada"
+              rel="noreferrer"
+              target="_blank"
+            >
+              LinkedIn
+              <span aria-hidden="true">↗</span>
+            </a>
+            <a href="#contact">
+              Contact
+              <span aria-hidden="true">↓</span>
+            </a>
+          </div>
         </div>
       </div>
 
