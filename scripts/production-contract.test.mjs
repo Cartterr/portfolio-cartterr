@@ -33,9 +33,12 @@ function sha256(filePath) {
 
 test('portfolio metadata uses one aligned canonical identity and real social assets', () => {
   const html = readText('frontend', 'index.html')
-  const expectedTitle = 'José Carter — Software Engineer for AI, Data & Autonomous Systems'
+  const expectedTitle = 'José Carter Arriagada — Production Technology, Tools & Simulation'
   const expectedDescription =
-    'José Carter builds production software, AI and data infrastructure, scientific computing platforms, and autonomous systems.'
+    'Software engineer building production tools, simulation systems, workflow automation, real-time 3D applications, and data-intensive platforms.'
+  const expectedSocialTitle = 'José Carter — Production Technology, Tools & Simulation'
+  const expectedSocialDescription =
+    'Software engineering across production tooling, simulation, real-time 3D, distributed systems, and scientific visualization.'
   const expectedSocialImage = 'https://josecarter.dev/og-jose-carter.png'
   const titleMatches = html.match(/<title>[^<]*<\/title>/gi) ?? []
   const canonicalLinks = tags(html, 'link').filter(
@@ -46,10 +49,10 @@ test('portfolio metadata uses one aligned canonical identity and real social ass
   assert.equal(attribute(singleMeta(html, 'name', 'description'), 'content'), expectedDescription)
   assert.equal(canonicalLinks.length, 1)
   assert.equal(attribute(canonicalLinks[0], 'href'), 'https://josecarter.dev/')
-  assert.equal(attribute(singleMeta(html, 'property', 'og:title'), 'content'), expectedTitle)
+  assert.equal(attribute(singleMeta(html, 'property', 'og:title'), 'content'), expectedSocialTitle)
   assert.equal(
     attribute(singleMeta(html, 'property', 'og:description'), 'content'),
-    expectedDescription,
+    expectedSocialDescription,
   )
   assert.equal(attribute(singleMeta(html, 'property', 'og:image'), 'content'), expectedSocialImage)
   assert.equal(attribute(singleMeta(html, 'property', 'og:image:width'), 'content'), '1200')
@@ -87,9 +90,12 @@ test('portfolio metadata uses one aligned canonical identity and real social ass
 
 test('Visual route metadata and structured data describe only the Visual portfolio', () => {
   const html = readText('frontend', 'visual', 'index.html')
-  const expectedTitle = 'José Carter — Visual Computing, Real-Time 3D & Simulation'
+  const expectedTitle = 'José Carter Arriagada — Production Technology, Tools & Simulation'
   const expectedDescription =
-    'José Carter builds real-time 3D tools, scientific visualization, simulation, and spatial computing systems.'
+    'Software engineer building production tools, simulation systems, workflow automation, real-time 3D applications, and data-intensive platforms.'
+  const expectedSocialTitle = 'José Carter — Production Technology, Tools & Simulation'
+  const expectedSocialDescription =
+    'Software engineering across production tooling, simulation, real-time 3D, distributed systems, and scientific visualization.'
   const expectedSocialImage = 'https://josecarter.dev/og-jose-carter-visual.png'
   const expectedSocialImageAlt =
     "José Carter's visual computing portfolio for real-time 3D, simulation, and spatial systems"
@@ -101,10 +107,10 @@ test('Visual route metadata and structured data describe only the Visual portfol
   assert.equal(attribute(singleMeta(html, 'name', 'description'), 'content'), expectedDescription)
   assert.equal(canonicalLinks.length, 1)
   assert.equal(attribute(canonicalLinks[0], 'href'), 'https://josecarter.dev/visual')
-  assert.equal(attribute(singleMeta(html, 'property', 'og:title'), 'content'), expectedTitle)
+  assert.equal(attribute(singleMeta(html, 'property', 'og:title'), 'content'), expectedSocialTitle)
   assert.equal(
     attribute(singleMeta(html, 'property', 'og:description'), 'content'),
-    expectedDescription,
+    expectedSocialDescription,
   )
   assert.equal(attribute(singleMeta(html, 'property', 'og:url'), 'content'), 'https://josecarter.dev/visual')
   assert.equal(
@@ -150,11 +156,17 @@ test('Visual route metadata and structured data describe only the Visual portfol
   assert.deepEqual(profilePage.mainEntity, { '@id': 'https://josecarter.dev/#person' })
   assert.equal(person.name, 'José Carter Arriagada')
   assert.equal(person.url, 'https://josecarter.dev/')
-  assert.equal(person.jobTitle, 'Software Engineer and Visual Computing Developer')
-  assert.doesNotMatch(JSON.stringify(structuredData), /birthDate|telephone|streetAddress|document|RUN/i)
+  assert.equal(person.jobTitle, 'Software Engineer')
+  assert.equal(person.worksFor.name, 'Dily')
+  assert.equal(person.alumniOf.name, 'Pontificia Universidad Católica de Chile')
+  assert.equal(person.publishingPrinciples, 'https://link.springer.com/article/10.1007/s42438-026-00638-4')
+  assert.doesNotMatch(
+    JSON.stringify(structuredData),
+    /"(?:birthDate|telephone|streetAddress|document|RUN)"\s*:/i,
+  )
 })
 
-test('both static entries keep useful, reciprocal, high-contrast no-JavaScript fallbacks', () => {
+test('both static entries expose useful WDAS-facing content without JavaScript', () => {
   const entries = [
     {
       html: readText('frontend', 'index.html'),
@@ -171,9 +183,37 @@ test('both static entries keep useful, reciprocal, high-contrast no-JavaScript f
     assert.notEqual(fallback, '')
     assert.match(fallback, new RegExp(`href=["']${reciprocalHref.replace('/', '\\/')}["']`, 'i'))
     assert.match(fallback, /href=["']mailto:/i)
-    assert.match(fallback, /href=["']\/Jose_Carter_CV_Eng\.pdf["']/i)
+    assert.match(fallback, /href=["']\/resume["']/i)
+    assert.match(fallback, /Production technology, technical tools, and simulation systems/i)
+    assert.match(fallback, /Parametric 3D Configurator/i)
+    assert.match(fallback, /3D Geoscience Simulation Pipeline/i)
+    assert.match(fallback, /Drone Response Mission Planner/i)
+    assert.match(fallback, /Research Data Platform/i)
+    assert.match(fallback, /Software Engineer at Dily/i)
+    assert.match(fallback, /ACM SIGGRAPH 2026 Student Volunteer/i)
     assert.match(fallback, /background:\s*#090909/i)
     assert.match(fallback, /color:\s*#f8f5ec/i)
+  }
+})
+
+test('stable resume route and legacy links all serve the current WDAS resume', () => {
+  const resumePath = fromRoot('frontend', 'public', 'Jose_Carter_WDAS_Resume_2026.pdf')
+  const resumeRoute = readText('frontend', 'public', 'resume', 'index.html')
+
+  assert.equal(existsSync(resumePath), true)
+  assert.match(resumeRoute, /url=\/Jose_Carter_WDAS_Resume_2026\.pdf/i)
+  assert.match(resumeRoute, /location\.replace\(['"]\/Jose_Carter_WDAS_Resume_2026\.pdf['"]\)/i)
+
+  for (const legacyName of [
+    'Jose_Carter_CV_Eng.pdf',
+    'Jose_Carter_CV_Spanish.pdf',
+    'Jose_Carter_CV_Spanish_FullStack.pdf',
+  ]) {
+    assert.equal(
+      sha256(fromRoot('frontend', 'public', legacyName)),
+      sha256(resumePath),
+      `${legacyName} must serve the current resume`,
+    )
   }
 })
 
@@ -221,14 +261,22 @@ test('JSON-LD describes a restrained WebSite, ProfilePage, and Person graph', ()
   assert.equal(person.name, 'José Carter Arriagada')
   assert.equal(person.url, 'https://josecarter.dev/')
   assert.equal(person.jobTitle, 'Software Engineer')
-  assert.equal(person.description, 'Software engineer building reliable AI, data, and autonomous systems.')
+  assert.equal(
+    person.description,
+    'Software engineer building production tools, simulation systems, workflow automation, real-time 3D applications, and data-intensive platforms.',
+  )
   assert.equal(person.homeLocation.name, 'Santiago, Chile')
+  assert.equal(person.worksFor.name, 'Dily')
+  assert.equal(person.alumniOf.name, 'Pontificia Universidad Católica de Chile')
   assert.equal(person.image.url, 'https://josecarter.dev/favicon.webp')
   assert.deepEqual(person.sameAs, [
     'https://github.com/Cartterr',
     'https://linkedin.com/in/jose-carter-arriagada',
   ])
-  assert.doesNotMatch(JSON.stringify(structuredData), /birthDate|telephone|streetAddress|document|RUN/i)
+  assert.doesNotMatch(
+    JSON.stringify(structuredData),
+    /"(?:birthDate|telephone|streetAddress|document|RUN)"\s*:/i,
+  )
 })
 
 test('Railway deploy contract is health-gated and contains no identifiers or secrets', () => {

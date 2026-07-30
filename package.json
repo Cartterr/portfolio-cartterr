@@ -1,7 +1,7 @@
 {
   "name": "cartterr-portfolio",
   "version": "1.0.0",
-  "description": "José Carter's portfolio for reliable AI, data, and autonomous systems",
+  "description": "José Carter's portfolio for production technology, tools, simulation, and real-time 3D",
   "private": true,
   "workspaces": [
     "frontend",

@@ -92,9 +92,15 @@ describe('dual portfolio shell', () => {
     expect(page?.querySelector('.software-hero, .software-section')).not.toBeInTheDocument()
 
     expect(within(page!).getByRole('heading', { level: 1 })).toHaveTextContent(visual.hero.title)
-    const contactCta = within(page!).getByRole('link', { name: visual.hero.secondaryCta.label })
-    expect(contactCta).toHaveAttribute('href', '#contact')
-    expect(contactCta).not.toHaveAttribute('download')
+    const heroActions = within(page!).getByRole('group', { name: 'Visual portfolio actions' })
+    const resumeCta = within(heroActions).getByRole('link', {
+      name: visual.hero.secondaryCta.label,
+    })
+    expect(resumeCta).toHaveAttribute('href', '/resume')
+    expect(within(heroActions).getByRole('link', { name: 'Contact' })).toHaveAttribute(
+      'href',
+      '#contact',
+    )
 
     const about = within(page!).getByRole('region', {
       name: 'Visual profile field and practice gallery',
@@ -197,7 +203,7 @@ describe('dual portfolio shell', () => {
     )
     expect(document.querySelector('meta[property="og:title"]')).toHaveAttribute(
       'content',
-      visual.meta.title,
+      visual.meta.socialTitle,
     )
     expect(document.querySelector('meta[property="og:url"]')).toHaveAttribute(
       'content',
@@ -217,7 +223,7 @@ describe('dual portfolio shell', () => {
     )
     expect(document.querySelector('meta[name="twitter:title"]')).toHaveAttribute(
       'content',
-      visual.meta.title,
+      visual.meta.socialTitle,
     )
     expect(document.querySelector('meta[name="twitter:image"]')).toHaveAttribute(
       'content',

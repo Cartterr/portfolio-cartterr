@@ -478,6 +478,26 @@ describe('portfolio API', () => {
     })
   })
 
+  it('redirects the stable resume route to the current WDAS PDF', async () => {
+    await withTemporaryFrontendDist(async (frontendDist) => {
+      fs.writeFileSync(
+        path.join(frontendDist, 'Jose_Carter_WDAS_Resume_2026.pdf'),
+        'current resume',
+      )
+
+      await withNodeEnvironment('production', async () => {
+        const response = await request(createApp({ frontendDist }))
+          .get('/resume?source=portfolio')
+          .redirects(0)
+
+        expect(response.status).toBe(307)
+        expect(response.headers.location).toBe(
+          '/Jose_Carter_WDAS_Resume_2026.pdf?source=portfolio',
+        )
+      })
+    })
+  })
+
   it('gives the CV and both social images one-day revalidation caching', async () => {
     await withTemporaryFrontendDist(async (frontendDist) => {
       fs.writeFileSync(path.join(frontendDist, 'Jose_Carter_CV_Eng.pdf'), 'test CV')

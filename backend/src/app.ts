@@ -181,6 +181,10 @@ export function createApp(options: CreateAppOptions = {}) {
 
     app.get('/index.html', redirectPortfolioEntry('/'))
     app.get('/visual/index.html', redirectPortfolioEntry('/visual'))
+    app.get('/resume', (request, response) => {
+      const query = new URL(request.originalUrl, 'http://localhost').search
+      response.redirect(307, `/Jose_Carter_WDAS_Resume_2026.pdf${query}`)
+    })
     app.use((request, response, next) => {
       if (request.path !== '/visual/') {
         next()

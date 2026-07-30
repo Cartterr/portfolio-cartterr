@@ -42,9 +42,48 @@ const visualMetrics = [
 
 const visualExperience = [
   {
+    id: 'dily-software-engineer',
+    period: 'Sep 2025 - Present',
+    title: 'Software Engineer',
+    company: 'Dily',
+    summary:
+      'Develop end-to-end automotive-finance workflows across TypeScript/Node.js services and Angular/Nx micro-frontends.',
+    contribution:
+      'Build modular production systems with cloud integrations, messaging, data persistence, observability, and automated testing.',
+    outcome: 'Reliable production features delivered across product, frontend, backend, and operations.',
+    technologies: ['TypeScript', 'Node.js', 'Angular', 'AWS', 'PostgreSQL'],
+    mediaIds: mediaIdsFor('dily'),
+  },
+  {
+    id: 'flair-software-engineer',
+    period: 'Dec 2024 - Aug 2025',
+    title: 'Software Engineer',
+    company: 'Flair',
+    summary:
+      'Built software for an autonomous building-management platform monitoring energy and carbon-impact metrics.',
+    contribution:
+      'Maintained Python services, Vue/React interfaces, and high-frequency InfluxDB and DynamoDB integrations on AWS.',
+    outcome: 'End-to-end product ownership in a fast-moving sustainability startup.',
+    technologies: ['Python', 'Vue', 'React', 'AWS', 'InfluxDB'],
+    mediaIds: mediaIdsFor('flair'),
+  },
+  {
+    id: 'politiktok-research-engineer',
+    period: 'Jul 2023 - Jul 2025',
+    title: 'Research Software Engineer',
+    company: 'Politiktok · Pontificia Universidad Católica de Chile',
+    summary:
+      'Led engineering of a Python/PostgreSQL research platform processing more than 100,000 social-media records.',
+    contribution:
+      'Built ingestion, processing, API, NLP, and visualization workflows for multidisciplinary Fondecyt research.',
+    outcome: 'Approximately 10× faster processing and a peer-reviewed Springer publication.',
+    technologies: ['Python', 'PostgreSQL', 'NLP', 'Data Engineering', 'APIs'],
+    mediaIds: mediaIdsFor('politiktok'),
+  },
+  {
     id: 'geoscience-visual-lab',
-    period: 'Jan 2023 - Jul 2024',
-    title: '3D Geoscience & Simulation',
+    period: 'Aug 2022 - Dec 2024',
+    title: 'Simulation Engineer',
     company: 'Pontificia Universidad Católica de Chile',
     summary:
       'Translated terrain, plate geometry, and scientific data into a three-dimensional simulation and visualization workflow.',
@@ -56,92 +95,138 @@ const visualExperience = [
     mediaIds: mediaIdsFor('geoscience'),
   },
   {
-    id: 'parametric-configurator-lab',
-    period: '2026',
-    title: 'Parametric 3D Configurator',
-    company: 'Independent product visualization',
-    summary:
-      'A working Three.js system that turns room and shelving measurements into interactive spatial proposals.',
-    contribution:
-      'Built parametric scene geometry, plan and 3D editing views, validation around physical constraints, and model export paths.',
-    outcome:
-      'A repeatable visualization workflow for explaining layouts before fabrication or quotation.',
-    technologies: ['TypeScript', 'Three.js', 'Parametric Geometry', 'Vite', 'Playwright'],
-    mediaIds: mediaIdsFor('parametric-configurator'),
-  },
-  {
     id: 'drone-response-visual-lab',
     period: 'Jan 2024 - Mar 2024',
-    title: 'Spatial Autonomy & Mission Planning',
-    company: 'Drone Response, University of Notre Dame',
+    title: 'Software Engineer Intern',
+    company: 'Drone Response · University of Notre Dame',
     summary:
-      'Connected spatial interfaces, routing logic, and real aircraft into an emergency-response planning workflow.',
+      'Developed a smart mission-planning system for coordinated autonomous rescue-drone operations.',
     contribution:
-      'Implemented route planning, mission assignment, MQTT messaging, and assisted decisions around live field constraints.',
+      'Implemented Python route optimization, clustering, MQTT event communication, and backend integrations.',
     outcome:
-      'A field-connected planning system demonstrated in an international NASA- and NSF-backed research environment.',
-    technologies: ['Python', 'Spatial Algorithms', 'MQTT', 'Angular', 'Java Spring'],
+      'Presented the field-connected system with an international multidisciplinary research team.',
+    technologies: ['Python', 'Algorithms', 'MQTT', 'Java Spring', 'Spatial Planning'],
     mediaIds: mediaIdsFor('notreDame'),
     link: { label: 'Visit Drone Response', href: 'https://droneresponse.ai/', external: true },
+  },
+  {
+    id: 'puc-senior-teaching-assistant',
+    period: 'Mar 2023 - Jul 2025',
+    title: 'Senior Teaching Assistant',
+    company: 'Pontificia Universidad Católica de Chile',
+    summary:
+      'Completed more than 14 assistantships supporting over 100 students across systems, networks, HPC, XR, and testing.',
+    contribution:
+      'Delivered lectures, debugging support, practical activities, assessment feedback, and technical learning material.',
+    outcome: 'Recognized as a Senior Teaching Assistant through the DCC UC program.',
+    technologies: ['Systems', 'Networks', 'HPC', 'Software Testing', 'Technical Communication'],
+    mediaIds: mediaIdsFor('ayudante'),
+  },
+  {
+    id: 'escuela-militar-instructor',
+    period: 'Jul 2024 - Jul 2026',
+    title: 'Programming Instructor & Teaching Assistant',
+    company: 'Escuela Militar',
+    summary:
+      'Taught introductory programming and problem-solving with Python to military cadets.',
+    contribution:
+      'Designed assessments and guided students through implementation and debugging of programming solutions.',
+    outcome: 'Formally recognized by Escuela Militar and the Academic Vice-Rector of PUC.',
+    technologies: ['Python', 'Teaching', 'Algorithms', 'Assessment Design', 'Mentoring'],
+    mediaIds: mediaIdsFor('ayudante'),
   },
 ] satisfies ExperienceStory[]
 
 const visualProjects = [
   mediaBackedProject({
-    id: 'geoscience-simulation',
-    slug: 'geoscience-simulation',
-    title: 'Marga-Marga 3D geoscience pipeline',
-    eyebrow: 'Scientific visualization',
-    role: 'Simulation Engineer',
-    period: 'Jan 2023 - Jul 2024',
-    status: 'Completed research project',
-    summary:
-      'A rendered terrain and subsurface system grounded in scientific simulation and GPU computing.',
-    problem:
-      'Complex spatial data needed to become both computationally tractable and visually understandable.',
-    contribution:
-      'I built the Python and CUDA workflow and produced spatial views of terrain, plate surfaces, and modeled layers.',
-    outcome: 'A 15x simulation speedup paired with a coherent set of 3D scientific visuals.',
-    technologies: ['Python', 'CUDA', '3D Geometry', 'Simulation', 'Scientific Visualization'],
-    mediaIds: mediaIdsFor('geoscience'),
-  }),
-  mediaBackedProject({
     id: 'parametric-configurator',
     slug: 'parametric-configurator',
-    title: 'Parametric shelving configurator',
-    eyebrow: 'Interactive 3D product visualization',
+    title: 'Parametric 3D Configurator',
+    eyebrow: 'Interactive geometry, constraints, visualization, and export tooling',
     role: 'Designer & Engineer',
     period: '2026',
     status: 'Working product demo',
     summary:
-      'A browser-based toolkit for measured shelving layouts, quote previews, and exportable scene geometry.',
+      'Built a browser-based parametric configurator using Three.js and TypeScript, translating structured product constraints into interactive 3D geometry, synchronized views, validation logic, and exportable outputs.',
     problem:
       'Room constraints and shelving configurations are difficult to validate from measurements or flat proposals alone.',
+    technicalChallenge:
+      'Keep plan and perspective views synchronized while enforcing clearances and producing reusable geometry.',
     contribution:
-      'I built interactive plan and 3D views, parametric geometry, constraint feedback, and export-oriented scene tooling.',
+      'I built the parametric scene model, editing views, constraint feedback, validation, and export-oriented tooling.',
     outcome:
-      'A repeatable way to inspect clearances, compare views, and communicate a proposed layout before delivery.',
+      'A repeatable way to inspect inputs, compare views, validate layouts, and communicate a proposal before delivery.',
     technologies: ['TypeScript', 'Three.js', 'Vite', 'Parametric Geometry', 'Playwright'],
     mediaIds: mediaIdsFor('parametric-configurator'),
   }),
   mediaBackedProject({
+    id: 'geoscience-simulation',
+    slug: 'geoscience-simulation',
+    title: '3D Geoscience Simulation Pipeline',
+    eyebrow: 'Scientific computing, spatial data, and high-performance visualization',
+    role: 'Simulation Engineer',
+    period: 'Aug 2022 - Dec 2024',
+    status: 'Completed research project',
+    summary:
+      'Developed scientific-computing and visualization workflows for tectonic plates, subduction zones, and adjacent crustal faults.',
+    problem:
+      'Complex spatial data needed to become both computationally tractable and visually understandable.',
+    technicalChallenge:
+      'Optimize large scientific workloads without losing the spatial structure needed for interpretable 3D views.',
+    contribution:
+      'I built Python, Tectosaur, Mapbox, Houdini, and Cinema 4D workflows for processing, simulation, and presentation.',
+    outcome:
+      'Up to a 15× performance improvement and research presented at the 2023 SSA Annual Meeting.',
+    technologies: ['Python', 'Tectosaur', 'Mapbox', 'Houdini', 'High-Performance Computing'],
+    mediaIds: mediaIdsFor('geoscience'),
+  }),
+  mediaBackedProject({
     id: 'drone-response-spatial-autonomy',
     slug: 'drone-response-spatial-autonomy',
-    title: 'Drone Response spatial autonomy',
-    eyebrow: 'Autonomous systems',
-    role: 'AI Systems Developer',
+    title: 'Drone Response Mission Planner',
+    eyebrow: 'Spatial planning and distributed coordination for autonomous rescue drones',
+    role: 'Software Engineer Intern',
     period: 'Jan 2024 - Mar 2024',
     status: 'Completed research engagement',
     summary:
-      'Mission-planning logic and spatial interfaces for autonomous emergency-response aircraft.',
+      'Developed a smart mission-planning system for coordinated rescue-drone operations during an international research placement.',
     problem:
       'Operators needed routes and resource assignments that could adapt to field conditions in real time.',
+    technicalChallenge:
+      'Coordinate route optimization, clustering, events, interfaces, and backend services across a multi-drone workflow.',
     contribution:
-      'I implemented route optimization, mission assignment, MQTT integration, and OpenAI-assisted decision support.',
-    outcome: 'Delivered planning logic connected to real aircraft and field-testing workflows.',
-    technologies: ['Python', 'Algorithms', 'MQTT', 'Angular', 'OpenAI API'],
+      'I implemented Python planning algorithms, MQTT communication, OpenAI-powered interfaces, and Java Spring services.',
+    outcome:
+      'A field-connected system presented at a university research fair with an international team.',
+    technologies: ['Python', 'Algorithms', 'MQTT', 'OpenAI API', 'Java Spring'],
     mediaIds: mediaIdsFor('notreDame'),
     link: { label: 'Visit Drone Response', href: 'https://droneresponse.ai/', external: true },
+  }),
+  mediaBackedProject({
+    id: 'politiktok-research-platform',
+    slug: 'politiktok-research-platform',
+    title: 'Research Data Platform',
+    eyebrow: '100,000+ records and approximately 10× faster processing',
+    role: 'Research Software Engineer',
+    period: 'Jul 2023 - Jul 2025',
+    status: 'Published research platform',
+    summary:
+      'Built a Python/PostgreSQL platform for large-scale social-media research across ingestion, processing, NLP, APIs, and visualization.',
+    problem:
+      'A multidisciplinary research team needed noisy, large-scale social data transformed into reliable, research-ready datasets.',
+    technicalChallenge:
+      'Scale ingestion and analysis while preserving reproducibility, traceability, and usable interfaces for researchers.',
+    contribution:
+      'I led platform engineering, parallelization, query optimization, pipeline redesign, APIs, and visualization workflows.',
+    outcome:
+      'More than 100,000 records processed, approximately 10× faster pipelines, and a peer-reviewed Springer article.',
+    technologies: ['Python', 'PostgreSQL', 'Data Engineering', 'NLP', 'Visualization'],
+    mediaIds: mediaIdsFor('politiktok'),
+    link: {
+      label: 'Read the Springer publication',
+      href: 'https://link.springer.com/article/10.1007/s42438-026-00638-4',
+      external: true,
+    },
   }),
 ] satisfies ProjectStory[]
 
@@ -182,9 +267,12 @@ export const visualPortfolio = {
   mode: 'visual',
   path: '/visual',
   meta: {
-    title: 'José Carter — Visual Computing, Real-Time 3D & Simulation',
+    title: 'José Carter Arriagada — Production Technology, Tools & Simulation',
+    socialTitle: 'José Carter — Production Technology, Tools & Simulation',
     description:
-      'José Carter builds real-time 3D tools, scientific visualization, simulation, and spatial computing systems.',
+      'Software engineer building production tools, simulation systems, workflow automation, real-time 3D applications, and data-intensive platforms.',
+    socialDescription:
+      'Software engineering across production tooling, simulation, real-time 3D, distributed systems, and scientific visualization.',
     canonical: 'https://josecarter.dev/visual',
     themeColor: '#11100f',
     socialImage: 'https://josecarter.dev/og-jose-carter-visual.png',
@@ -196,13 +284,13 @@ export const visualPortfolio = {
   sections: sectionOrder,
   hero: {
     name: portfolioOwner.name,
-    eyebrow: 'VFX, 3D & Visual Computing',
-    title: 'Creative technologist building real-time graphics, simulation, and interactive 3D systems.',
+    eyebrow: 'SOFTWARE ENGINEER · ACM SIGGRAPH 2026 STUDENT VOLUNTEER',
+    title: 'Production technology, technical tools, and simulation systems.',
     summary:
-      'I connect computer science, spatial data, and visual tooling to make complex systems explorable and useful.',
+      'I build reliable software that turns complex data, workflows, and spatial problems into usable technical tools—from distributed production platforms and automation to real-time 3D and scientific visualization.',
     location: portfolioOwner.location,
-    primaryCta: { label: 'Explore visual work', href: '#work' },
-    secondaryCta: { label: 'Discuss a visual project', href: '#contact' },
+    primaryCta: { label: 'View Selected Work', href: '#work' },
+    secondaryCta: { label: 'Download Résumé', href: '/resume' },
   },
   metrics: visualMetrics,
   about: {
@@ -219,10 +307,10 @@ export const visualPortfolio = {
   projects: visualProjects,
   capabilities: visualCapabilities,
   contact: {
-    heading: 'Make a complex idea visible',
+    heading: 'Build the next production tool',
     body:
-      'For interactive 3D, graphics prototypes, simulation visuals, spatial interfaces, or visual-computing collaboration, email me or find me online.',
-    subject: 'Visual computing project',
+      'For production technology, technical tooling, simulation, real-time 3D, or software-engineering opportunities, email me or find me online. Based in Santiago, Chile.',
+    subject: 'Production technology opportunity',
     links: [sharedLinks.cv, sharedLinks.email, sharedLinks.github, sharedLinks.linkedIn],
   },
 } satisfies PortfolioPage

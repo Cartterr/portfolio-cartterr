@@ -68,7 +68,7 @@ describe('SoftwarePortfolio', () => {
       'href',
       '#software-work',
     )
-    expect(within(actions).getByRole('link', { name: 'Download CV' })).toHaveAttribute(
+    expect(within(actions).getByRole('link', { name: 'Download Résumé' })).toHaveAttribute(
       'href',
       softwarePortfolio.hero.secondaryCta.href,
     )
@@ -148,7 +148,7 @@ describe('SoftwarePortfolio', () => {
   it('includes CV, social, and contact paths without an image wall or SIGGRAPH copy', () => {
     render(<SoftwarePortfolio />)
 
-    expect(screen.getByRole('link', { name: 'Download CV' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'Download Résumé' })).toHaveAttribute(
       'href',
       softwarePortfolio.hero.secondaryCta.href,
     )

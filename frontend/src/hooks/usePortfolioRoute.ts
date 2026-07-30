@@ -35,6 +35,34 @@ const upsertMeta = (attribute: 'name' | 'property', key: string, content: string
 }
 
 const portfolioStructuredData = (mode: PortfolioMode) => {
+  const professionalIdentity = {
+    '@type': 'Person',
+    '@id': 'https://josecarter.dev/#person',
+    name: 'José Carter Arriagada',
+    url: 'https://josecarter.dev/',
+    jobTitle: 'Software Engineer',
+    description:
+      'Software engineer building production tools, simulation systems, workflow automation, real-time 3D applications, and data-intensive platforms.',
+    image: { '@type': 'ImageObject', url: 'https://josecarter.dev/favicon.webp' },
+    worksFor: {
+      '@type': 'Organization',
+      name: 'Dily',
+      url: 'https://www.linkedin.com/company/11311817/',
+    },
+    alumniOf: {
+      '@type': 'CollegeOrUniversity',
+      name: 'Pontificia Universidad Católica de Chile',
+      url: 'https://www.uc.cl/',
+    },
+    homeLocation: { '@type': 'Place', name: 'Santiago, Chile' },
+    publishingPrinciples:
+      'https://link.springer.com/article/10.1007/s42438-026-00638-4',
+    sameAs: [
+      'https://github.com/Cartterr',
+      'https://linkedin.com/in/jose-carter-arriagada',
+    ],
+  }
+
   if (mode === 'visual') {
     return {
       '@context': 'https://schema.org',
@@ -43,25 +71,12 @@ const portfolioStructuredData = (mode: PortfolioMode) => {
           '@type': 'ProfilePage',
           '@id': 'https://josecarter.dev/visual#profile',
           url: 'https://josecarter.dev/visual',
-          name: 'José Carter — Visual Computing Portfolio',
+          name: 'José Carter — Production Technology, Tools & Simulation',
           description:
-            'Real-time 3D tools, scientific visualization, simulation, and spatial computing systems by José Carter.',
+            'Software engineering across production tooling, simulation, real-time 3D, distributed systems, and scientific visualization.',
           mainEntity: { '@id': 'https://josecarter.dev/#person' },
         },
-        {
-          '@type': 'Person',
-          '@id': 'https://josecarter.dev/#person',
-          name: 'José Carter Arriagada',
-          url: 'https://josecarter.dev/',
-          jobTitle: 'Software Engineer and Visual Computing Developer',
-          description:
-            'Software engineer building real-time graphics, simulation, and interactive 3D systems.',
-          image: { '@type': 'ImageObject', url: 'https://josecarter.dev/favicon.webp' },
-          sameAs: [
-            'https://github.com/Cartterr',
-            'https://linkedin.com/in/jose-carter-arriagada',
-          ],
-        },
+        professionalIdentity,
       ],
     }
   }
@@ -92,7 +107,8 @@ const portfolioStructuredData = (mode: PortfolioMode) => {
         name: 'José Carter Arriagada',
         url: 'https://josecarter.dev/',
         jobTitle: 'Software Engineer',
-        description: 'Software engineer building reliable AI, data, and autonomous systems.',
+        description:
+          'Software engineer building production tools, simulation systems, workflow automation, real-time 3D applications, and data-intensive platforms.',
         image: {
           '@type': 'ImageObject',
           '@id': 'https://josecarter.dev/#profile-image',
@@ -101,6 +117,9 @@ const portfolioStructuredData = (mode: PortfolioMode) => {
           height: 160,
         },
         homeLocation: { '@type': 'Place', name: 'Santiago, Chile' },
+        worksFor: professionalIdentity.worksFor,
+        alumniOf: professionalIdentity.alumniOf,
+        publishingPrinciples: professionalIdentity.publishingPrinciples,
         sameAs: [
           'https://github.com/Cartterr',
           'https://linkedin.com/in/jose-carter-arriagada',
@@ -119,8 +138,8 @@ export const applyPortfolioIdentity = (mode: PortfolioMode) => {
   upsertMeta('property', 'og:type', 'website')
   upsertMeta('property', 'og:locale', 'en_US')
   upsertMeta('property', 'og:site_name', 'José Carter')
-  upsertMeta('property', 'og:title', page.meta.title)
-  upsertMeta('property', 'og:description', page.meta.description)
+  upsertMeta('property', 'og:title', page.meta.socialTitle)
+  upsertMeta('property', 'og:description', page.meta.socialDescription)
   upsertMeta('property', 'og:url', page.meta.canonical)
   upsertMeta('property', 'og:image', page.meta.socialImage)
   upsertMeta('property', 'og:image:secure_url', page.meta.socialImage)
@@ -129,8 +148,8 @@ export const applyPortfolioIdentity = (mode: PortfolioMode) => {
   upsertMeta('property', 'og:image:height', '630')
   upsertMeta('property', 'og:image:alt', page.meta.socialImageAlt)
   upsertMeta('name', 'twitter:card', page.meta.twitterCard)
-  upsertMeta('name', 'twitter:title', page.meta.title)
-  upsertMeta('name', 'twitter:description', page.meta.description)
+  upsertMeta('name', 'twitter:title', page.meta.socialTitle)
+  upsertMeta('name', 'twitter:description', page.meta.socialDescription)
   upsertMeta('name', 'twitter:image', page.meta.socialImage)
   upsertMeta('name', 'twitter:image:alt', page.meta.socialImageAlt)
 

@@ -79,6 +79,7 @@ export type ProjectStory = {
   status: string
   summary: string
   problem: string
+  technicalChallenge?: string
   contribution: string
   outcome: string
   technologies: string[]
@@ -118,7 +119,9 @@ export type PortfolioPage = {
   path: '/' | '/visual'
   meta: {
     title: string
+    socialTitle: string
     description: string
+    socialDescription: string
     canonical: string
     themeColor: string
     socialImage: string
