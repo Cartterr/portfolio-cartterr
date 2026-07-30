@@ -199,6 +199,40 @@ main {
   padding-block: clamp(5rem, 10vw, 9rem);
 }
 
+[data-section-boundary] {
+  position: relative;
+}
+
+[data-section-boundary]::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--section-boundary-accent, var(--shell-accent)) 0 9rem,
+    var(--section-boundary-line, var(--glass-line)) 9rem 100%
+  );
+  content: '';
+  pointer-events: none;
+}
+
+[data-section-boundary]::after {
+  position: absolute;
+  top: 0.9rem;
+  right: 0;
+  color: var(--section-boundary-label, var(--shell-muted));
+  content: attr(data-section-index) ' / ' attr(data-section-label);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.59rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
 .section-heading {
   display: grid;
   gap: 1rem;
@@ -321,12 +355,19 @@ main {
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  transition: background-color 180ms ease, color 180ms ease;
+  transition: background-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
 }
 
-.site-nav a:hover,
-.site-nav a[aria-current='location'] {
+.site-nav a:hover {
   background: var(--shell-accent-soft);
+  color: var(--shell-text);
+}
+
+.site-nav a[aria-current='location'] {
+  background:
+    linear-gradient(135deg, var(--shell-accent-soft), transparent 130%),
+    rgba(255, 255, 255, 0.025);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--shell-accent) 28%, transparent);
   color: var(--shell-text);
 }
 
@@ -1158,6 +1199,11 @@ main {
     border-radius: 1.35rem;
   }
 
+  [data-section-boundary]::after {
+    right: auto;
+    left: 0;
+  }
+
   .site-role {
     display: none;
   }
@@ -1269,6 +1315,14 @@ main {
 }
 
 @media (forced-colors: active) {
+  [data-section-boundary]::before {
+    background: CanvasText;
+  }
+
+  [data-section-boundary]::after {
+    color: CanvasText;
+  }
+
   .site-header__inner,
   .mobile-navigation,
   .mode-switch,

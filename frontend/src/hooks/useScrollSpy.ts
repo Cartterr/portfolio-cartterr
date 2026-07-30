@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export function useScrollSpy(hrefs: string[], mountedPageKey: string) {
   const [activeHref, setActiveHref] = useState(hrefs[0] ?? '')
   const [progress, setProgress] = useState(0)
-  const activeHrefRef = useRef(activeHref)
-  activeHrefRef.current = activeHref
   const hrefKey = hrefs.join('|')
 
   useEffect(() => {
@@ -12,32 +10,49 @@ export function useScrollSpy(hrefs: string[], mountedPageKey: string) {
   }, [hrefKey, hrefs, mountedPageKey])
 
   useEffect(() => {
-    if (!('IntersectionObserver' in window)) return undefined
-
-    const validHrefs = new Set(hrefs)
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((left, right) => right.intersectionRatio - left.intersectionRatio)[0]
-        const href = visible?.target.id ? `#${visible.target.id}` : ''
-        if (validHrefs.has(href) && href !== activeHrefRef.current) setActiveHref(href)
-      },
-      { rootMargin: '-30% 0px -55% 0px', threshold: [0.15, 0.4, 0.7] },
-    )
+    let sections: Array<{ element: HTMLElement; href: string }> = []
     let mountObserver: MutationObserver | null = null
+    let animationFrame = 0
+
+    const measurePage = () => {
+      animationFrame = 0
+
+      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
+      setProgress(scrollableHeight > 0 ? Math.min(1, window.scrollY / scrollableHeight) : 0)
+
+      if (!sections.length) return
+
+      const readingLine = Math.min(Math.max(window.innerHeight * 0.28, 104), 280)
+      let nextHref = sections[0]?.href ?? ''
+
+      for (const section of sections) {
+        if (section.element.getBoundingClientRect().top > readingLine) break
+        nextHref = section.href
+      }
+
+      const reachedDocumentEnd =
+        scrollableHeight > 0 && window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2
+      if (reachedDocumentEnd) nextHref = sections.at(-1)?.href ?? nextHref
+
+      setActiveHref((currentHref) => (currentHref === nextHref ? currentHref : nextHref))
+    }
+
+    const queueMeasurement = () => {
+      if (!animationFrame) animationFrame = window.requestAnimationFrame(measurePage)
+    }
 
     const observeMountedPage = () => {
-      const page = document.querySelector(
+      const page = document.querySelector<HTMLElement>(
         `[data-portfolio-page="${mountedPageKey}"]`,
       )
       if (!page) return false
 
-      for (const href of hrefs) {
-        const section = page.querySelector(href)
-        if (section) observer.observe(section)
-      }
+      sections = hrefs.flatMap((href) => {
+        const element = page.querySelector<HTMLElement>(href)
+        return element ? [{ element, href }] : []
+      })
       mountObserver?.disconnect()
+      queueMeasurement()
       return true
     }
 
@@ -49,32 +64,16 @@ export function useScrollSpy(hrefs: string[], mountedPageKey: string) {
       }
     }
 
+    window.addEventListener('resize', queueMeasurement)
+    window.addEventListener('scroll', queueMeasurement, { passive: true })
+
     return () => {
       mountObserver?.disconnect()
-      observer.disconnect()
-    }
-  }, [hrefKey, hrefs, mountedPageKey])
-
-  useEffect(() => {
-    let animationFrame = 0
-    const updateProgress = () => {
-      animationFrame = 0
-      const scrollableHeight = document.documentElement.scrollHeight - window.innerHeight
-      setProgress(scrollableHeight > 0 ? Math.min(1, window.scrollY / scrollableHeight) : 0)
-    }
-    const queueUpdate = () => {
-      if (!animationFrame) animationFrame = window.requestAnimationFrame(updateProgress)
-    }
-
-    queueUpdate()
-    window.addEventListener('resize', queueUpdate)
-    window.addEventListener('scroll', queueUpdate, { passive: true })
-    return () => {
-      window.removeEventListener('resize', queueUpdate)
-      window.removeEventListener('scroll', queueUpdate)
+      window.removeEventListener('resize', queueMeasurement)
+      window.removeEventListener('scroll', queueMeasurement)
       if (animationFrame) window.cancelAnimationFrame(animationFrame)
     }
-  }, [])
+  }, [hrefKey, hrefs, mountedPageKey])
 
   return { activeHref, progress }
 }

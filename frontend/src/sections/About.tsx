@@ -13,6 +13,9 @@ export function About({ content, id = 'about', media }: AboutProps) {
       aria-labelledby={`${id}-title`}
       className="software-section software-about"
       data-layout="asymmetric-about"
+      data-section-boundary
+      data-section-index="01"
+      data-section-label="About"
       data-testid={id.startsWith('software-') ? 'software-section' : undefined}
       id={id}
     >

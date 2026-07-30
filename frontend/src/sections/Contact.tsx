@@ -73,6 +73,9 @@ export function Contact({ content, id = 'contact', portfolioMode }: ContactProps
     <section
       aria-labelledby={`${id}-title`}
       className={`contact${id.startsWith('software-') ? ' software-contact' : ''}`}
+      data-section-boundary
+      data-section-index="05"
+      data-section-label="Contact"
       data-testid={id.startsWith('software-') ? 'software-section' : undefined}
       id={id}
     >

@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import App from './App'
@@ -6,41 +6,6 @@ import { getPortfolio } from './data/portfolio'
 
 const setPath = (path: string, state: unknown = {}) => {
   window.history.replaceState(state, '', path)
-}
-
-class IntersectionObserverMock {
-  static instances: IntersectionObserverMock[] = []
-
-  observed = new Set<Element>()
-  private readonly callback: IntersectionObserverCallback
-
-  constructor(callback: IntersectionObserverCallback) {
-    this.callback = callback
-    IntersectionObserverMock.instances.push(this)
-  }
-
-  disconnect() {
-    this.observed.clear()
-  }
-
-  observe(target: Element) {
-    this.observed.add(target)
-  }
-
-  emit(target: Element) {
-    this.callback(
-      [{ isIntersecting: true, intersectionRatio: 1, target } as IntersectionObserverEntry],
-      this as unknown as IntersectionObserver,
-    )
-  }
-
-  takeRecords() {
-    return []
-  }
-
-  unobserve(target: Element) {
-    this.observed.delete(target)
-  }
 }
 
 describe('dual portfolio shell', () => {
@@ -53,7 +18,6 @@ describe('dual portfolio shell', () => {
   afterEach(() => {
     vi.restoreAllMocks()
     vi.unstubAllGlobals()
-    IntersectionObserverMock.instances = []
   })
 
   it('derives the visual identity from pathname before the first render', () => {
@@ -122,6 +86,13 @@ describe('dual portfolio shell', () => {
       expect(within(page!).getByRole('heading', { name: capability.title })).toBeInTheDocument()
     })
     expect(within(page!).getByRole('heading', { name: visual.contact.heading })).toBeInTheDocument()
+    visual.navigation.forEach(({ href }, index) => {
+      expect(page?.querySelector(href)).toHaveAttribute(
+        'data-section-index',
+        String(index + 1).padStart(2, '0'),
+      )
+      expect(page?.querySelector(href)).toHaveAttribute('data-section-boundary')
+    })
   })
 
   it('renders the active navigation and every destination section immediately', () => {
@@ -137,9 +108,14 @@ describe('dual portfolio shell', () => {
       .map((link) => link.textContent)
 
     expect(navigationLabels).toEqual(page.navigation.map(({ label }) => label))
-    for (const { href } of page.navigation) {
+    page.navigation.forEach(({ href }, index) => {
       expect(document.querySelector(href)).toBeInTheDocument()
-    }
+      expect(document.querySelector(href)).toHaveAttribute(
+        'data-section-index',
+        String(index + 1).padStart(2, '0'),
+      )
+      expect(document.querySelector(href)).toHaveAttribute('data-section-boundary')
+    })
     expect(screen.getByRole('link', { name: /skip to content/i })).toHaveAttribute('href', '#main')
   })
 
@@ -241,27 +217,53 @@ describe('dual portfolio shell', () => {
     expect(screen.getByText('Visual portfolio loaded')).toHaveAttribute('aria-live', 'polite')
   })
 
-  it('observes destination sections after the mode transition mounts them', async () => {
-    vi.stubGlobal('IntersectionObserver', IntersectionObserverMock)
+  it('updates active navigation from the reading line while scrolling in both modes', async () => {
     const user = userEvent.setup()
     render(<App />)
+
+    const positionSections = (mode: 'software' | 'visual', activeIndex: number) => {
+      const page = getPortfolio(mode)
+      page.navigation.forEach(({ href }, index) => {
+        const section = document.querySelector<HTMLElement>(
+          `[data-portfolio-page="${mode}"] ${href}`,
+        )
+        expect(section).not.toBeNull()
+        vi.spyOn(section!, 'getBoundingClientRect').mockReturnValue({
+          bottom: index <= activeIndex ? 700 : 1700,
+          height: 900,
+          left: 0,
+          right: 1200,
+          top: index <= activeIndex ? -400 + index * 180 : 900 + index * 200,
+          width: 1200,
+          x: 0,
+          y: index <= activeIndex ? -400 + index * 180 : 900 + index * 200,
+          toJSON: () => ({}),
+        })
+      })
+    }
+
+    positionSections('software', 2)
+    window.dispatchEvent(new Event('scroll'))
+
+    const primaryNavigation = screen.getByRole('navigation', { name: 'Primary navigation' })
+    await waitFor(() =>
+      expect(within(primaryNavigation).getByRole('link', { name: 'Work' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      ),
+    )
 
     await user.click(screen.getByRole('link', { name: 'Visual' }))
     await screen.findByText('Visual portfolio loaded')
 
-    const destinationWork = document.querySelector('[data-portfolio-page="visual"] #work')
-    expect(destinationWork).not.toBeNull()
-    const destinationObserver = IntersectionObserverMock.instances.find((observer) =>
-      observer.observed.has(destinationWork!),
-    )
-    expect(destinationObserver).toBeDefined()
+    positionSections('visual', 3)
+    window.dispatchEvent(new Event('scroll'))
 
-    act(() => destinationObserver?.emit(destinationWork!))
-
-    const primaryNavigation = screen.getByRole('navigation', { name: 'Primary navigation' })
-    expect(within(primaryNavigation).getByRole('link', { name: 'Work' })).toHaveAttribute(
-      'aria-current',
-      'location',
+    await waitFor(() =>
+      expect(within(primaryNavigation).getByRole('link', { name: 'Capabilities' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      ),
     )
   })
 

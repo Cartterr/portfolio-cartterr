@@ -14,6 +14,9 @@ export function Capabilities({ groups, id, projects = [] }: CapabilitiesProps) {
     <section
       aria-labelledby={titleId}
       className="software-section software-capabilities"
+      data-section-boundary
+      data-section-index="04"
+      data-section-label="Capabilities"
       data-testid={id?.startsWith('software-') ? 'software-section' : undefined}
       id={id}
     >

@@ -15,6 +15,9 @@
   --software-orange: #f2a066;
   --software-orange-soft: rgba(242, 160, 102, 0.13);
   --software-frame: min(92vw, 1520px);
+  --section-boundary-accent: var(--software-orange);
+  --section-boundary-label: rgba(242, 160, 102, 0.78);
+  --section-boundary-line: var(--software-line);
   overflow: clip;
   background: var(--software-canvas);
   color: var(--software-paper);
@@ -53,9 +56,7 @@
 .software-section-heading {
   display: grid;
   max-width: 72rem;
-  padding-top: 1.35rem;
   gap: 1.1rem;
-  border-top: 1px solid var(--software-line-strong);
 }
 
 .software-section-heading--wide {
