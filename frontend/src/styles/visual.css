@@ -11,6 +11,9 @@
   --visual-cyan: #7ae7ef;
   --visual-violet: #a98bff;
   --visual-frame: min(calc(100% - 2rem), 1520px);
+  --section-boundary-accent: var(--visual-cyan);
+  --section-boundary-label: rgba(122, 231, 239, 0.78);
+  --section-boundary-line: var(--visual-line);
   --ink: #0b090b;
   --ink-soft: #171219;
   --white: #f2f2ed;
@@ -403,7 +406,6 @@
   width: var(--visual-frame);
   margin-inline: auto;
   padding-block: clamp(5.5rem, 11vw, 11rem);
-  border-top: 1px solid var(--visual-line);
 }
 
 .visual-section-heading {

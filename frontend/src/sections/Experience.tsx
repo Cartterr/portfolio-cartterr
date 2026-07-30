@@ -11,6 +11,9 @@ export function Experience({ id = 'experience', items }: ExperienceProps) {
     <section
       aria-labelledby={`${id}-title`}
       className="software-section software-experience"
+      data-section-boundary
+      data-section-index="02"
+      data-section-label="Experience"
       data-testid={id.startsWith('software-') ? 'software-section' : undefined}
       id={id}
     >

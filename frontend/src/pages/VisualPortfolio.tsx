@@ -173,7 +173,14 @@ function Profile() {
   const profileMedia = visualPortfolio.about.mediaIds.map(getMedia)
 
   return (
-    <section aria-labelledby="visual-profile-title" className="visual-section visual-profile" id="about">
+    <section
+      aria-labelledby="visual-profile-title"
+      className="visual-section visual-profile"
+      data-section-boundary
+      data-section-index="01"
+      data-section-label="Profile"
+      id="about"
+    >
       <div className="visual-profile__copy">
         <p className="visual-kicker">Profile / creative technology</p>
         <h2 id="visual-profile-title">Visual profile: computation with a sense of place.</h2>
@@ -216,6 +223,9 @@ function Experience() {
     <section
       aria-labelledby="visual-experience-title"
       className="visual-section visual-laboratories"
+      data-section-boundary
+      data-section-index="02"
+      data-section-label="Experience"
       id="experience"
     >
       <header className="visual-section-heading visual-section-heading--split">
@@ -297,7 +307,14 @@ function Experience() {
 
 function SelectedWork() {
   return (
-    <section aria-labelledby="visual-work-title" className="visual-section visual-work" id="work">
+    <section
+      aria-labelledby="visual-work-title"
+      className="visual-section visual-work"
+      data-section-boundary
+      data-section-index="03"
+      data-section-label="Selected work"
+      id="work"
+    >
       <header className="visual-section-heading">
         <p className="visual-kicker">Selected visual work / cleared evidence</p>
         <h2 id="visual-work-title">Selected visual work, one system at a time.</h2>
@@ -382,6 +399,9 @@ function Pipeline() {
     <section
       aria-labelledby="visual-pipeline-title"
       className="visual-section visual-pipeline"
+      data-section-boundary
+      data-section-index="04"
+      data-section-label="Capabilities"
       id="capabilities"
     >
       <header className="visual-section-heading visual-section-heading--split">

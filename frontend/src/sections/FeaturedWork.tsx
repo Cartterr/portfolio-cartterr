@@ -11,6 +11,9 @@ export function FeaturedWork({ caseStudies, id = 'work' }: FeaturedWorkProps) {
     <section
       aria-labelledby={`${id}-title`}
       className="software-section software-work"
+      data-section-boundary
+      data-section-index="03"
+      data-section-label="Selected work"
       data-testid={id.startsWith('software-') ? 'software-section' : undefined}
       id={id}
     >
