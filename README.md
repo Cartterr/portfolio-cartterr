@@ -1,6 +1,6 @@
 # José Carter — Engineering Portfolio
 
-A case-study-led portfolio for José Carter, a software engineer building reliable AI, data, scientific-computing, and autonomous systems. The site combines a React editorial frontend with a small, hardened Express contact API.
+A case-study-led portfolio for José Carter, a software engineer moving into production technology, technical tooling, simulation, and real-time 3D. The site combines a React editorial frontend with a small, hardened Express contact API.
 
 ## Project structure
 

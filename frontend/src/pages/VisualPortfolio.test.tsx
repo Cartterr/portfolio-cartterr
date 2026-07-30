@@ -43,40 +43,63 @@ describe('VisualPortfolio', () => {
     expect(within(page).getByRole('heading', { level: 1 })).toHaveTextContent(
       visualPortfolio.hero.title,
     )
+    const heroActions = within(page).getByRole('group', { name: 'Visual portfolio actions' })
     expect(
-      within(page).getByRole('link', { name: visualPortfolio.hero.primaryCta.label }),
+      within(heroActions).getByRole('link', { name: visualPortfolio.hero.primaryCta.label }),
     ).toHaveAttribute('href', '#work')
     expect(
-      within(page).getByRole('link', { name: visualPortfolio.hero.secondaryCta.label }),
-    ).toHaveAttribute('href', '#contact')
+      within(heroActions).getByRole('link', { name: visualPortfolio.hero.secondaryCta.label }),
+    ).toHaveAttribute('href', '/resume')
+    expect(within(heroActions).getByRole('link', { name: 'LinkedIn' })).toHaveAttribute(
+      'href',
+      'https://linkedin.com/in/jose-carter-arriagada',
+    )
+    expect(within(heroActions).getByRole('link', { name: 'Contact' })).toHaveAttribute(
+      'href',
+      '#contact',
+    )
     expect(within(page).getByTestId('visual-hero-poster')).toBeInTheDocument()
 
     expect(within(page).getByRole('heading', { level: 2, name: /profile/i })).toBeInTheDocument()
-    expect(within(page).getByRole('heading', { level: 2, name: /laborator/i })).toBeInTheDocument()
+    expect(within(page).getByRole('heading', { level: 2, name: /experience/i })).toBeInTheDocument()
+    expect(within(page).getByRole('heading', { level: 2, name: /education/i })).toBeInTheDocument()
+    expect(
+      within(page).getByRole('heading', { level: 2, name: /research & recognition/i }),
+    ).toBeInTheDocument()
     expect(within(page).getByRole('heading', { level: 2, name: /selected visual work/i })).toBeInTheDocument()
     expect(within(page).getByRole('heading', { level: 2, name: /pipeline/i })).toBeInTheDocument()
     expect(within(page).getByRole('heading', { name: visualPortfolio.contact.heading })).toBeInTheDocument()
-    expect(within(page).getByRole('link', { name: 'Download CV' })).toHaveAttribute(
+    expect(within(page).getAllByRole('link', { name: 'Download Résumé' })[0]).toHaveAttribute(
       'href',
-      '/Jose_Carter_CV_Eng.pdf',
+      '/resume',
     )
-    expect(within(page).getByRole('link', { name: 'Download CV' })).toHaveAttribute('download')
+    expect(within(page).getByText('Software Engineer at Dily')).toBeInTheDocument()
+    expect(within(page).getByText('ACM SIGGRAPH 2026 Student Volunteer')).toBeInTheDocument()
+    expect(within(page).getByText('Springer Co-author')).toBeInTheDocument()
   })
 
-  it('shows three cleared project stories as contextual single-image carousels', () => {
+  it('shows four WDAS-aligned project stories in priority order with explicit case-study evidence', () => {
     const { container } = render(<VisualPortfolio />)
     const page = container.querySelector<HTMLElement>('[data-visual-portfolio]')!
     const stories = within(page).getAllByTestId('visual-project-story')
 
-    expect(stories).toHaveLength(3)
-    expect(within(page).getByRole('heading', { name: /Marga-Marga 3D geoscience pipeline/i })).toBeInTheDocument()
-    expect(within(page).getByRole('heading', { name: /Parametric shelving configurator/i })).toBeInTheDocument()
-    expect(within(page).getByRole('heading', { name: /Drone Response spatial autonomy/i })).toBeInTheDocument()
+    expect(stories).toHaveLength(4)
+    expect(stories.map((story) => within(story).getByRole('heading', { level: 3 }).textContent)).toEqual([
+      'Parametric 3D Configurator',
+      '3D Geoscience Simulation Pipeline',
+      'Drone Response Mission Planner',
+      'Research Data Platform',
+    ])
 
     stories.forEach((story) => {
       const carousel = within(story).getByRole('region', { name: /project evidence/i })
       expect(carousel.querySelectorAll('.portfolio-carousel__slide').length).toBeGreaterThan(0)
       expect(carousel.querySelectorAll('[data-active="true"]')).toHaveLength(1)
+      expect(within(story).getByText('Problem')).toBeInTheDocument()
+      expect(within(story).getByText('What I built')).toBeInTheDocument()
+      expect(within(story).getByText('Technical challenge')).toBeInTheDocument()
+      expect(within(story).getByText('My contribution')).toBeInTheDocument()
+      expect(within(story).getByText('Result')).toBeInTheDocument()
     })
 
     expect(page.querySelector('[data-layout="image-wall"]')).not.toBeInTheDocument()
@@ -86,8 +109,8 @@ describe('VisualPortfolio', () => {
     const { container } = render(<VisualPortfolio />)
     const copy = container.textContent ?? ''
 
-    expect(copy).not.toMatch(/SIGGRAPH/i)
     expect(copy).not.toMatch(/demo reel|film credits?|visual effects supervisor|feature film artist/i)
+    expect(copy).toMatch(/ACM SIGGRAPH 2026 Student Volunteer/i)
     expect(copy).toMatch(/scientific visualization/i)
     expect(copy).toMatch(/parametric/i)
     expect(copy).toMatch(/spatial autonomy/i)

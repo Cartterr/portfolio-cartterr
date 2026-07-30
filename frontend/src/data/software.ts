@@ -273,14 +273,17 @@ export const softwarePortfolio = {
   mode: 'software',
   path: '/',
   meta: {
-    title: 'José Carter — Software Engineer for AI, Data & Autonomous Systems',
+    title: 'José Carter Arriagada — Production Technology, Tools & Simulation',
+    socialTitle: 'José Carter — Production Technology, Tools & Simulation',
     description:
-      'José Carter builds production software, AI and data infrastructure, scientific computing platforms, and autonomous systems.',
+      'Software engineer building production tools, simulation systems, workflow automation, real-time 3D applications, and data-intensive platforms.',
+    socialDescription:
+      'Software engineering across production tooling, simulation, real-time 3D, distributed systems, and scientific visualization.',
     canonical: 'https://josecarter.dev/',
     themeColor: '#111722',
     socialImage: 'https://josecarter.dev/og-jose-carter.png',
     socialImageAlt:
-      "José Carter's editorial portfolio for reliable AI, data, and autonomous systems",
+      "José Carter's portfolio for production technology, tools, simulation, and real-time 3D",
     twitterCard: 'summary_large_image',
   },
   navigation: softwareNavigation,

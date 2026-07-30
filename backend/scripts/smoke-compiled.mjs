@@ -46,6 +46,7 @@ try {
   const software = await fetch(`${baseUrl}/`)
   const visual = await fetch(`${baseUrl}/visual`)
   const visualSocialImage = await fetch(`${baseUrl}/og-jose-carter-visual.png`)
+  const resume = await fetch(`${baseUrl}/resume?source=smoke`, { redirect: 'manual' })
   const visualSlash = await fetch(`${baseUrl}/visual/?source=smoke`, { redirect: 'manual' })
   const indexEntry = await fetch(`${baseUrl}/index.html`, { redirect: 'manual' })
   const missingAsset = await fetch(`${baseUrl}/assets/missing-abcdef123456.js`)
@@ -53,10 +54,13 @@ try {
   assert.equal(health.status, 200)
   assert.equal((await health.json()).status, 'OK')
   assert.equal(software.status, 200)
-  assert.match(await software.text(), /Software Engineer for AI, Data & Autonomous Systems/)
+  assert.match(
+    await software.text(),
+    /Production Technology, Tools &amp; Simulation|Production Technology, Tools & Simulation/,
+  )
   assert.equal(visual.status, 200)
   const visualHtml = await visual.text()
-  assert.match(visualHtml, /Visual Computing, Real-Time 3D & Simulation/)
+  assert.match(visualHtml, /Production technology, technical tools, and simulation systems/i)
   assert.match(visualHtml, /og-jose-carter-visual\.png/)
   assert.equal(visualSocialImage.status, 200)
   assert.equal(visualSocialImage.headers.get('content-type'), 'image/png')
@@ -64,6 +68,8 @@ try {
     visualSocialImage.headers.get('cache-control'),
     'public, max-age=86400, must-revalidate',
   )
+  assert.equal(resume.status, 307)
+  assert.equal(resume.headers.get('location'), '/Jose_Carter_WDAS_Resume_2026.pdf?source=smoke')
   assert.equal(visualSlash.status, 308)
   assert.equal(visualSlash.headers.get('location'), '/visual?source=smoke')
   assert.equal(indexEntry.status, 308)

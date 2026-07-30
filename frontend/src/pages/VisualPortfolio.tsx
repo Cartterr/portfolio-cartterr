@@ -88,10 +88,43 @@ function Hero() {
             {visualPortfolio.hero.secondaryCta.label}
             <span aria-hidden="true">→</span>
           </a>
+          <a
+            href="https://linkedin.com/in/jose-carter-arriagada"
+            rel="noreferrer"
+            target="_blank"
+          >
+            LinkedIn
+            <span aria-hidden="true">↗</span>
+          </a>
+          <a href="#contact">
+            Contact
+            <span aria-hidden="true">↓</span>
+          </a>
         </div>
       </div>
 
       <VisualHeroStage />
+
+      <ul aria-label="Career credibility" className="visual-credibility-strip">
+        <li>
+          <a href="#experience">Software Engineer at Dily</a>
+        </li>
+        <li>
+          <a href="#recognition">ACM SIGGRAPH 2026 Student Volunteer</a>
+        </li>
+        <li>
+          <a href="#education">PUC Computer Science Engineering — Graduated with Distinction</a>
+        </li>
+        <li>
+          <a
+            href="https://link.springer.com/article/10.1007/s42438-026-00638-4"
+            rel="noreferrer"
+            target="_blank"
+          >
+            Springer Co-author
+          </a>
+        </li>
+      </ul>
 
       <ol aria-label="Visual practice evidence" className="visual-proof-rail">
         {visualPortfolio.metrics.map((metric, index) => (
@@ -138,21 +171,34 @@ function Profile() {
   )
 }
 
-function Laboratories() {
+const recognitionCards = [
+  ['ACM SIGGRAPH 2026', 'Student Volunteer', '#hero'],
+  [
+    'Springer — 2026',
+    'Peer-reviewed co-author',
+    'https://link.springer.com/article/10.1007/s42438-026-00638-4',
+  ],
+  ['SSA Annual Meeting — 2023', 'Geoscience research contribution', '#visual-project-geoscience-simulation'],
+  ['Space Generation Advisory Council — 2026', 'South American Space Generation Workshop Delegate', '#recognition'],
+  ['DCC UC — 2025', 'Senior Teaching Assistant Recognition', '#experience'],
+  ['KHIPU AI — 2025', 'Latin American AI Meeting', '#recognition'],
+] as const
+
+function Experience() {
   return (
     <section
-      aria-labelledby="visual-laboratories-title"
+      aria-labelledby="visual-experience-title"
       className="visual-section visual-laboratories"
       id="experience"
     >
       <header className="visual-section-heading visual-section-heading--split">
         <div>
-          <p className="visual-kicker">Laboratories / applied research</p>
-          <h2 id="visual-laboratories-title">Visual laboratories where systems meet the field.</h2>
+          <p className="visual-kicker">Experience / production and research</p>
+          <h2 id="visual-experience-title">Experience building reliable technical systems.</h2>
         </div>
         <p>
-          Three evidence-backed practices, connected by a single method: understand the spatial
-          constraint, make it legible, then test it against reality.
+          Production software, research platforms, simulation, autonomous systems, and technical
+          instruction—grounded in shipped work and documented outcomes.
         </p>
       </header>
 
@@ -170,16 +216,10 @@ function Laboratories() {
               </div>
               <div className="visual-lab-list__body">
                 <p>{laboratory.summary}</p>
-                <dl>
-                  <div>
-                    <dt>Built</dt>
-                    <dd>{laboratory.contribution}</dd>
-                  </div>
-                  <div>
-                    <dt>Signal</dt>
-                    <dd>{laboratory.outcome}</dd>
-                  </div>
-                </dl>
+                <ul className="visual-experience-points">
+                  <li>{laboratory.contribution}</li>
+                  <li>{laboratory.outcome}</li>
+                </ul>
                 <ul aria-label={`${laboratory.title} tools`}>
                   {laboratory.technologies.map((technology) => (
                     <li key={technology}>{technology}</li>
@@ -190,6 +230,40 @@ function Laboratories() {
           </li>
         ))}
       </ol>
+
+      <section aria-labelledby="visual-education-title" className="visual-education" id="education">
+        <p className="visual-kicker">Education</p>
+        <h2 id="visual-education-title">Education</h2>
+        <article>
+          <h3>Pontificia Universidad Católica de Chile</h3>
+          <p>Computer Science Engineering</p>
+          <p>Major in Software Engineering · Minor in Data Science</p>
+          <p>Graduated with Distinction · 2020–2025</p>
+        </article>
+      </section>
+
+      <section
+        aria-labelledby="visual-recognition-title"
+        className="visual-recognition"
+        id="recognition"
+      >
+        <p className="visual-kicker">Research & recognition</p>
+        <h2 id="visual-recognition-title">Research & Recognition</h2>
+        <ul>
+          {recognitionCards.map(([title, detail, href]) => (
+            <li key={title}>
+              <a
+                href={href}
+                rel={href.startsWith('http') ? 'noreferrer' : undefined}
+                target={href.startsWith('http') ? '_blank' : undefined}
+              >
+                <strong>{title}</strong>
+                <span>{detail}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
     </section>
   )
 }
@@ -222,15 +296,23 @@ function SelectedWork() {
                 <p className="visual-story__summary">{project.summary}</p>
                 <dl>
                   <div>
-                    <dt>Constraint</dt>
+                    <dt>Problem</dt>
                     <dd>{project.problem}</dd>
                   </div>
                   <div>
-                    <dt>Contribution</dt>
+                    <dt>What I built</dt>
+                    <dd>{project.summary}</dd>
+                  </div>
+                  <div>
+                    <dt>Technical challenge</dt>
+                    <dd>{project.technicalChallenge ?? project.problem}</dd>
+                  </div>
+                  <div>
+                    <dt>My contribution</dt>
                     <dd>{project.contribution}</dd>
                   </div>
                   <div>
-                    <dt>Outcome</dt>
+                    <dt>Result</dt>
                     <dd>{project.outcome}</dd>
                   </div>
                 </dl>
@@ -318,7 +400,7 @@ export function VisualPortfolio() {
     <div className="visual-portfolio" data-presentation="visual-computing" data-visual-portfolio>
       <Hero />
       <Profile />
-      <Laboratories />
+      <Experience />
       <SelectedWork />
       <Pipeline />
       <Contact content={visualPortfolio.contact} portfolioMode="visual" />
