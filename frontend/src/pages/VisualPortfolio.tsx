@@ -1,7 +1,5 @@
 import {
   Component,
-  lazy,
-  Suspense,
   type ErrorInfo,
   type ReactNode,
 } from 'react'
@@ -10,13 +8,10 @@ import { getMedia } from '../data/media'
 import { visualPortfolio } from '../data/visual'
 import {
   requestGraphicsFallback,
-  useGraphicsCapability,
 } from '../hooks/useGraphicsCapability'
 import { Contact } from '../sections/Contact'
 import { VisualHeroPoster } from '../visual/VisualHeroPoster'
 import '../styles/visual.css'
-
-const LazyVisualHeroScene = lazy(() => import('../visual/VisualHeroScene'))
 
 const visualHeroTitleLines = [
   'Production technology, ',
@@ -53,31 +48,16 @@ export class VisualHeroErrorBoundary extends Component<
 }
 
 function VisualHeroStage() {
-  const capability = useGraphicsCapability()
-
   return (
-    <div className="visual-hero-stage" data-graphics-capability={capability}>
-      <VisualHeroPoster capability={capability} />
-      {capability !== 'poster' ? (
-        <VisualHeroErrorBoundary fallback={null}>
-          <Suspense
-            fallback={
-              <p aria-live="polite" className="visual-hero-stage__status">
-                Preparing real-time terrain…
-              </p>
-            }
-          >
-            <LazyVisualHeroScene capability={capability} />
-          </Suspense>
-        </VisualHeroErrorBoundary>
-      ) : null}
+    <div className="visual-hero-stage" data-graphics-capability="poster">
+      <VisualHeroPoster capability="poster" />
       <p className="visual-hero-stage__mode" aria-hidden="true">
-        {capability === 'poster' ? 'Static terrain study' : `${capability} realtime field`}
+        Authentic project render
       </p>
       <div className="visual-hero-stage__legend" aria-hidden="true">
-        <span>Simulation study · 01</span>
-        <strong>Marga-Marga terrain model</strong>
-        <span>Python · CUDA · 3D</span>
+        <span>Scientific visualization · 01</span>
+        <strong>Marga-Marga geoscience study</strong>
+        <span>Python · CUDA · Tectosaur</span>
       </div>
     </div>
   )

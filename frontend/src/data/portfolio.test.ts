@@ -26,7 +26,7 @@ describe('dual portfolio content', () => {
     expect(softwarePortfolio.projects).toHaveLength(6)
     expect(softwarePortfolio.capabilities).toHaveLength(4)
     expect(visualPortfolio.experience).toHaveLength(7)
-    expect(visualPortfolio.projects).toHaveLength(4)
+    expect(visualPortfolio.projects).toHaveLength(5)
     expect(visualPortfolio.hero.eyebrow).toBe(
       'SOFTWARE ENGINEER · ACM SIGGRAPH 2026 STUDENT VOLUNTEER',
     )
@@ -38,6 +38,7 @@ describe('dual portfolio content', () => {
   it('uses the WDAS-priority visual launch set', () => {
     expect(visualPortfolio.projects.map((project) => project.id)).toEqual([
       'parametric-configurator',
+      'personal-vfx-studies',
       'geoscience-simulation',
       'drone-response-spatial-autonomy',
       'politiktok-research-platform',

@@ -12,7 +12,7 @@ export function VisualHeroPoster({ capability }: VisualHeroPosterProps) {
       data-testid="visual-hero-poster"
     >
       <img
-        alt="Close view of the Marga-Marga terrain model meeting a translucent tectonic section"
+        alt="Rendered coastal terrain and modeled plate geometry from the Marga-Marga geoscience project"
         decoding="sync"
         fetchPriority="high"
         height="898"
@@ -20,8 +20,8 @@ export function VisualHeroPoster({ capability }: VisualHeroPosterProps) {
         width="1600"
       />
       <figcaption>
-        <span>Marga-Marga terrain model</span>
-        <span>Scientific visualization · real project evidence</span>
+        <span>Marga-Marga geoscience study</span>
+        <span>Authentic project render</span>
       </figcaption>
     </figure>
   )
