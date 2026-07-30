@@ -160,6 +160,35 @@ const visualProjects = [
     mediaIds: mediaIdsFor('parametric-configurator'),
   }),
   mediaBackedProject({
+    id: 'personal-vfx-studies',
+    slug: 'personal-vfx-studies',
+    title: 'Personal VFX & Look Development Studies',
+    eyebrow: 'Self-directed rendering, compositing, FX, lighting, and material exploration',
+    role: 'Independent 3D / VFX Artist',
+    period: 'Ongoing',
+    status: 'Personal study collection',
+    summary:
+      'A curated set of personal renders developed while learning production-style 3D, VFX, compositing, look development, lighting, and rendering workflows.',
+    problem:
+      'Build practical visual fluency across different DCC applications, render engines, scene types, and finishing workflows.',
+    technicalChallenge:
+      'Move ideas from modeling and procedural experimentation through materials, lighting, rendering, compositing, and final presentation.',
+    contribution:
+      'I created the scenes and studies through self-directed practice, exploring environment work, character FX, hard-surface look development, and cinematic lighting.',
+    outcome:
+      'A growing visual laboratory that demonstrates curiosity across the full path from scene construction to final image.',
+    technologies: [
+      'Houdini',
+      'Nuke',
+      'Cinema 4D',
+      'Blender',
+      'Arnold',
+      'Octane',
+      'Redshift',
+    ],
+    mediaIds: mediaIdsFor('personal-vfx-studies'),
+  }),
+  mediaBackedProject({
     id: 'geoscience-simulation',
     slug: 'geoscience-simulation',
     title: '3D Geoscience Simulation Pipeline',
@@ -242,22 +271,22 @@ const visualCapabilities = [
     id: 'geometry-modeling',
     title: 'Geometry and modeling',
     summary: 'Build spatial systems whose structure follows data and user-controlled parameters.',
-    items: ['Three.js', 'Parametric geometry', 'Scene graphs', 'Terrain models'],
-    proofStoryIds: ['parametric-configurator', 'geoscience-simulation'],
+    items: ['Three.js', 'Blender', 'Cinema 4D', 'Parametric geometry', 'Scene graphs'],
+    proofStoryIds: ['parametric-configurator', 'personal-vfx-studies', 'geoscience-simulation'],
   },
   {
     id: 'simulation-rendering',
     title: 'Simulation and rendering',
-    summary: 'Connect computation to clear real-time and scientific visual output.',
-    items: ['CUDA', 'Simulation', 'WebGL', 'Scientific visualization'],
-    proofStoryIds: ['geoscience-simulation'],
+    summary: 'Connect computation and look development to clear real-time, cinematic, and scientific output.',
+    items: ['Houdini', 'Arnold', 'Octane', 'Redshift', 'CUDA'],
+    proofStoryIds: ['personal-vfx-studies', 'geoscience-simulation'],
   },
   {
     id: 'integration-delivery',
-    title: 'Integration and delivery',
-    summary: 'Turn visual systems into tested interfaces, exports, and operator-ready workflows.',
-    items: ['TypeScript', 'Vite', 'Model export', 'Playwright', 'MQTT'],
-    proofStoryIds: ['parametric-configurator', 'drone-response-spatial-autonomy'],
+    title: 'Compositing and delivery',
+    summary: 'Finish visual work through compositing, tested interfaces, exports, and operator-ready workflows.',
+    items: ['Nuke', 'TypeScript', 'Vite', 'Model export', 'Playwright'],
+    proofStoryIds: ['personal-vfx-studies', 'parametric-configurator', 'drone-response-spatial-autonomy'],
   },
 ] satisfies CapabilityStory[]
 
@@ -298,7 +327,7 @@ export const visualPortfolio = {
     paragraphs: [
       'My visual-computing work grows from software engineering, simulation, and graphics rather than from invented production credits.',
       'I build interactive product visualization, technical 3D prototypes, scientific visuals, real-time spatial interfaces, and the pipeline tooling around them.',
-      'The strongest current evidence is in geoscience modeling, parametric Three.js tools, and autonomous mission-planning research.',
+      'The strongest current evidence spans geoscience modeling, parametric Three.js tools, autonomous mission-planning research, and a self-directed VFX and look-development practice.',
     ],
     mediaIds: visualAboutMediaIds,
     images: aboutImages(visualAboutMediaIds),

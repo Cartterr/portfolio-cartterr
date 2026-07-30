@@ -79,16 +79,22 @@ describe('VisualPortfolio', () => {
     expect(within(page).getByText('Software Engineer at Dily')).toBeInTheDocument()
     expect(within(page).getByText('ACM SIGGRAPH 2026 Student Volunteer')).toBeInTheDocument()
     expect(within(page).getByText('Springer Co-author')).toBeInTheDocument()
+    expect(within(page).getByTestId('visual-hero-poster')).toHaveAttribute(
+      'data-capability',
+      'poster',
+    )
+    expect(within(page).queryByTestId('visual-hero-scene')).not.toBeInTheDocument()
   })
 
-  it('shows four WDAS-aligned project stories in priority order with explicit case-study evidence', () => {
+  it('shows five WDAS-aligned project stories in priority order with explicit case-study evidence', () => {
     const { container } = render(<VisualPortfolio />)
     const page = container.querySelector<HTMLElement>('[data-visual-portfolio]')!
     const stories = within(page).getAllByTestId('visual-project-story')
 
-    expect(stories).toHaveLength(4)
+    expect(stories).toHaveLength(5)
     expect(stories.map((story) => within(story).getByRole('heading', { level: 3 }).textContent)).toEqual([
       'Parametric 3D Configurator',
+      'Personal VFX & Look Development Studies',
       '3D Geoscience Simulation Pipeline',
       'Drone Response Mission Planner',
       'Research Data Platform',
@@ -117,6 +123,13 @@ describe('VisualPortfolio', () => {
     expect(copy).toMatch(/scientific visualization/i)
     expect(copy).toMatch(/parametric/i)
     expect(copy).toMatch(/spatial autonomy/i)
+    expect(copy).toMatch(/Houdini/i)
+    expect(copy).toMatch(/Nuke/i)
+    expect(copy).toMatch(/Cinema 4D/i)
+    expect(copy).toMatch(/Blender/i)
+    expect(copy).toMatch(/Arnold/i)
+    expect(copy).toMatch(/Octane/i)
+    expect(copy).toMatch(/Redshift/i)
   })
 
   it('keeps the designed poster path available when the lazy scene rejects', () => {

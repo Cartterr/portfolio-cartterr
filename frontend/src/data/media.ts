@@ -18,50 +18,65 @@ const legacyThumbnailAssets = import.meta.glob<string>(
   { eager: true, import: 'default' },
 )
 
-const visualMainAssets = import.meta.glob<string>('../assets/visual/*.png', {
-  eager: true,
-  import: 'default',
-  query: { format: 'webp', w: '1400', withoutEnlargement: 'true' },
-})
-
-const visualThumbnailAssets = import.meta.glob<string>('../assets/visual/*.png', {
-  eager: true,
-  import: 'default',
-  query: { format: 'webp', w: '240', withoutEnlargement: 'true' },
-})
-
-const visualAvifSources = import.meta.glob<string>('../assets/visual/*.png', {
-  eager: true,
-  import: 'default',
-  query: {
-    as: 'srcset',
-    format: 'avif',
-    w: '640;960;1400',
-    withoutEnlargement: 'true',
+const visualMainAssets = import.meta.glob<string>(
+  ['../assets/visual/*.png', '../assets/visual/*.jpg'],
+  {
+    eager: true,
+    import: 'default',
+    query: { format: 'webp', w: '1400', withoutEnlargement: 'true' },
   },
-})
+)
 
-const visualWebpSources = import.meta.glob<string>('../assets/visual/*.png', {
-  eager: true,
-  import: 'default',
-  query: {
-    as: 'srcset',
-    format: 'webp',
-    w: '640;960;1400',
-    withoutEnlargement: 'true',
+const visualThumbnailAssets = import.meta.glob<string>(
+  ['../assets/visual/*.png', '../assets/visual/*.jpg'],
+  {
+    eager: true,
+    import: 'default',
+    query: { format: 'webp', w: '240', withoutEnlargement: 'true' },
   },
-})
+)
 
-const visualJpegSources = import.meta.glob<string>('../assets/visual/*.png', {
-  eager: true,
-  import: 'default',
-  query: {
-    as: 'srcset',
-    format: 'jpeg',
-    w: '640;960;1400',
-    withoutEnlargement: 'true',
+const visualAvifSources = import.meta.glob<string>(
+  ['../assets/visual/*.png', '../assets/visual/*.jpg'],
+  {
+    eager: true,
+    import: 'default',
+    query: {
+      as: 'srcset',
+      format: 'avif',
+      w: '640;960;1400',
+      withoutEnlargement: 'true',
+    },
   },
-})
+)
+
+const visualWebpSources = import.meta.glob<string>(
+  ['../assets/visual/*.png', '../assets/visual/*.jpg'],
+  {
+    eager: true,
+    import: 'default',
+    query: {
+      as: 'srcset',
+      format: 'webp',
+      w: '640;960;1400',
+      withoutEnlargement: 'true',
+    },
+  },
+)
+
+const visualJpegSources = import.meta.glob<string>(
+  ['../assets/visual/*.png', '../assets/visual/*.jpg'],
+  {
+    eager: true,
+    import: 'default',
+    query: {
+      as: 'srcset',
+      format: 'jpeg',
+      w: '640;960;1400',
+      withoutEnlargement: 'true',
+    },
+  },
+)
 
 const readAsset = (assets: Record<string, string>, path: string) => {
   const asset = assets[path]
@@ -620,6 +635,8 @@ type VisualDefinition = {
   alt: string
   caption: string
   objectPosition: string
+  fit?: MediaFit
+  storyId: 'parametric-configurator' | 'personal-vfx-studies'
 }
 
 const visualDefinitions: VisualDefinition[] = [
@@ -631,6 +648,7 @@ const visualDefinitions: VisualDefinition[] = [
     alt: 'Front angled 3D shelving layout with room and structure measurements',
     caption: 'A measured front view of the parametric shelving layout inside the modeled room.',
     objectPosition: '50% 52%',
+    storyId: 'parametric-configurator',
   },
   {
     id: 'configurator-entrance',
@@ -640,6 +658,7 @@ const visualDefinitions: VisualDefinition[] = [
     alt: 'Entrance-level 3D view through a room fitted with parametric shelving',
     caption: 'An eye-level spatial check of aisle, entrance, and shelving relationships.',
     objectPosition: '50% 50%',
+    storyId: 'parametric-configurator',
   },
   {
     id: 'configurator-door-clearance',
@@ -649,6 +668,68 @@ const visualDefinitions: VisualDefinition[] = [
     alt: 'Interactive 3D shelving configurator showing a door and two labeled structures',
     caption: 'The working editor validates structure placement against the modeled door swing.',
     objectPosition: '50% 50%',
+    storyId: 'parametric-configurator',
+  },
+  {
+    id: 'vfx-campfire-environment',
+    file: 'vfx-campfire-environment.jpg',
+    width: 1920,
+    height: 1080,
+    alt: 'Nighttime campsite render with a seated character lit by a glowing campfire',
+    caption: 'Environment lighting study balancing firelight, character focus, and a dark forest.',
+    objectPosition: '50% 52%',
+    storyId: 'personal-vfx-studies',
+  },
+  {
+    id: 'vfx-crystal-environment',
+    file: 'vfx-crystal-environment.jpg',
+    width: 1920,
+    height: 1080,
+    alt: 'Blue science-fiction chamber centered on a luminous crystal formation',
+    caption: 'Procedural environment and lighting study built around a luminous crystal chamber.',
+    objectPosition: '50% 50%',
+    storyId: 'personal-vfx-studies',
+  },
+  {
+    id: 'vfx-orbital-portrait',
+    file: 'vfx-orbital-portrait.jpg',
+    width: 1920,
+    height: 1080,
+    alt: 'Metallic portrait with an illuminated orbital ring against a star field',
+    caption: 'Portrait look-development study combining reflective materials, light trails, and compositing.',
+    objectPosition: '50% 42%',
+    storyId: 'personal-vfx-studies',
+  },
+  {
+    id: 'vfx-disintegration-portrait',
+    file: 'vfx-disintegration-portrait.jpg',
+    width: 1920,
+    height: 1080,
+    alt: 'Human profile dissolving into layered leaves and glowing fragments',
+    caption: 'FX study exploring organic scattering, layered materials, and emissive breakup.',
+    objectPosition: '55% 48%',
+    storyId: 'personal-vfx-studies',
+  },
+  {
+    id: 'vfx-cyberpunk-lookdev',
+    file: 'vfx-cyberpunk-lookdev.jpg',
+    width: 1280,
+    height: 720,
+    alt: 'Backlit character overlooking a red and cyan cyberpunk city',
+    caption: 'Cinematic lighting and atmosphere study for a dense futuristic city scene.',
+    objectPosition: '50% 50%',
+    storyId: 'personal-vfx-studies',
+  },
+  {
+    id: 'vfx-robot-lookdev',
+    file: 'vfx-robot-lookdev.jpg',
+    width: 512,
+    height: 512,
+    alt: 'Detailed mechanical robot with glossy red and steel materials',
+    caption: 'Hard-surface robot look development focused on material response and studio lighting.',
+    objectPosition: '50% 46%',
+    fit: 'contain',
+    storyId: 'personal-vfx-studies',
   },
 ]
 
@@ -663,15 +744,18 @@ export const visualMedia: PortfolioImageMedia[] = visualDefinitions.map((definit
     height: definition.height,
     alt: definition.alt,
     caption: definition.caption,
-    fit: 'contain',
+    fit: definition.fit ?? 'contain',
     objectPosition: definition.objectPosition,
     rights: {
       owner: 'José Ernesto Carter Arriagada',
-      source: 'Cleared native Playwright capture from repisas-3d-quote-demo',
+      source:
+        definition.storyId === 'parametric-configurator'
+          ? 'Cleared native Playwright capture from repisas-3d-quote-demo'
+          : 'User-provided personal render selected from F:\\VFX',
       clearance: 'cleared-project-capture',
     },
     publication: 'approved',
-    storyId: 'parametric-configurator',
+    storyId: definition.storyId,
     sources: [
       { type: 'image/avif', srcSet: readAsset(visualAvifSources, path) },
       { type: 'image/webp', srcSet: readAsset(visualWebpSources, path) },

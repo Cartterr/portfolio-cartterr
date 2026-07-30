@@ -63,16 +63,33 @@ describe('portfolio media manifest', () => {
     }
   })
 
-  it('uses only the three cleared configurator captures with separate renditions', () => {
-    expect(visualMedia.map(({ id }) => id)).toEqual([
+  it('uses cleared configurator and personal VFX captures with separate renditions', () => {
+    expect(
+      visualMedia
+        .filter(({ storyId }) => storyId === 'parametric-configurator')
+        .map(({ id }) => id),
+    ).toEqual([
       'configurator-front-angled',
       'configurator-entrance',
       'configurator-door-clearance',
     ])
 
+    expect(
+      visualMedia
+        .filter(({ storyId }) => storyId === 'personal-vfx-studies')
+        .map(({ id }) => id),
+    ).toEqual([
+      'vfx-campfire-environment',
+      'vfx-crystal-environment',
+      'vfx-orbital-portrait',
+      'vfx-disintegration-portrait',
+      'vfx-cyberpunk-lookdev',
+      'vfx-robot-lookdev',
+    ])
+
     for (const entry of visualMedia) {
       expect(entry.src).not.toBe(entry.thumbnail)
-      expect(entry.storyId).toBe('parametric-configurator')
+      expect(['parametric-configurator', 'personal-vfx-studies']).toContain(entry.storyId)
     }
   })
 
