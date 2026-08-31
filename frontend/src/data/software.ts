@@ -28,7 +28,7 @@ const softwareExperience = [
     contribution:
       'Shape ingestion, rules, escalation, operator tooling, and rollout controls around operational parity.',
     outcome:
-      'A disciplined modernization path that can replace legacy automation without abandoning live workflows.',
+      'A staged modernization path that replaces legacy automation while preserving live workflows.',
     technologies: ['Next.js', 'Node.js', 'Railway', 'MQTT', 'PostgreSQL'],
     mediaIds: mediaIdsFor('gridworks'),
   },
@@ -121,9 +121,26 @@ const softwareExperience = [
 
 const softwareProjects = [
   mediaBackedProject({
+    id: 'dily-fintech-systems',
+    slug: 'dily-fintech-systems',
+    title: 'Domain-driven lending systems',
+    eyebrow: 'Dily',
+    role: 'Full Stack Developer',
+    period: 'Sep 2025 - Present',
+    status: 'Active product engineering',
+    summary: 'End-to-end fintech delivery around maintainable lending-domain boundaries.',
+    problem:
+      'Fast-moving lending flows need product flexibility without coupling core business rules to delivery details.',
+    contribution:
+      'I build TypeScript and Node.js services and Angular product flows using DDD and hexagonal architecture.',
+    outcome: 'A testable product architecture that supports change across backend and frontend delivery.',
+    technologies: ['TypeScript', 'Node.js', 'Angular', 'Nx', 'PostgreSQL', 'DDD'],
+    mediaIds: mediaIdsFor('dily'),
+  }),
+  mediaBackedProject({
     id: 'gridworks-alerting-platform',
     slug: 'gridworks-alerting-platform',
-    title: 'Production-safe alerting platform migration',
+    title: 'Industrial alerting platform migration',
     eyebrow: 'GridWorks',
     role: 'Lead Engineer',
     period: '2026 - Present',
@@ -157,6 +174,24 @@ const softwareProjects = [
     technologies: ['Python', 'Algorithms', 'MQTT', 'OpenAI API', 'Angular', 'Java Spring'],
     mediaIds: mediaIdsFor('notreDame'),
     link: { label: 'Visit Drone Response', href: 'https://droneresponse.ai/', external: true },
+  }),
+  mediaBackedProject({
+    id: 'flair-energy-systems',
+    slug: 'flair-energy-systems',
+    title: 'Commercial-building energy systems',
+    eyebrow: 'Flair',
+    role: 'Software Engineer',
+    period: 'Dec 2024 - Jul 2025',
+    status: 'Completed production role',
+    summary: 'Production software for building controls, sensor data, and HVAC optimization.',
+    problem:
+      'Commercial-building operations need reliable controls and time-series visibility across connected devices.',
+    contribution:
+      'I shipped production services, enterprise UI, and high-frequency sensor-data workflows.',
+    outcome: 'Contributed to platform capabilities tied to HVAC energy reductions of up to 50%.',
+    technologies: ['Python', 'Vue.js', 'AWS', 'InfluxDB', 'DynamoDB'],
+    mediaIds: mediaIdsFor('flair'),
+    link: { label: 'Visit Flair', href: 'https://goflair.cl/', external: true },
   }),
   mediaBackedProject({
     id: 'politiktok-research-infrastructure',
@@ -193,41 +228,6 @@ const softwareProjects = [
     outcome: 'Achieved a 15x performance improvement in the scientific-computing workload.',
     technologies: ['Python', 'CUDA', 'Optimization', 'Data Pipelines', 'Simulation'],
     mediaIds: mediaIdsFor('geoscience'),
-  }),
-  mediaBackedProject({
-    id: 'dily-fintech-systems',
-    slug: 'dily-fintech-systems',
-    title: 'Domain-driven lending systems',
-    eyebrow: 'Dily',
-    role: 'Full Stack Developer',
-    period: 'Sep 2025 - Present',
-    status: 'Active product engineering',
-    summary: 'End-to-end fintech delivery around maintainable lending-domain boundaries.',
-    problem:
-      'Fast-moving lending flows need product flexibility without coupling core business rules to delivery details.',
-    contribution:
-      'I build TypeScript and Node.js services and Angular product flows using DDD and hexagonal architecture.',
-    outcome: 'A testable product architecture that supports change across backend and frontend delivery.',
-    technologies: ['TypeScript', 'Node.js', 'Angular', 'Nx', 'PostgreSQL', 'DDD'],
-    mediaIds: mediaIdsFor('dily'),
-  }),
-  mediaBackedProject({
-    id: 'flair-energy-systems',
-    slug: 'flair-energy-systems',
-    title: 'Commercial-building energy systems',
-    eyebrow: 'Flair',
-    role: 'Software Engineer',
-    period: 'Dec 2024 - Jul 2025',
-    status: 'Completed production role',
-    summary: 'Production software for building controls, sensor data, and HVAC optimization.',
-    problem:
-      'Commercial-building operations need reliable controls and time-series visibility across connected devices.',
-    contribution:
-      'I shipped production services, enterprise UI, and high-frequency sensor-data workflows.',
-    outcome: 'Contributed to platform capabilities tied to HVAC energy reductions of up to 50%.',
-    technologies: ['Python', 'Vue.js', 'AWS', 'InfluxDB', 'DynamoDB'],
-    mediaIds: mediaIdsFor('flair'),
-    link: { label: 'Visit Flair', href: 'https://goflair.cl/', external: true },
   }),
 ] satisfies ProjectStory[]
 
@@ -291,7 +291,7 @@ export const softwarePortfolio = {
   hero: {
     name: portfolioOwner.name,
     eyebrow: 'Software Engineering · AI · Data · Autonomy',
-    title: 'Software engineer building reliable AI, data, and autonomous systems.',
+    title: 'Building reliable AI, data, and autonomous systems.',
     summary:
       'I build production software across AI systems, data infrastructure, scientific computing, and autonomous planning.',
     location: portfolioOwner.location,
@@ -313,7 +313,7 @@ export const softwarePortfolio = {
   projects: softwareProjects,
   capabilities: softwareCapabilities,
   contact: {
-    heading: 'Build something reliable',
+    heading: 'Contact',
     body:
       'For software engineering, AI systems, data infrastructure, scientific computing, or autonomous-systems work, email me or find me online.',
     subject: 'Software engineering project',

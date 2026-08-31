@@ -133,7 +133,7 @@ function Hero() {
         </li>
       </ul>
 
-      <ol aria-label="Visual practice evidence" className="visual-proof-rail">
+      <ol aria-label="Portfolio metrics" className="visual-proof-rail">
         {visualPortfolio.metrics.map((metric, index) => (
           <li key={metric.label}>
             <span className="visual-proof-rail__index" aria-hidden="true">
@@ -163,7 +163,7 @@ function Profile() {
     >
       <div className="visual-profile__copy">
         <p className="visual-kicker">Profile / creative technology</p>
-        <h2 id="visual-profile-title">Visual profile: computation with a sense of place.</h2>
+        <h2 id="visual-profile-title">Visual computing and technical 3D work</h2>
         {visualPortfolio.about.paragraphs.map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
         ))}
@@ -177,7 +177,7 @@ function Profile() {
           autoplayMs={8000}
           featured
           id="visual-profile-gallery"
-          label="Visual profile field and practice gallery"
+          label="Visual computing project gallery"
           media={profileMedia}
         />
       </div>
@@ -211,11 +211,11 @@ function Experience() {
       <header className="visual-section-heading visual-section-heading--split">
         <div>
           <p className="visual-kicker">Experience / production and research</p>
-          <h2 id="visual-experience-title">Experience building reliable technical systems.</h2>
+          <h2 id="visual-experience-title">Professional experience</h2>
         </div>
         <p>
-          Production software, research platforms, simulation, autonomous systems, and technical
-          instruction—grounded in shipped work and documented outcomes.
+          Roles in production software, research platforms, simulation, autonomous systems, and
+          technical education.
         </p>
       </header>
 
@@ -296,8 +296,8 @@ function SelectedWork() {
       id="work"
     >
       <header className="visual-section-heading">
-        <p className="visual-kicker">Selected visual work / cleared evidence</p>
-        <h2 id="visual-work-title">Selected visual work, one system at a time.</h2>
+        <p className="visual-kicker">Selected visual work / project case studies</p>
+        <h2 id="visual-work-title">Selected visual computing projects</h2>
       </header>
 
       <div className="visual-story-list">
@@ -362,7 +362,7 @@ function SelectedWork() {
                   autoplayMs={index === 0 ? 9000 : undefined}
                   featured={index === 0}
                   id={`visual-${project.id}-gallery`}
-                  label={`${project.title} project evidence`}
+                  label={`${project.title} project gallery`}
                   media={projectMedia}
                 />
               </div>
@@ -387,11 +387,11 @@ function Pipeline() {
       <header className="visual-section-heading visual-section-heading--split">
         <div>
           <p className="visual-kicker">Pipeline / capabilities</p>
-          <h2 id="visual-pipeline-title">A visual pipeline from reference to tested delivery.</h2>
+          <h2 id="visual-pipeline-title">Visual computing workflow and capabilities</h2>
         </div>
         <p>
-          The tools change with the problem. The through-line is spatial reasoning, inspectable
-          geometry, bounded computation, and proof in the final context.
+          Methods and tools used across spatial analysis, geometry, simulation, rendering, and
+          interface delivery.
         </p>
       </header>
 
@@ -407,10 +407,12 @@ function Pipeline() {
                   <li key={item}>{item}</li>
                 ))}
               </ul>
-              <ul aria-label={`${capability.title} project proof`} className="visual-pipeline__proof">
+              <ul aria-label={`${capability.title} related projects`} className="visual-pipeline__proof">
                 {capability.proofStoryIds.map((storyId) => (
                   <li key={storyId}>
-                    <a href={`#visual-project-${storyId}`}>Proof / {storyId.split('-').join(' ')}</a>
+                    <a href={`#visual-project-${storyId}`}>
+                      Related project / {storyId.split('-').join(' ')}
+                    </a>
                   </li>
                 ))}
               </ul>
@@ -427,8 +429,8 @@ export function VisualPortfolio() {
     <div className="visual-portfolio" data-presentation="visual-computing" data-visual-portfolio>
       <Hero />
       <Profile />
-      <Experience />
       <SelectedWork />
+      <Experience />
       <Pipeline />
       <Contact content={visualPortfolio.contact} portfolioMode="visual" />
     </div>

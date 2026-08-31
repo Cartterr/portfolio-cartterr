@@ -189,27 +189,6 @@ const visualProjects = [
     mediaIds: mediaIdsFor('personal-vfx-studies'),
   }),
   mediaBackedProject({
-    id: 'geoscience-simulation',
-    slug: 'geoscience-simulation',
-    title: '3D Geoscience Simulation Pipeline',
-    eyebrow: 'Scientific computing, spatial data, and high-performance visualization',
-    role: 'Simulation Engineer',
-    period: 'Aug 2022 - Dec 2024',
-    status: 'Completed research project',
-    summary:
-      'Developed scientific-computing and visualization workflows for tectonic plates, subduction zones, and adjacent crustal faults.',
-    problem:
-      'Complex spatial data needed to become both computationally tractable and visually understandable.',
-    technicalChallenge:
-      'Optimize large scientific workloads without losing the spatial structure needed for interpretable 3D views.',
-    contribution:
-      'I built Python, Tectosaur, Mapbox, Houdini, and Cinema 4D workflows for processing, simulation, and presentation.',
-    outcome:
-      'Up to a 15× performance improvement and research presented at the 2023 SSA Annual Meeting.',
-    technologies: ['Python', 'Tectosaur', 'Mapbox', 'Houdini', 'High-Performance Computing'],
-    mediaIds: mediaIdsFor('geoscience'),
-  }),
-  mediaBackedProject({
     id: 'drone-response-spatial-autonomy',
     slug: 'drone-response-spatial-autonomy',
     title: 'Drone Response Mission Planner',
@@ -257,13 +236,34 @@ const visualProjects = [
       external: true,
     },
   }),
+  mediaBackedProject({
+    id: 'geoscience-simulation',
+    slug: 'geoscience-simulation',
+    title: '3D Geoscience Simulation Pipeline',
+    eyebrow: 'Scientific computing, spatial data, and high-performance visualization',
+    role: 'Simulation Engineer',
+    period: 'Aug 2022 - Dec 2024',
+    status: 'Completed research project',
+    summary:
+      'Developed scientific-computing and visualization workflows for tectonic plates, subduction zones, and adjacent crustal faults.',
+    problem:
+      'Complex spatial data needed to become both computationally tractable and visually understandable.',
+    technicalChallenge:
+      'Optimize large scientific workloads without losing the spatial structure needed for interpretable 3D views.',
+    contribution:
+      'I built Python, Tectosaur, Mapbox, Houdini, and Cinema 4D workflows for processing, simulation, and presentation.',
+    outcome:
+      'Up to a 15× performance improvement and research presented at the 2023 SSA Annual Meeting.',
+    technologies: ['Python', 'Tectosaur', 'Mapbox', 'Houdini', 'High-Performance Computing'],
+    mediaIds: mediaIdsFor('geoscience'),
+  }),
 ] satisfies ProjectStory[]
 
 const visualCapabilities = [
   {
     id: 'research-reference',
     title: 'Research and reference',
-    summary: 'Start from measured constraints, scientific sources, and the real use context.',
+    summary: 'Review spatial data, scientific sources, field requirements, and visual references.',
     items: ['Spatial data', 'Scientific references', 'Field requirements', 'Visual research'],
     proofStoryIds: ['geoscience-simulation', 'drone-response-spatial-autonomy'],
   },
@@ -323,11 +323,11 @@ export const visualPortfolio = {
   },
   metrics: visualMetrics,
   about: {
-    heading: 'Where computation becomes spatial and visual',
+    heading: 'Visual computing and technical 3D',
     paragraphs: [
-      'My visual-computing work grows from software engineering, simulation, and graphics rather than from invented production credits.',
+      'My visual-computing work combines software engineering, simulation, graphics, and technical 3D.',
       'I build interactive product visualization, technical 3D prototypes, scientific visuals, real-time spatial interfaces, and the pipeline tooling around them.',
-      'The strongest current evidence spans geoscience modeling, parametric Three.js tools, autonomous mission-planning research, and a self-directed VFX and look-development practice.',
+      'Current projects include geoscience modeling, parametric Three.js tools, autonomous mission-planning research, and self-directed VFX and look-development studies.',
     ],
     mediaIds: visualAboutMediaIds,
     images: aboutImages(visualAboutMediaIds),
@@ -336,7 +336,7 @@ export const visualPortfolio = {
   projects: visualProjects,
   capabilities: visualCapabilities,
   contact: {
-    heading: 'Build the next production tool',
+    heading: 'Contact',
     body:
       'For production technology, technical tooling, simulation, real-time 3D, or software-engineering opportunities, email me or find me online. Based in Santiago, Chile.',
     subject: 'Production technology opportunity',

@@ -65,7 +65,7 @@ export function About({ content, id = 'about', media }: AboutProps) {
           </div>
           <div>
             <dt>Operate</dt>
-            <dd>Software designed for imperfect, real-world conditions.</dd>
+            <dd>Deployment, monitoring, and maintenance in production environments.</dd>
           </div>
         </dl>
       </div>

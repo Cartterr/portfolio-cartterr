@@ -19,10 +19,10 @@ export function Experience({ id = 'experience', items }: ExperienceProps) {
     >
       <header className="software-section-heading software-section-heading--wide">
         <p className="software-kicker">Experience · 02</p>
-        <h2 id={`${id}-title`}>Seven roles. One systems practice.</h2>
+        <h2 id={`${id}-title`}>Professional experience</h2>
         <p>
-          Product delivery, research engineering, technical teaching, and scientific computing —
-          the career line at a glance. The deep dives live in Selected Work below.
+          Roles in product engineering, research, technical education, and scientific computing.
+          Detailed project case studies appear in Selected Work above.
         </p>
       </header>
 

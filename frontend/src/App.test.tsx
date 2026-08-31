@@ -67,7 +67,7 @@ describe('dual portfolio shell', () => {
     )
 
     const about = within(page!).getByRole('region', {
-      name: 'Visual profile field and practice gallery',
+      name: 'Visual computing project gallery',
     })
     expect(about.querySelectorAll('.portfolio-carousel__slide')).toHaveLength(
       visual.about.mediaIds.length,
@@ -130,7 +130,7 @@ describe('dual portfolio shell', () => {
     render(<App />)
 
     const target = document.querySelector('#software-work')
-    const heading = screen.getByRole('heading', { level: 2, name: 'Evidence, not a second résumé.' })
+    const heading = screen.getByRole('heading', { level: 2, name: 'Selected engineering projects' })
     await waitFor(() => expect(scrollIntoView).toHaveBeenCalled())
     expect(scrollIntoView).toHaveBeenCalledWith()
     expect(target).toBeInTheDocument()
@@ -332,7 +332,7 @@ describe('dual portfolio shell', () => {
     await waitFor(() => {
       expect(window.location.hash).toBe('#software-work')
       expect(
-        screen.getByRole('heading', { level: 2, name: 'Evidence, not a second résumé.' }),
+        screen.getByRole('heading', { level: 2, name: 'Selected engineering projects' }),
       ).toHaveFocus()
     })
     expect(screen.queryByRole('navigation', { name: 'Mobile navigation' })).not.toBeInTheDocument()

@@ -39,8 +39,8 @@ export function SoftwarePortfolio() {
       <Hero content={softwarePortfolio.hero} id="software-home" />
       <ProofRail />
       <About content={softwarePortfolio.about} id="software-about" media={profileMedia} />
-      <Experience id="software-experience" items={softwarePortfolio.experience} />
       <FeaturedWork caseStudies={softwarePortfolio.projects} id="software-work" />
+      <Experience id="software-experience" items={softwarePortfolio.experience} />
       <Capabilities
         groups={softwarePortfolio.capabilities}
         id="software-capabilities"

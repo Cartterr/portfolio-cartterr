@@ -36,6 +36,9 @@ export default defineConfig({
   server: {
     port: Number(process.env.FRONTEND_PORT ?? 3000),
     host: true,
+    hmr: {
+      host: '127.0.0.1',
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:5000',

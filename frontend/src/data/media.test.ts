@@ -2,7 +2,7 @@ import { existsSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { legacyMedia, portfolioMedia, visualMedia } from './media'
 
-const forbiddenPrivateAssetPaths = [
+const forbiddenLegacyPrivateAssetPaths = [
   'src/assets/images/flair4.png',
   'src/assets/images/optimized/flair4-main.webp',
   'src/assets/images/optimized/flair4-thumb.webp',
@@ -30,11 +30,11 @@ describe('portfolio media manifest', () => {
   })
 
   it('restores every legacy gallery entry to its original story', () => {
-    expect(legacyMedia).toHaveLength(57)
+    expect(legacyMedia).toHaveLength(59)
     expect(countByStory(legacyMedia)).toEqual({
       profile: 13,
       dily: 3,
-      gridworks: 2,
+      gridworks: 4,
       flair: 4,
       notreDame: 9,
       politiktok: 12,
@@ -93,20 +93,28 @@ describe('portfolio media manifest', () => {
     }
   })
 
-  it('keeps private dashboard originals out of the public manifest', () => {
+  it('uses four distinct, cleared GridWorks product captures', () => {
     const mediaById = new Map(legacyMedia.map((entry) => [entry.id, entry]))
-    const gridWorksIdentity = mediaById.get('gridworks1')
-    const gridWorksReplacement = mediaById.get('gridworks2')
+    const gridWorksEntries = legacyMedia.filter(({ storyId }) => storyId === 'gridworks')
     const flairIdentity = mediaById.get('flair1')
     const flairReplacement = mediaById.get('flair4')
 
-    expect(gridWorksReplacement?.src).toBe(gridWorksIdentity?.src)
+    expect(gridWorksEntries.map(({ id }) => id)).toEqual([
+      'gridworks-landing-overview',
+      'gridworks-dashboard-operations',
+      'gridworks-dashboard-food-history',
+      'gridworks-alert-history',
+    ])
+    expect(new Set(gridWorksEntries.map(({ src }) => src)).size).toBe(4)
+    expect(gridWorksEntries.every(({ src, thumbnail }) => src !== thumbnail)).toBe(true)
+    expect(
+      gridWorksEntries.every(({ rights }) => rights.clearance === 'cleared-project-capture'),
+    ).toBe(true)
     expect(flairReplacement?.src).toBe(flairIdentity?.src)
-    expect(gridWorksReplacement?.rights.clearance).toBe('privacy-safe-replacement')
     expect(flairReplacement?.rights.clearance).toBe('privacy-safe-replacement')
   })
 
-  it('keeps private dashboard source files out of the repository checkout', () => {
-    expect(forbiddenPrivateAssetPaths.filter((path) => existsSync(path))).toEqual([])
+  it('keeps superseded private dashboard originals out of the repository checkout', () => {
+    expect(forbiddenLegacyPrivateAssetPaths.filter((path) => existsSync(path))).toEqual([])
   })
 })

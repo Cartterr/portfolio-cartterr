@@ -22,7 +22,7 @@ export function Capabilities({ groups, id, projects = [] }: CapabilitiesProps) {
     >
       <header className="software-section-heading software-section-heading--wide">
         <p className="software-kicker">Capabilities · 04</p>
-        <h2 id={titleId}>Four systems of practice, each tied to shipped proof.</h2>
+        <h2 id={titleId}>Technical capabilities and related projects</h2>
       </header>
 
       <div className="software-capability-list">
@@ -40,13 +40,13 @@ export function Capabilities({ groups, id, projects = [] }: CapabilitiesProps) {
                 <li key={item}>{item}</li>
               ))}
             </ul>
-            <ul aria-label={`${group.title} proof`} className="software-capability-system__proof">
+            <ul aria-label={`${group.title} related projects`} className="software-capability-system__proof">
               {group.proofStoryIds.map((storyId) => {
                 const project = projectById.get(storyId)
                 return (
                   <li key={storyId}>
                     <a href={`#project-${storyId}`}>
-                      Proof: {project?.title ?? storyId}
+                      Related project: {project?.title ?? storyId}
                       <span aria-hidden="true"> ↗</span>
                     </a>
                   </li>

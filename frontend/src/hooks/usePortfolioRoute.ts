@@ -306,6 +306,8 @@ export function usePortfolioRoute() {
     if (!pending || pending.revision !== route.revision) return undefined
 
     let animationFrame = 0
+    let stabilizationFrame = 0
+    let stabilizationTimeouts: number[] = []
     let observer: MutationObserver | null = null
     const finishNavigation = () => {
       const page = document.querySelector<HTMLElement>(
@@ -318,6 +320,13 @@ export function usePortfolioRoute() {
         : null
       if (hashTarget) {
         hashTarget.scrollIntoView?.()
+        stabilizationFrame = window.requestAnimationFrame(() => {
+          hashTarget.scrollIntoView?.()
+          stabilizationFrame = window.requestAnimationFrame(() => hashTarget.scrollIntoView?.())
+        })
+        stabilizationTimeouts = [120, 320].map((delay) =>
+          window.setTimeout(() => hashTarget.scrollIntoView?.(), delay),
+        )
         const focusTarget =
           hashTarget.id === 'main' || hashTarget.matches('h1, h2, h3, h4, h5, h6')
             ? hashTarget
@@ -357,6 +366,8 @@ export function usePortfolioRoute() {
     return () => {
       observer?.disconnect()
       if (animationFrame) window.cancelAnimationFrame(animationFrame)
+      if (stabilizationFrame) window.cancelAnimationFrame(stabilizationFrame)
+      stabilizationTimeouts.forEach((timeout) => window.clearTimeout(timeout))
     }
   }, [route])
 

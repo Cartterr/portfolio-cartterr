@@ -1,4 +1,22 @@
-import type { PortfolioPage } from '../data/types'
+import { useEffect, useState } from 'react'
+import { getMedia } from '../data/media'
+import type { PortfolioImageMedia, PortfolioPage } from '../data/types'
+
+const heroMediaSlides = [
+  { id: 'nd1', project: 'Drone Response', label: 'Autonomous fieldwork' },
+  { id: 'geoscience7', project: 'CUDA geoscience', label: 'Scientific simulation' },
+  { id: 'gridworks-dashboard-operations', project: 'GridWorks', label: 'Production monitoring' },
+].map((definition) => {
+  const media = getMedia(definition.id)
+  if (media.kind !== 'image') throw new Error(`Hero media must be an image: ${definition.id}`)
+
+  return { ...definition, media } satisfies {
+    id: string
+    project: string
+    label: string
+    media: PortfolioImageMedia
+  }
+})
 
 type HeroProps = {
   content: PortfolioPage['hero']
@@ -7,6 +25,31 @@ type HeroProps = {
 
 export function Hero({ content, id }: HeroProps) {
   const secondaryIsDownload = /\.pdf(?:$|[?#])/i.test(content.secondaryCta.href)
+  const [activeSlide, setActiveSlide] = useState(0)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(() =>
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+  )
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const handleMotionPreference = () => setPrefersReducedMotion(mediaQuery.matches)
+
+    mediaQuery.addEventListener('change', handleMotionPreference)
+    return () => mediaQuery.removeEventListener('change', handleMotionPreference)
+  }, [])
+
+  useEffect(() => {
+    if (prefersReducedMotion) {
+      setActiveSlide(0)
+      return undefined
+    }
+
+    const timer = window.setInterval(() => {
+      setActiveSlide((current) => (current + 1) % heroMediaSlides.length)
+    }, 7200)
+
+    return () => window.clearInterval(timer)
+  }, [prefersReducedMotion])
 
   return (
     <section
@@ -17,7 +60,7 @@ export function Hero({ content, id }: HeroProps) {
     >
       <div className="software-hero__inner">
         <div className="software-hero__signal">
-          <p className="software-kicker">Santiago, Chile · Systems under real constraints</p>
+          <p className="software-kicker">Santiago, Chile · Software engineering and applied research</p>
           <span className="software-hero__signal-line" aria-hidden="true" />
           <p>Production software · research infrastructure · autonomous planning</p>
         </div>
@@ -42,10 +85,26 @@ export function Hero({ content, id }: HeroProps) {
           </div>
         </div>
 
-        <aside className="software-hero__note" aria-label="Current engineering direction">
-          <p className="software-kicker">Current direction</p>
-          <p>Applying AI to satellite data, scientific simulation, and aerospace systems.</p>
-        </aside>
+        <figure className="software-hero__media">
+          <div aria-hidden="true" className="software-hero__media-frame">
+            {heroMediaSlides.map(({ media }, index) => (
+              <img
+                alt=""
+                className={index === activeSlide ? 'is-active' : undefined}
+                data-hero-media={media.id}
+                decoding="async"
+                fetchPriority={index === 0 ? 'high' : 'low'}
+                key={media.id}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                src={media.src}
+                style={{ objectPosition: media.objectPosition }}
+              />
+            ))}
+          </div>
+          <figcaption className="software-hero__media-meta">
+            {heroMediaSlides[activeSlide].project} · {heroMediaSlides[activeSlide].label}
+          </figcaption>
+        </figure>
       </div>
     </section>
   )

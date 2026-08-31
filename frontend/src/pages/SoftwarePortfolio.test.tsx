@@ -7,14 +7,14 @@ import { SoftwarePortfolio } from './SoftwarePortfolio'
 const sectionIds = [
   'software-home',
   'software-about',
-  'software-experience',
   'software-work',
+  'software-experience',
   'software-capabilities',
   'software-contact',
 ]
 
 const projectGalleryCounts = {
-  'gridworks-alerting-platform': 2,
+  'gridworks-alerting-platform': 4,
   'notre-dame-drone-response': 9,
   'politiktok-research-infrastructure': 12,
   'geoscience-simulation': 9,
@@ -62,6 +62,15 @@ describe('SoftwarePortfolio', () => {
     render(<SoftwarePortfolio />)
 
     const hero = document.getElementById('software-home')!
+    const mediaSlides = hero.querySelectorAll('[data-hero-media]')
+    expect(mediaSlides).toHaveLength(3)
+    expect(mediaSlides[0]).toHaveClass('is-active')
+    expect(within(hero).queryByText('Current direction')).not.toBeInTheDocument()
+    expect(within(hero).getByText('Drone Response · Autonomous fieldwork')).toBeInTheDocument()
+    expect(within(hero).getByRole('heading', { level: 1 })).toHaveTextContent(
+      'Building reliable AI, data, and autonomous systems.',
+    )
+
     const actions = within(hero).getByRole('group', { name: 'Software portfolio actions' })
     expect(within(actions).getAllByRole('link')).toHaveLength(2)
     expect(within(actions).getByRole('link', { name: 'View Work' })).toHaveAttribute(
@@ -109,7 +118,7 @@ describe('SoftwarePortfolio', () => {
     expect(softwarePortfolio.experience[0].id).toBe('gridworks')
   })
 
-  it('renders six evidence-rich projects with legacy galleries and four capability systems with linked proof', () => {
+  it('renders six detailed projects with legacy galleries and four capability systems with related work', () => {
     render(<SoftwarePortfolio />)
 
     const work = document.getElementById('software-work')!
@@ -141,7 +150,7 @@ describe('SoftwarePortfolio', () => {
     const systems = within(capabilities).getAllByTestId('capability-system')
     expect(systems).toHaveLength(4)
     systems.forEach((system) => {
-      expect(within(system).getAllByRole('link', { name: /proof/i }).length).toBeGreaterThan(0)
+      expect(within(system).getAllByRole('link', { name: /related project/i }).length).toBeGreaterThan(0)
     })
   })
 

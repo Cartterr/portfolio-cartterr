@@ -50,15 +50,15 @@ export function ProjectChapter({ index, project }: ProjectChapterProps) {
 
         <dl className="software-project-evidence">
           <div>
-            <dt>Constraint</dt>
+            <dt>Challenge</dt>
             <dd>{project.problem}</dd>
           </div>
           <div>
-            <dt>System</dt>
+            <dt>Implementation</dt>
             <dd>{project.contribution}</dd>
           </div>
           <div>
-            <dt>Evidence</dt>
+            <dt>Outcome</dt>
             <dd>{project.outcome}</dd>
           </div>
         </dl>

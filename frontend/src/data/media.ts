@@ -18,6 +18,34 @@ const legacyThumbnailAssets = import.meta.glob<string>(
   { eager: true, import: 'default' },
 )
 
+const gridWorksMainAssets = import.meta.glob<string>(
+  [
+    '../assets/images/gridworks-landing-overview.png',
+    '../assets/images/gridworks-dashboard-food-history.png',
+    '../assets/images/gridworks-dashboard-operations.png',
+    '../assets/images/gridworks-alert-history.png',
+  ],
+  {
+    eager: true,
+    import: 'default',
+    query: { format: 'webp', w: '1400', withoutEnlargement: 'true' },
+  },
+)
+
+const gridWorksThumbnailAssets = import.meta.glob<string>(
+  [
+    '../assets/images/gridworks-landing-overview.png',
+    '../assets/images/gridworks-dashboard-food-history.png',
+    '../assets/images/gridworks-dashboard-operations.png',
+    '../assets/images/gridworks-alert-history.png',
+  ],
+  {
+    eager: true,
+    import: 'default',
+    query: { format: 'webp', w: '240', withoutEnlargement: 'true' },
+  },
+)
+
 const visualMainAssets = import.meta.glob<string>(
   ['../assets/visual/*.png', '../assets/visual/*.jpg'],
   {
@@ -268,25 +296,67 @@ const dilyMedia = legacyStory('dily', 'Dily', [
   },
 ])
 
-const gridWorksMedia = legacyStory('gridworks', 'GridWorks', [
+const gridWorksCaptureDefinitions = [
   {
-    name: 'gridworks1',
-    width: 1024,
-    height: 1024,
-    alt: 'GridWorks project wordmark and connected-systems symbol',
-    caption: 'Public-safe GridWorks project identity for the industrial alerting platform.',
-    fit: 'contain',
+    id: 'gridworks-landing-overview',
+    file: 'gridworks-landing-overview.png',
+    width: 1265,
+    height: 712,
+    alt: 'GridWorks public landing page introducing real-time industrial monitoring',
+    caption: 'The public GridWorks product story frames operational monitoring around faster response.',
+    source: 'Browser capture of the public GridWorks landing page on 2026-08-30',
   },
   {
-    name: 'gridworks2',
-    sourceName: 'gridworks1',
-    width: 1024,
-    height: 1024,
-    alt: 'Public-safe GridWorks project identity',
-    caption: 'Privacy-safe replacement for a private authenticated operational dashboard.',
-    fit: 'contain',
+    id: 'gridworks-dashboard-operations',
+    file: 'gridworks-dashboard-operations.png',
+    width: 1265,
+    height: 712,
+    alt: 'GridWorks operations dashboard showing live pavilion sensor status and trends',
+    caption: 'The operational dashboard consolidates live device state, telemetry, and recent trends.',
+    source: 'User-authorized authenticated GridWorks dashboard capture on 2026-08-30',
   },
-])
+  {
+    id: 'gridworks-dashboard-food-history',
+    file: 'gridworks-dashboard-food-history.png',
+    width: 1888,
+    height: 936,
+    alt: 'GridWorks historical food monitoring dashboard with pavilion comparison charts',
+    caption: 'Historical feed telemetry supports range comparison across multiple production pavilions.',
+    source: 'User-provided GridWorks dashboard capture cleared for this portfolio update',
+  },
+  {
+    id: 'gridworks-alert-history',
+    file: 'gridworks-alert-history.png',
+    width: 1265,
+    height: 712,
+    alt: 'GridWorks alert history listing resolved operational events and responsible operators',
+    caption: 'Alert history preserves event type, ownership, resolution state, and drill-down actions.',
+    source: 'User-authorized authenticated GridWorks alert-history capture on 2026-08-30',
+  },
+] as const
+
+const gridWorksMedia: PortfolioImageMedia[] = gridWorksCaptureDefinitions.map((definition) => {
+  const path = `../assets/images/${definition.file}`
+  return {
+    id: definition.id,
+    kind: 'image',
+    src: readAsset(gridWorksMainAssets, path),
+    thumbnail: readAsset(gridWorksThumbnailAssets, path),
+    width: definition.width,
+    height: definition.height,
+    alt: definition.alt,
+    caption: definition.caption,
+    fit: 'contain',
+    objectPosition: '50% 50%',
+    rights: {
+      owner: 'GridWorks',
+      source: definition.source,
+      clearance: 'cleared-project-capture',
+    },
+    publication: 'approved',
+    storyId: 'gridworks',
+  }
+})
 
 const flairMedia = legacyStory('flair', 'Flair', [
   {

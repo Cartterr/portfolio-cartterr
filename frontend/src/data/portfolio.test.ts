@@ -39,9 +39,9 @@ describe('dual portfolio content', () => {
     expect(visualPortfolio.projects.map((project) => project.id)).toEqual([
       'parametric-configurator',
       'personal-vfx-studies',
-      'geoscience-simulation',
       'drone-response-spatial-autonomy',
       'politiktok-research-platform',
+      'geoscience-simulation',
     ])
   })
 

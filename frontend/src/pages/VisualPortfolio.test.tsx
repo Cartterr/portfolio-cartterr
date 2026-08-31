@@ -38,7 +38,7 @@ describe('VisualPortfolio', () => {
       Array.from(page.children)
         .filter((element) => element.tagName === 'SECTION')
         .map(({ id }) => id),
-    ).toEqual(['hero', 'about', 'experience', 'work', 'capabilities', 'contact'])
+    ).toEqual(['hero', 'about', 'work', 'experience', 'capabilities', 'contact'])
 
     const heroHeading = within(page).getByRole('heading', {
       level: 1,
@@ -63,14 +63,20 @@ describe('VisualPortfolio', () => {
     )
     expect(within(page).getByTestId('visual-hero-poster')).toBeInTheDocument()
 
-    expect(within(page).getByRole('heading', { level: 2, name: /profile/i })).toBeInTheDocument()
+    expect(
+      within(page).getByRole('heading', { level: 2, name: /visual computing and technical 3d work/i }),
+    ).toBeInTheDocument()
     expect(within(page).getByRole('heading', { level: 2, name: /experience/i })).toBeInTheDocument()
     expect(within(page).getByRole('heading', { level: 2, name: /education/i })).toBeInTheDocument()
     expect(
       within(page).getByRole('heading', { level: 2, name: /research & recognition/i }),
     ).toBeInTheDocument()
-    expect(within(page).getByRole('heading', { level: 2, name: /selected visual work/i })).toBeInTheDocument()
-    expect(within(page).getByRole('heading', { level: 2, name: /pipeline/i })).toBeInTheDocument()
+    expect(
+      within(page).getByRole('heading', { level: 2, name: /selected visual computing projects/i }),
+    ).toBeInTheDocument()
+    expect(
+      within(page).getByRole('heading', { level: 2, name: /workflow and capabilities/i }),
+    ).toBeInTheDocument()
     expect(within(page).getByRole('heading', { name: visualPortfolio.contact.heading })).toBeInTheDocument()
     expect(within(page).getAllByRole('link', { name: 'Download Résumé' })[0]).toHaveAttribute(
       'href',
@@ -86,7 +92,7 @@ describe('VisualPortfolio', () => {
     expect(within(page).queryByTestId('visual-hero-scene')).not.toBeInTheDocument()
   })
 
-  it('shows five WDAS-aligned project stories in priority order with explicit case-study evidence', () => {
+  it('shows five WDAS-aligned project stories in priority order with detailed case studies', () => {
     const { container } = render(<VisualPortfolio />)
     const page = container.querySelector<HTMLElement>('[data-visual-portfolio]')!
     const stories = within(page).getAllByTestId('visual-project-story')
@@ -95,13 +101,13 @@ describe('VisualPortfolio', () => {
     expect(stories.map((story) => within(story).getByRole('heading', { level: 3 }).textContent)).toEqual([
       'Parametric 3D Configurator',
       'Personal VFX & Look Development Studies',
-      '3D Geoscience Simulation Pipeline',
       'Drone Response Mission Planner',
       'Research Data Platform',
+      '3D Geoscience Simulation Pipeline',
     ])
 
     stories.forEach((story) => {
-      const carousel = within(story).getByRole('region', { name: /project evidence/i })
+      const carousel = within(story).getByRole('region', { name: /project gallery/i })
       expect(carousel.querySelectorAll('.portfolio-carousel__slide').length).toBeGreaterThan(0)
       expect(carousel.querySelectorAll('[data-active="true"]')).toHaveLength(1)
       expect(within(story).getByText('Problem')).toBeInTheDocument()
