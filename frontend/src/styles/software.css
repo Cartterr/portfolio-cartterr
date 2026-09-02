@@ -603,13 +603,15 @@
 }
 
 .software-project-chapter h3 {
-  max-width: 13ch;
+  width: 100%;
+  max-width: none;
   margin-top: 0.6rem;
-  font-size: clamp(2.4rem, 4.5vw, 5.5rem);
+  font-size: clamp(2.25rem, 3.8vw, 4.75rem);
   font-weight: 530;
   letter-spacing: -0.055em;
   line-height: 0.94;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
 }
 
 .software-project-evidence {
