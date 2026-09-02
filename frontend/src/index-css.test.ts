@@ -126,6 +126,12 @@ describe('portfolio CSS accessibility contracts', () => {
     )
   })
 
+  it('keeps long Software project titles inside their responsive text column', () => {
+    expect(getSoftwareRule('.software-project-chapter__copy')).toContain('min-width: 0')
+    expect(getSoftwareRule('.software-project-chapter__heading > div')).toContain('min-width: 0')
+    expect(getSoftwareRule('.software-project-chapter h3')).toContain('overflow-wrap: anywhere')
+  })
+
   it('lets the Fade plugin crossfade outgoing slides instead of hiding them immediately', () => {
     expect(getGalleryRule('.portfolio-carousel__slide')).not.toContain('visibility: hidden')
     expect(galleryStyles).not.toContain(".portfolio-carousel__slide[data-active='true']")
