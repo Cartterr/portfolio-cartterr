@@ -1,39 +1,40 @@
-# Design QA: Politiktok project title overflow
+# Design QA: shared software-project title treatment
 
-Source visual truth: `C:\Users\josec\AppData\Local\Temp\codex-clipboard-7c6b1824-1ef3-4c74-a577-d57c1d615d15.png`
+Source visual truth: `C:\Users\josec\AppData\Local\Temp\codex-clipboard-18fc3834-0886-435c-b072-4669a807346f.png`
 
-Implementation screenshot: `C:\Users\josec\Documents\Codex\2026-08-26\okay-based-on-what-you-find\outputs\portfolio-cartterr\artifacts\12-politiktok-title-overflow-fixed.png`
+Implementation screenshot: `C:\Users\josec\Documents\Codex\2026-08-26\okay-based-on-what-you-find\outputs\portfolio-cartterr\artifacts\15-project-title-scale-final.png`
 
-Focused comparison: `C:\Users\josec\Documents\Codex\2026-08-26\okay-based-on-what-you-find\outputs\portfolio-cartterr\artifacts\14-politiktok-title-overflow-comparison.png`
+Focused comparison: `C:\Users\josec\Documents\Codex\2026-08-26\okay-based-on-what-you-find\outputs\portfolio-cartterr\artifacts\16-project-title-scale-comparison.png`
 
-Viewport: 1280 x 720 CSS px at device scale factor 1. The source capture is 720 x 743 px. The focused comparison uses the source at native size beside a 720 x 720 crop of the implementation's affected copy column. This preserves the source pixels while aligning the visible title and evidence region for comparison.
+Viewport: 1280 x 720 CSS px at device scale factor 1. The source capture is 869 x 749 px. The implementation capture is 1265 x 720 px.
 
-State: Software portfolio, Politiktok project chapter, production deployment `ef596b7d-fc35-4080-a6b8-cf5fb379f8e2`.
+State: Live software portfolio, Politiktok project chapter, production deployment `de5e8429-a6f8-42f9-9fd9-2f6e050d03bc`.
 
 ## Findings
 
-- No remaining P0, P1, or P2 issues. The full title is visible and wraps as three complete lines.
-- Typography: Space Grotesk family, weight, tracking, line height, and hierarchy remain consistent with the source. Only the emergency long-word wrapping behavior changed.
-- Spacing and layout: the title stays within its 375 px text column. Its rendered and scroll widths are both 375 px, its right edge is 1221 px inside the 1280 px viewport, and the document scroll width is 1265 px.
-- Colors and tokens: the dark canvas, warm paper text, orange metadata, and divider tones are unchanged.
-- Image quality: the existing Politiktok carousel asset, crop, masking, and thumbnail treatment are unchanged.
-- Copy and content: all title, evidence, technology, and link copy remains unchanged.
+- No remaining P0, P1, or P2 issues. Politiktok now wraps cleanly as three whole-word lines with no orphaned letter.
+- Typography: every software-project title uses the same reduced responsive scale, full column width, and normal whole-word wrapping.
+- Spacing and layout: all six titles share the exact left edge of their role/date metadata. The page has no horizontal overflow at 1280 x 720.
+- Colors and tokens: unchanged.
+- Image quality: existing carousel assets, crops, masks, and thumbnail treatments are unchanged.
+- Copy and content: all project titles, evidence, technology, and link copy remain unchanged.
 - Console: zero browser console errors.
 
 ## Comparison history
 
-1. Earlier P1: `Politiktok research infrastructure` exceeded its grid item's min-content width and was clipped by the document boundary.
-2. Fix: allowed the copy and heading grid items to shrink with `min-width: 0`, then added `overflow-wrap: anywhere` as a defensive fallback for long unbroken project-name words.
-3. Post-fix evidence: production screenshot and focused comparison show the complete word `infrastructure`; title `clientWidth` and `scrollWidth` match at 375 px, and there is no document-level horizontal overflow.
+1. Earlier P1: the emergency `overflow-wrap: anywhere` fallback kept the Politiktok title in bounds but split `infrastructure` into an orphaned final `e`.
+2. Fix: reduced the shared title scale, removed the narrow character-based title limit, used the full text-column width, and restored normal whole-word wrapping.
+3. Post-fix evidence: Politiktok renders as `Politiktok` / `research` / `infrastructure`; all six project titles are aligned with their role/date metadata and remain inside the viewport.
 
 ## Implementation checklist
 
-- [x] Constrain the responsive copy grid.
-- [x] Add a safe long-word wrapping fallback.
+- [x] Apply the title treatment globally to all software-project chapters.
+- [x] Remove forced mid-word wrapping.
 - [x] Add a CSS regression test.
 - [x] Run frontend tests and the production build.
-- [x] Verify the deployed page and health endpoint.
+- [x] Verify all six titles in the deployed page.
+- [x] Verify the deployed health endpoint.
 
-Focused-region comparison was required because the full source is a crop of the affected copy column. The combined evidence image was used for the final comparison.
+The focused comparison preserves the supplied screenshot beside the live implementation to make the corrected title wrapping and alignment directly visible.
 
 final result: passed
