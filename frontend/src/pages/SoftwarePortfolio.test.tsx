@@ -100,12 +100,12 @@ describe('SoftwarePortfolio', () => {
     expect(gallery.querySelectorAll('.portfolio-carousel__slide')).toHaveLength(13)
   })
 
-  it('renders seven Experience stories as a compact timeline without duplicate galleries', () => {
+  it('renders nine Experience stories as a compact timeline without duplicate galleries', () => {
     render(<SoftwarePortfolio />)
 
     const experience = document.getElementById('software-experience')!
     const stories = within(experience).getAllByTestId('experience-chapter')
-    expect(stories).toHaveLength(7)
+    expect(stories).toHaveLength(9)
 
     for (const story of softwarePortfolio.experience) {
       const chapter = within(experience).getByTestId(`experience-${story.id}`)
@@ -115,7 +115,7 @@ describe('SoftwarePortfolio', () => {
     }
 
     expect(experience.querySelectorAll('.portfolio-carousel')).toHaveLength(0)
-    expect(softwarePortfolio.experience[0].id).toBe('gridworks')
+    expect(softwarePortfolio.experience[0].id).toBe('tek')
   })
 
   it('renders six detailed projects with legacy galleries and four capability systems with related work', () => {
