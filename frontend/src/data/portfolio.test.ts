@@ -22,10 +22,10 @@ describe('dual portfolio content', () => {
       expect(JSON.stringify(page)).not.toMatch(/siggraph/i)
     }
 
-    expect(softwarePortfolio.experience).toHaveLength(7)
+    expect(softwarePortfolio.experience).toHaveLength(9)
     expect(softwarePortfolio.projects).toHaveLength(6)
     expect(softwarePortfolio.capabilities).toHaveLength(4)
-    expect(visualPortfolio.experience).toHaveLength(7)
+    expect(visualPortfolio.experience).toHaveLength(9)
     expect(visualPortfolio.projects).toHaveLength(5)
     expect(visualPortfolio.hero.eyebrow).toBe(
       'SOFTWARE ENGINEER · ACM SIGGRAPH 2026 STUDENT VOLUNTEER',

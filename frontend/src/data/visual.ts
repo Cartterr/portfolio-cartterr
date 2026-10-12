@@ -42,14 +42,40 @@ const visualMetrics = [
 
 const visualExperience = [
   {
+    id: 'dictuc-xr-engineer',
+    period: 'Sep 2026 - Present',
+    title: 'Multiplatform Full Stack Software Engineer, XR Lab',
+    company: 'DICTUC · Pontificia Universidad Católica de Chile',
+    summary:
+      'Build the Unity XR research tool for ANID project 13250116, Enhancing Collaboration in Extended Reality, with Prof. Leonel Merino.',
+    contribution:
+      'Three participants in HTC Vive Focus Vision headsets solve a shared Jenga task while the tool records gaze, full-body motion from VIVE trackers, and task events.',
+    outcome: 'Behavioral data kept in sync with MindWare physiological recordings, so researchers can study emotion and collaboration in XR.',
+    technologies: ['Unity', 'OpenXR', 'Eye Tracking', 'Motion Capture', 'Physiological Sensing'],
+    mediaIds: [],
+  },
+  {
+    id: 'tek-physical-ai-intern',
+    period: 'Sep 2026 - Present',
+    title: 'Physical AI & Robotics Software Engineering Intern',
+    company: 'TEK Chile',
+    summary:
+      'Build perception and robot-control software for conveyor-based industrial automation cells.',
+    contribution:
+      'Develop real-time object detection and tracking, and program pick-and-place, motion planning, and collision avoidance on industrial robot arms.',
+    outcome: 'Perception and robotics software integrated and tested on real manufacturing hardware.',
+    technologies: ['Python', 'Computer Vision', 'Robot Arms', 'Motion Planning', 'Simulation'],
+    mediaIds: [],
+  },
+  {
     id: 'dily-software-engineer',
-    period: 'Sep 2025 - Present',
+    period: 'Sep 2025 - Sep 2026',
     title: 'Software Engineer',
     company: 'Dily',
     summary:
-      'Develop end-to-end automotive-finance workflows across TypeScript/Node.js services and Angular/Nx micro-frontends.',
+      'Developed end-to-end automotive-finance workflows across TypeScript/Node.js services and Angular/Nx micro-frontends.',
     contribution:
-      'Build modular production systems with cloud integrations, messaging, data persistence, observability, and automated testing.',
+      'Built modular production systems with cloud integrations, messaging, data persistence, observability, and automated testing.',
     outcome: 'Reliable production features delivered across product, frontend, backend, and operations.',
     technologies: ['TypeScript', 'Node.js', 'Angular', 'AWS', 'PostgreSQL'],
     mediaIds: mediaIdsFor('dily'),
@@ -111,7 +137,7 @@ const visualExperience = [
   },
   {
     id: 'puc-senior-teaching-assistant',
-    period: 'Mar 2023 - Jul 2025',
+    period: 'Mar 2023 - Present',
     title: 'Senior Teaching Assistant',
     company: 'Pontificia Universidad Católica de Chile',
     summary:
@@ -327,7 +353,7 @@ export const visualPortfolio = {
     paragraphs: [
       'My visual-computing work combines software engineering, simulation, graphics, and technical 3D.',
       'I build interactive product visualization, technical 3D prototypes, scientific visuals, real-time spatial interfaces, and the pipeline tooling around them.',
-      'Current projects include geoscience modeling, parametric Three.js tools, autonomous mission-planning research, and self-directed VFX and look-development studies.',
+      'Current work includes XR capture systems at DICTUC, robotic perception at TEK Chile, parametric Three.js tools, and self-directed VFX and look-development studies.',
     ],
     mediaIds: visualAboutMediaIds,
     images: aboutImages(visualAboutMediaIds),

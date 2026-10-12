@@ -19,30 +19,58 @@ const mediaIdsFor = (storyId: string) => getMediaForStory(storyId).map(({ id }) 
 
 const softwareExperience = [
   {
+    id: 'tek',
+    period: 'Sep 2026 - Present',
+    title: 'Physical AI & Robotics Software Engineering Intern',
+    company: 'TEK Chile',
+    summary:
+      'Build perception and robot-control software for conveyor-based industrial automation cells.',
+    contribution:
+      'Develop real-time object detection and tracking, and program pick-and-place, motion planning, and collision avoidance on industrial robot arms.',
+    outcome:
+      'Perception, robotics, and automation software integrated and tested on real manufacturing hardware.',
+    technologies: ['Python', 'Computer Vision', 'Robot Arms', 'Motion Planning', 'Simulation'],
+    mediaIds: [],
+  },
+  {
+    id: 'dictuc',
+    period: 'Sep 2026 - Present',
+    title: 'Multiplatform Full Stack Software Engineer, XR Lab',
+    company: 'DICTUC, Pontificia Universidad Católica de Chile',
+    summary:
+      'Build the Unity XR research tool for ANID project 13250116, Enhancing Collaboration in Extended Reality, with Prof. Leonel Merino.',
+    contribution:
+      'Three participants in HTC Vive Focus Vision headsets solve a shared Jenga task while the tool records gaze, full-body motion from VIVE trackers, and task events.',
+    outcome:
+      'Behavioral data kept in sync with MindWare physiological recordings, so researchers can study emotion and collaboration in XR.',
+    technologies: ['Unity', 'OpenXR', 'Eye Tracking', 'Motion Capture', 'Physiological Sensing'],
+    mediaIds: [],
+  },
+  {
     id: 'gridworks',
-    period: '2026 - Present',
+    period: '2026',
     title: 'Lead Engineer, Alerting Platform Migration',
     company: 'GridWorks',
     summary:
-      'Lead the rebuild of an industrial alerting platform with modular services and a safer migration path.',
+      'Led the end-to-end rebuild of an industrial alerting platform with modular services and a safer migration path.',
     contribution:
-      'Shape ingestion, rules, escalation, operator tooling, and rollout controls around operational parity.',
+      'Shaped ingestion, rules, escalation, operator tooling, and rollout controls around operational parity.',
     outcome:
-      'A staged modernization path that replaces legacy automation while preserving live workflows.',
+      'A staged modernization that replaced legacy automation while preserving live workflows.',
     technologies: ['Next.js', 'Node.js', 'Railway', 'MQTT', 'PostgreSQL'],
     mediaIds: mediaIdsFor('gridworks'),
   },
   {
     id: 'dily',
-    period: 'Sep 2025 - Present',
+    period: 'Sep 2025 - Sep 2026',
     title: 'Full Stack Developer',
     company: 'Dily',
     summary:
-      'Build fintech and lending software end to end with clear domain boundaries and testable product flows.',
+      'Built fintech and lending software end to end with clear domain boundaries and testable product flows.',
     contribution:
-      'Work across TypeScript and Node.js services, Angular delivery, and lending-domain design in a real monorepo.',
+      'Worked across TypeScript and Node.js services, Angular delivery, and lending-domain design in a production monorepo.',
     outcome:
-      'Product changes land through DDD and hexagonal boundaries that keep core lending behavior maintainable.',
+      'Product changes landed through DDD and hexagonal boundaries that kept core lending behavior maintainable.',
     technologies: ['TypeScript', 'Node.js', 'Express', 'Angular', 'Nx', 'MySQL', 'PostgreSQL', 'AWS'],
     mediaIds: mediaIdsFor('dily'),
   },
@@ -78,13 +106,13 @@ const softwareExperience = [
   },
   {
     id: 'politiktok',
-    period: 'Jul 2023 - Present',
+    period: 'Jul 2023 - Jul 2025',
     title: 'Data Science Researcher',
     company: 'Politiktok, Pontificia Universidad Católica de Chile',
     summary:
-      'Build large-scale political-content research infrastructure with GPU-backed machine-learning and data workflows.',
+      'Built large-scale political-content research infrastructure with GPU-backed machine-learning and data workflows.',
     contribution:
-      'Turn research questions into repeatable Python, PyTorch, CUDA, NLP, and PostgreSQL processing systems.',
+      'Turned research questions into repeatable Python, PyTorch, CUDA, NLP, and PostgreSQL processing systems.',
     outcome: 'Processed more than 100,000 records and improved research-pipeline performance by 10x.',
     technologies: ['Python', 'PyTorch', 'CUDA', 'NLP', 'PostgreSQL', 'Data Pipelines'],
     mediaIds: mediaIdsFor('politiktok'),
@@ -126,13 +154,13 @@ const softwareProjects = [
     title: 'Domain-driven lending systems',
     eyebrow: 'Dily',
     role: 'Full Stack Developer',
-    period: 'Sep 2025 - Present',
-    status: 'Active product engineering',
+    period: 'Sep 2025 - Sep 2026',
+    status: 'Completed production role',
     summary: 'End-to-end fintech delivery around maintainable lending-domain boundaries.',
     problem:
       'Fast-moving lending flows need product flexibility without coupling core business rules to delivery details.',
     contribution:
-      'I build TypeScript and Node.js services and Angular product flows using DDD and hexagonal architecture.',
+      'I built TypeScript and Node.js services and Angular product flows using DDD and hexagonal architecture.',
     outcome: 'A testable product architecture that supports change across backend and frontend delivery.',
     technologies: ['TypeScript', 'Node.js', 'Angular', 'Nx', 'PostgreSQL', 'DDD'],
     mediaIds: mediaIdsFor('dily'),
@@ -143,16 +171,16 @@ const softwareProjects = [
     title: 'Industrial alerting platform migration',
     eyebrow: 'GridWorks',
     role: 'Lead Engineer',
-    period: '2026 - Present',
-    status: 'Active production migration',
+    period: '2026',
+    status: 'Completed production migration',
     summary:
       'An industrial alerting migration designed around operational parity, modular services, and safer rollout controls.',
     problem:
       'Legacy alerting workflows needed to move without losing ingestion, rules, escalation, and operator behavior.',
     contribution:
-      'I lead the rebuild across alert lifecycle, escalation, ingestion logic, and production operator tooling.',
+      'I led the rebuild across alert lifecycle, escalation, ingestion logic, and production operator tooling.',
     outcome:
-      'A controlled modernization path that preserves live workflows while replacing legacy automation.',
+      'A controlled modernization that preserved live workflows while replacing legacy automation.',
     technologies: ['Next.js', 'Node.js', 'Railway', 'MQTT', 'PostgreSQL'],
     mediaIds: mediaIdsFor('gridworks'),
   }),
@@ -199,8 +227,8 @@ const softwareProjects = [
     title: 'Politiktok research infrastructure',
     eyebrow: 'Pontificia Universidad Católica de Chile',
     role: 'Data Science Researcher',
-    period: 'Jul 2023 - Present',
-    status: 'Active research',
+    period: 'Jul 2023 - Jul 2025',
+    status: 'Completed research, published in Springer',
     summary:
       'Research infrastructure for repeatable political-media analysis across large datasets.',
     problem:
@@ -302,8 +330,8 @@ export const softwarePortfolio = {
   about: {
     heading: 'Engineering across production and research',
     paragraphs: [
-      'I am a software engineer based in Santiago, Chile. My work spans production backend and frontend systems, GPU-backed research infrastructure, scientific simulation, and autonomous mission planning.',
-      'Across Dily, GridWorks, Flair, Notre Dame, Politiktok, and PUC, I have worked on fintech, industrial alerting, energy optimization, political-media research, drone coordination, and geoscience simulation.',
+      'I am a software engineer based in Santiago, Chile. My work spans physical AI and robotics, XR systems, production backend and frontend systems, GPU-backed research infrastructure, scientific simulation, and autonomous mission planning.',
+      'Today I work on robotic perception and manipulation at TEK Chile and on XR research systems at DICTUC. Before that, across Dily, GridWorks, Flair, Notre Dame, Politiktok, and PUC, I worked on fintech, industrial alerting, energy optimization, political-media research, drone coordination, and geoscience simulation.',
       'I am especially interested in applying AI to satellite data, simulation, and aerospace problems.',
     ],
     mediaIds: aboutMediaIds,
