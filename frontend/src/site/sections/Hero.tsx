@@ -1,4 +1,5 @@
 import { type CSSProperties, Fragment, useEffect, useRef, useState } from 'react'
+import heroPortrait from '../../assets/images/optimized/profile1-hero.webp'
 import { getMedia } from '../../data/media'
 import type { ExperienceStory, PortfolioImageMedia, PortfolioPage } from '../../data/types'
 import { WaveField } from '../fx/WaveField'
@@ -6,6 +7,7 @@ import { canAnimate, hasFinePointer } from '../lib/env'
 import { useMagnetic, useRefreshRate, useSantiagoTime } from '../lib/hooks'
 
 const deck = [
+  { id: 'profile1', place: 'KHIPU 2025', label: 'Latin American AI meeting' },
   { id: 'tek-roll-gripper', place: 'TEK Chile', label: 'Robot packing cell' },
   { id: 'dictuc-headsets-jenga', place: 'DICTUC XR Lab', label: 'Three-headset study' },
   { id: 'nd1', place: 'Notre Dame', label: 'Autonomous drone fieldwork' },
@@ -14,7 +16,12 @@ const deck = [
 ].map((card) => {
   const media = getMedia(card.id)
   if (media.kind !== 'image') throw new Error(`Hero deck media must be an image: ${card.id}`)
-  return { ...card, media: media as PortfolioImageMedia }
+  // The top card uses a tighter crop of the KHIPU photo so the face reads at card size.
+  const image =
+    card.id === 'profile1'
+      ? { ...(media as PortfolioImageMedia), src: heroPortrait, width: 800, height: 1000, objectPosition: '50% 35%' }
+      : (media as PortfolioImageMedia)
+  return { ...card, media: image }
 })
 
 const DECK_INTERVAL_MS = 5200
