@@ -127,6 +127,7 @@ const legacyStory = (
   storyId: string,
   owner: string,
   definitions: readonly LegacyMediaDefinition[],
+  publishedSource = 'Previously published portfolio media from commit c94ed511',
 ): PortfolioImageMedia[] =>
   definitions.map((definition) => {
     const sourceName = definition.sourceName ?? definition.name
@@ -152,7 +153,7 @@ const legacyStory = (
         owner,
         source: isReplacement
           ? 'Public-safe duplicate of an existing approved project identity asset'
-          : 'Previously published portfolio media from commit c94ed511',
+          : publishedSource,
         clearance: isReplacement ? 'privacy-safe-replacement' : 'previously-published',
         ...(isReplacement
           ? { replacementFor: `${definition.name} private authenticated dashboard` }
@@ -686,6 +687,47 @@ const geoscienceMedia = legacyStory('geoscience', 'José Ernesto Carter Arriagad
   },
 ])
 
+// SIGGRAPH 2026 Student Volunteer photos, from José's own public LinkedIn posts.
+const siggraphMedia = legacyStory(
+  'siggraph',
+  'José Ernesto Carter Arriagada',
+  [
+    {
+      name: 'siggraph-sign',
+      width: 1280,
+      height: 960,
+      alt: 'José Carter beside the SIGGRAPH letters in the Los Angeles convention hall',
+      caption: 'SIGGRAPH 2026 in Los Angeles, attending as a Student Volunteer.',
+      objectPosition: '30% 60%',
+    },
+    {
+      name: 'treyarch-portrait',
+      width: 800,
+      height: 1066,
+      alt: 'José Carter at Treyarch studio in front of an awards and memorabilia shelf',
+      caption: 'Visiting Treyarch in Playa Vista through the SIGGRAPH Student Volunteer program.',
+      objectPosition: '50% 45%',
+    },
+    {
+      name: 'treyarch-group',
+      width: 800,
+      height: 533,
+      alt: 'SIGGRAPH Student Volunteers at Treyarch studio beneath a large creature sculpture',
+      caption: 'The Student Volunteer group during the Treyarch studio visit.',
+      objectPosition: '50% 55%',
+    },
+    {
+      name: 'siggraph-nvidia-lab',
+      width: 480,
+      height: 640,
+      alt: 'Laptop at an NVIDIA hands-on lab on ray-tracing applications at SIGGRAPH',
+      caption: 'The NVIDIA hands-on lab on developing and debugging ray-tracing applications.',
+      objectPosition: '50% 50%',
+    },
+  ],
+  'José Ernesto Carter Arriagada’s public LinkedIn posts about SIGGRAPH 2026 (Jul 2026)',
+)
+
 export const legacyMedia: PortfolioImageMedia[] = [
   ...profileMedia,
   ...dilyMedia,
@@ -973,7 +1015,12 @@ export const experienceMedia: PortfolioImageMedia[] = experienceDefinitions.map(
   }
 })
 
-export const portfolioMedia: PortfolioMedia[] = [...legacyMedia, ...experienceMedia, ...visualMedia]
+export const portfolioMedia: PortfolioMedia[] = [
+  ...legacyMedia,
+  ...siggraphMedia,
+  ...experienceMedia,
+  ...visualMedia,
+]
 
 const mediaById = new Map(portfolioMedia.map((media) => [media.id, media]))
 

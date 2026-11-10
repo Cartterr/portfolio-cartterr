@@ -57,6 +57,25 @@ const sketches: Record<string, { label: string; body: ReactNode; accent: ReactNo
       </>
     ),
   },
+  siggraph: {
+    label: 'A teapot lit by a ray-traced light',
+    body: (
+      <>
+        <path d="M52 94 C 40 92 38 70 52 63 C 62 57 98 57 108 63 C 122 70 120 92 108 94 Z" />
+        <path d="M60 94 v6 M100 94 v6" />
+        <path d="M64 61 Q 80 49 96 61" />
+        <circle cx="80" cy="51" r="3" />
+        <path d="M52 84 C 40 82 34 70 30 56 M53 74 C 44 73 38 66 30 56 M30 56 l-5 -3" />
+        <path d="M108 68 C 124 64 128 86 110 89" />
+      </>
+    ),
+    accent: (
+      <>
+        <circle cx="136" cy="22" r="4" />
+        <path d="M131 26 L99 58 M133 29 L117 66" strokeDasharray="2 4" />
+      </>
+    ),
+  },
   dily: {
     label: 'A car with a loan tag',
     body: (

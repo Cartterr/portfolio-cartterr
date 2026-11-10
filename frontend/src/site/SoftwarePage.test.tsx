@@ -74,15 +74,17 @@ describe('SoftwarePage', () => {
     })
   })
 
-  it('tells the About story with every profile photo plus the Dily team', () => {
+  it('tells the About story with every profile photo plus SIGGRAPH and the Dily team', () => {
     render(<SoftwarePage />)
 
     const about = document.getElementById('software-about')!
     const profileMedia = legacyMedia.filter(({ storyId }) => storyId === 'profile')
     expect(profileMedia).toHaveLength(13)
     const photos = [...about.querySelectorAll('img[data-about-photo]')]
-    expect(photos).toHaveLength(profileMedia.length + 2)
-    expect(photos.slice(4, 6).map((img) => img.getAttribute('alt'))).toEqual([
+    expect(photos).toHaveLength(profileMedia.length + 6)
+    expect(photos.slice(4, 8).map((img) => img.getAttribute('alt'))).toEqual([
+      getMedia('siggraph-sign').alt,
+      getMedia('treyarch-portrait').alt,
       getMedia('dily1').alt,
       getMedia('dily3').alt,
     ])
@@ -94,12 +96,12 @@ describe('SoftwarePage', () => {
     }
   })
 
-  it('renders nine Experience stories as a compact timeline without galleries', () => {
+  it('renders ten Experience stories as a compact timeline without galleries', () => {
     render(<SoftwarePage />)
 
     const experience = document.getElementById('software-experience')!
     const stories = within(experience).getAllByTestId('experience-story')
-    expect(stories).toHaveLength(9)
+    expect(stories).toHaveLength(10)
     expect(experience.querySelectorAll('img')).toHaveLength(0)
     softwarePortfolio.experience.forEach((story, index) => {
       expect(within(stories[index]).getByRole('heading', { level: 3, name: story.title })).toBeInTheDocument()
@@ -202,7 +204,7 @@ describe('SoftwarePage', () => {
     expect(viewer).not.toHaveAttribute('open')
   })
 
-  it('includes résumé, email, social, and form paths without SIGGRAPH copy', () => {
+  it('includes résumé, email, social, and form paths', () => {
     render(<SoftwarePage />)
 
     const contact = document.getElementById('software-contact')!
@@ -227,7 +229,7 @@ describe('SoftwarePage', () => {
     expect(within(form).getByLabelText('Name')).toBeRequired()
     expect(within(form).getByLabelText('Email')).toBeRequired()
     expect(within(form).getByLabelText('Message')).toBeRequired()
-    expect(document.body).not.toHaveTextContent(/siggraph/i)
+    expect(contact).not.toHaveTextContent(/siggraph/i)
   })
 
   it('posts the contact form with the software context and confirms it', async () => {

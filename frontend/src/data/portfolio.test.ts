@@ -19,10 +19,13 @@ describe('dual portfolio content', () => {
   it('defines two complete portfolio trees with focused visual positioning', () => {
     for (const page of [softwarePortfolio]) {
       expect(page.sections.map((section) => section.kind)).toEqual(sectionOrder)
-      expect(JSON.stringify(page)).not.toMatch(/siggraph/i)
+      // SIGGRAPH appears only as the Student Volunteer role and its photos.
+      expect(page.experience.find(({ id }) => id === 'siggraph')?.company).toBe(
+        'ACM SIGGRAPH 2026, Los Angeles',
+      )
     }
 
-    expect(softwarePortfolio.experience).toHaveLength(9)
+    expect(softwarePortfolio.experience).toHaveLength(10)
     expect(softwarePortfolio.projects).toHaveLength(8)
     expect(softwarePortfolio.capabilities).toHaveLength(4)
     expect(visualPortfolio.experience).toHaveLength(9)

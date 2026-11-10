@@ -79,6 +79,20 @@ const softwareExperience = [
     mediaIds: mediaIdsFor('gridworks'),
   },
   {
+    id: 'siggraph',
+    period: 'Jul 2026',
+    title: 'Student Volunteer',
+    company: 'ACM SIGGRAPH 2026, Los Angeles',
+    summary:
+      'Selected as a Student Volunteer for SIGGRAPH 2026 in Los Angeles, July 19–23, the conference on computer graphics and interactive techniques.',
+    contribution:
+      'Supported the conference while attending talks from Wētā FX, Industrial Light & Magic, Criterion Games and Meta, an NVIDIA hands-on lab on ray-tracing applications, Papers Fast Forward, Real-Time Live! and the Electronic Theater.',
+    outcome:
+      'Visited Treyarch in Playa Vista through the volunteer program and talked with its engineers about rendering, engine work, tools for artists and production pipelines.',
+    technologies: ['Computer Graphics', 'Ray Tracing', 'Real-Time Rendering', 'VFX', 'XR'],
+    mediaIds: mediaIdsFor('siggraph'),
+  },
+  {
     id: 'dily',
     period: 'Sep 2025 - Sep 2026',
     title: 'Full Stack Developer',
@@ -350,12 +364,16 @@ const softwareCapabilities = [
   },
 ] satisfies CapabilityStory[]
 
-// People and places: the four milestone photos first, then the Dily team, then the rest.
+// People and places: the four milestones, SIGGRAPH and Treyarch, the Dily team, then the rest.
 const profileMediaIds = mediaIdsFor('profile')
 const aboutMediaIds = [
   ...profileMediaIds.slice(0, 4),
+  'siggraph-sign',
+  'treyarch-portrait',
   'dily1',
   'dily3',
+  'treyarch-group',
+  'siggraph-nvidia-lab',
   ...profileMediaIds.slice(4),
 ]
 
