@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>José Carter business card, back</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..600&family=Instrument+Serif:ital@1&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; display: flex; flex-direction: column; justify-content: space-between; width: 1360px; height: 756px; box-sizing: border-box; padding: 76px; overflow: hidden; background: #f2f0eb; color: #0d0d0c; font-family: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+<div style="display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 40px; font-family: 'Geist Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 26px; font-weight: 500; letter-spacing: 0.08em; line-height: 1.2; text-transform: uppercase; color: #33322e">
+<span>Software engineer</span>
+<div style="display: flex; align-items: center; gap: 16px">
+<span style="width: 14px; height: 14px; border-radius: 50%; background: {{accent}}"></span>
+<span>Santiago, Chile</span>
+</div>
+</div>
+<div style="font-size: 80px; font-weight: 560; letter-spacing: -0.045em; line-height: 0.98">Building <span style="font-family: 'Instrument Serif', 'Iowan Old Style', Georgia, serif; font-size: 1.12em; font-style: italic; font-weight: 400; letter-spacing: -0.02em">reliable</span><br>AI, data, and<br>autonomous systems.</div>
+</div>
+<div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 60px">
+<div style="display: grid; grid-template-columns: 190px minmax(0, 1fr); width: 800px; align-items: baseline">
+<div style="grid-column: 1 / -1; height: 2px; background: #0d0d0c; opacity: 0.22"></div>
+<span style="padding: 9px 0; font-family: 'Geist Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 24px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #63615a">Email</span>
+<span style="padding: 9px 0; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.2">jose.carterx@gmail.com</span>
+<div style="grid-column: 1 / -1; height: 2px; background: #0d0d0c; opacity: 0.22"></div>
+<span style="padding: 9px 0; font-family: 'Geist Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 24px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #63615a">Web</span>
+<span style="padding: 9px 0; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.2">josecarter.dev</span>
+<div style="grid-column: 1 / -1; height: 2px; background: #0d0d0c; opacity: 0.22"></div>
+<span style="padding: 9px 0; font-family: 'Geist Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 24px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #63615a">LinkedIn</span>
+<span style="padding: 9px 0; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.2">linkedin.com/in/jose-carter-arriagada</span>
+<div style="grid-column: 1 / -1; height: 2px; background: #0d0d0c; opacity: 0.22"></div>
+<span style="padding: 9px 0 0; font-family: 'Geist Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 24px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: #63615a">GitHub</span>
+<span style="padding: 9px 0 0; font-size: 32px; font-weight: 500; letter-spacing: -0.015em; line-height: 1.2">github.com/Cartterr</span>
+</div>
+<img src="/_blob/95d0cf405c1517f445991d7635f47baf" alt="QR code for josecarter.dev" style="width: 225px; height: 225px">
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#ff4a1c","options":["#ff4a1c","#0d0d0c","#b93208"]},"$preview":{"width":1360,"height":756}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#ff4a1c' };
+}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>José Carter business card, front</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..600&display=swap">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="position: relative; width: 1360px; height: 756px; box-sizing: border-box; overflow: hidden; background: #0d0d0c; color: #f2f0eb; font-family: 'Geist', 'Helvetica Neue', Helvetica, Arial, sans-serif">
+<img src="/_blob/8f34baa72b8e67de1d0c62d93bc6068c" alt="" aria-hidden="true" style="position: absolute; left: -45px; top: -45px; width: 1450px; height: 846px; max-width: none">
+<div style="position: relative; display: flex; flex-direction: column; gap: 34px; height: 100%; box-sizing: border-box; padding: 76px">
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 40px; font-family: 'Geist Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 27px; font-weight: 500; letter-spacing: 0.08em; line-height: 1.2; text-transform: uppercase">
+<div style="display: flex; align-items: center; gap: 18px; color: #d3d0c8">
+<span style="width: 15px; height: 15px; border-radius: 50%; background: {{accent}}"></span>
+<span>Software engineering · AI · Data · Autonomy</span>
+</div>
+<span style="text-transform: none; letter-spacing: 0.04em; color: #f2f0eb">josecarter.dev</span>
+</div>
+<div style="margin-left: -13px; font-size: 249px; font-weight: 600; letter-spacing: -0.07em; line-height: 0.92; white-space: nowrap">José Carter</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"accent":{"editor":"color","default":"#ff4a1c","options":["#ff4a1c","#f2f0eb","#ffb000"]},"$preview":{"width":1360,"height":756}}'>
+class Component extends DCLogic {
+renderVals() {
+return { accent: this.props.accent ?? '#ff4a1c' };
+}
+}
+</script>
+</body>
+</html>
