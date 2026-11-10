@@ -99,8 +99,9 @@ describe('SoftwarePage', () => {
     softwarePortfolio.experience.forEach((story, index) => {
       expect(within(stories[index]).getByRole('heading', { level: 3, name: story.title })).toBeInTheDocument()
       expect(within(stories[index]).getByText(story.company)).toBeInTheDocument()
-      expect(within(stories[index]).getByText(story.outcome)).toBeInTheDocument()
+      expect(stories[index].querySelector('.jc-xp__outcome')).toHaveTextContent(story.outcome)
     })
+    expect(within(experience).getAllByRole('link', { name: /,/ }).length).toBeGreaterThanOrEqual(9)
   })
 
   it('renders eight projects with their evidence and galleries, two featured and six as rows', () => {
