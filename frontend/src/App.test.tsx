@@ -100,7 +100,7 @@ describe('dual portfolio shell', () => {
 
     const page = getPortfolio('software')
     expect(screen.getByRole('link', { name: `José Carter — ${page.hero.eyebrow}` })).toHaveClass(
-      'site-identity',
+      'jc-nav__brand',
     )
     const primaryNavigation = screen.getByRole('navigation', { name: 'Primary navigation' })
     const navigationLabels = within(primaryNavigation)
@@ -114,8 +114,12 @@ describe('dual portfolio shell', () => {
         'data-section-index',
         String(index + 1).padStart(2, '0'),
       )
-      expect(document.querySelector(href)).toHaveAttribute('data-section-boundary')
     })
+    // The navigation lists the sections in the order the page presents them.
+    const sectionOrder = [...document.querySelectorAll('[data-section-index]')].map(
+      ({ id }) => `#${id}`,
+    )
+    expect(sectionOrder).toEqual(page.navigation.map(({ href }) => href))
     expect(screen.getByRole('link', { name: /skip to content/i })).toHaveAttribute('href', '#main')
   })
 
@@ -130,7 +134,7 @@ describe('dual portfolio shell', () => {
     render(<App />)
 
     const target = document.querySelector('#software-work')
-    const heading = screen.getByRole('heading', { level: 2, name: 'Selected engineering projects' })
+    const heading = screen.getByRole('heading', { level: 2, name: 'Selected work' })
     await waitFor(() => expect(scrollIntoView).toHaveBeenCalled())
     expect(scrollIntoView).toHaveBeenCalledWith()
     expect(target).toBeInTheDocument()
@@ -242,12 +246,13 @@ describe('dual portfolio shell', () => {
       })
     }
 
-    positionSections('software', 2)
+    positionSections('software', 1)
     window.dispatchEvent(new Event('scroll'))
 
-    const primaryNavigation = screen.getByRole('navigation', { name: 'Primary navigation' })
+    // Each mode has its own header, so the landmark is looked up again after the switch.
+    const primaryNavigation = () => screen.getByRole('navigation', { name: 'Primary navigation' })
     await waitFor(() =>
-      expect(within(primaryNavigation).getByRole('link', { name: 'Work' })).toHaveAttribute(
+      expect(within(primaryNavigation()).getByRole('link', { name: 'Work' })).toHaveAttribute(
         'aria-current',
         'location',
       ),
@@ -260,7 +265,7 @@ describe('dual portfolio shell', () => {
     window.dispatchEvent(new Event('scroll'))
 
     await waitFor(() =>
-      expect(within(primaryNavigation).getByRole('link', { name: 'Capabilities' })).toHaveAttribute(
+      expect(within(primaryNavigation()).getByRole('link', { name: 'Capabilities' })).toHaveAttribute(
         'aria-current',
         'location',
       ),
@@ -331,9 +336,7 @@ describe('dual portfolio shell', () => {
 
     await waitFor(() => {
       expect(window.location.hash).toBe('#software-work')
-      expect(
-        screen.getByRole('heading', { level: 2, name: 'Selected engineering projects' }),
-      ).toHaveFocus()
+      expect(screen.getByRole('heading', { level: 2, name: 'Selected work' })).toHaveFocus()
     })
     expect(screen.queryByRole('navigation', { name: 'Mobile navigation' })).not.toBeInTheDocument()
   })

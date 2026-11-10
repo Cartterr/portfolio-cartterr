@@ -352,10 +352,13 @@ const softwareCapabilities = [
 
 const aboutMediaIds = mediaIdsFor('profile')
 
-const softwareNavigation = sharedNavigation.map((item) => ({
-  ...item,
-  href: `#software-${item.href.slice(1)}`,
-}))
+// In the order the Software page presents its sections, so the active link follows the scroll.
+const softwareNavigationOrder = ['About', 'Work', 'Experience', 'Capabilities', 'Contact']
+
+const softwareNavigation = softwareNavigationOrder.flatMap((label) => {
+  const item = sharedNavigation.find((candidate) => candidate.label === label)
+  return item ? [{ ...item, href: `#software-${item.href.slice(1)}` }] : []
+})
 
 export const softwarePortfolio = {
   mode: 'software',
@@ -368,7 +371,7 @@ export const softwarePortfolio = {
     socialDescription:
       'Software engineering across production tooling, simulation, real-time 3D, distributed systems, and scientific visualization.',
     canonical: 'https://josecarter.dev/',
-    themeColor: '#111722',
+    themeColor: '#f2f0eb',
     socialImage: 'https://josecarter.dev/og-jose-carter.png',
     socialImageAlt:
       "José Carter's portfolio for production technology, tools, simulation, and real-time 3D",
@@ -401,7 +404,7 @@ export const softwarePortfolio = {
   projects: softwareProjects,
   capabilities: softwareCapabilities,
   contact: {
-    heading: 'Contact',
+    heading: 'Let’s build something reliable.',
     body:
       'For software engineering, AI systems, data infrastructure, scientific computing, or autonomous-systems work, email me or find me online.',
     subject: 'Software engineering project',

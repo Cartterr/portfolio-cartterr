@@ -21,6 +21,8 @@ The production server serves the compiled frontend and the same-origin API from 
 - `GET /api/health`
 - `POST /api/contact`
 
+The Software page lives in `frontend/src/site/`: `sections/` (hero, about, work, experience, capabilities, contact), `fx/` (the WebGL point field, image viewer, cursor preview, rolling figures), `lib/` (shared hooks) and `site.css`. It is built for high-refresh displays: motion is CSS `transform`/`opacity` with `linear()` springs, scroll-driven animations where the browser has them, and scripted effects that integrate measured frame time, so nothing depends on a 60 Hz frame. The Visual page keeps its own components and styles.
+
 The Vite application under `frontend/` builds separate Software and Visual HTML documents. Express serves only those explicit document routes, known static files, and the same-origin API; unknown documents and missing assets return real `404` responses.
 
 ## Native Windows setup

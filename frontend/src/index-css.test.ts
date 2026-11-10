@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 
 const styles = readFileSync('src/index.css', 'utf8')
-const softwareStyles = readFileSync('src/styles/software.css', 'utf8')
+const softwareStyles = readFileSync('src/site/site.css', 'utf8')
 const galleryStyles = readFileSync('src/styles/gallery.css', 'utf8')
 
 const getRule = (selector: string) => {
@@ -98,42 +98,80 @@ describe('portfolio CSS accessibility contracts', () => {
     expect(getRule('.contact .eyebrow')).toContain('color: var(--copper-on-dark)')
   })
 
-  it('keeps faint Software metadata readable on every dark surface', () => {
-    const faint = getSoftwareToken('--software-faint')
-
-    for (const background of [
-      getSoftwareToken('--software-canvas'),
-      getSoftwareToken('--software-surface'),
-      getSoftwareToken('--software-surface-raised'),
-    ]) {
-      expect(contrastRatio(faint, background)).toBeGreaterThanOrEqual(4.5)
+  it('keeps Software text readable on paper, on cards, and on ink', () => {
+    const paper = getSoftwareToken('--jc-paper')
+    const card = getSoftwareToken('--jc-white')
+    const ink = getSoftwareToken('--jc-ink')
+    const inkRaised = getSoftwareToken('--jc-ink-2')
+    const signal = getSoftwareToken('--jc-signal')
+    const inkContext = getSoftwareRule('.jc-ink')
+    const inkToken = (name: string) => {
+      const match = inkContext.match(new RegExp(`${name}:\\s*(#[0-9a-fA-F]{6})`))
+      expect(match, `Missing ink-context token ${name}`).not.toBeNull()
+      return match?.[1] ?? '#000000'
     }
+
+    for (const background of [paper, card]) {
+      expect(contrastRatio(getSoftwareToken('--fg-2'), background)).toBeGreaterThanOrEqual(4.5)
+      expect(contrastRatio(getSoftwareToken('--fg-mute'), background)).toBeGreaterThanOrEqual(4.5)
+      expect(
+        contrastRatio(getSoftwareToken('--jc-signal-text'), background),
+      ).toBeGreaterThanOrEqual(4.5)
+    }
+    for (const background of [ink, inkRaised]) {
+      expect(contrastRatio(inkToken('--fg-2'), background)).toBeGreaterThanOrEqual(4.5)
+      expect(contrastRatio(inkToken('--fg-mute'), background)).toBeGreaterThanOrEqual(4.5)
+      expect(contrastRatio(inkToken('--accent-text'), background)).toBeGreaterThanOrEqual(4.5)
+    }
+    // Buttons turn signal orange on hover and keep ink text on it.
+    expect(contrastRatio(ink, signal)).toBeGreaterThanOrEqual(4.5)
+    expect(softwareStyles).toMatch(
+      /\.jc-btn--ink:hover,\s*\.jc-btn--ink:focus-visible\s*\{\s*color: var\(--jc-ink\);/,
+    )
   })
 
-  it('defers layout work for offscreen long-form Software chapters', () => {
-    for (const selector of [
-      '.software-about',
-      '.software-experience-chapter',
-      '.software-project-chapter',
-      '.software-capability-system',
-      '.software-contact',
-    ]) {
-      expect(getSoftwareRule(selector)).toContain('content-visibility: auto')
-      expect(getSoftwareRule(selector)).toContain('contain-intrinsic-size: auto')
-    }
-    expect(getSoftwareRule('.software-document .software-contact h2')).toContain(
-      "font-family: 'Space Grotesk Variable'",
+  it('hides Software entrances only after the script opts in', () => {
+    const rules = softwareStyles.replace(/\/\*[\s\S]*?\*\//g, '')
+    const hiddenStates = [...rules.matchAll(/([^{}]+)\{[^}]*opacity:\s*0;[^}]*\}/g)]
+      .map(([, selector]) => selector.trim())
+      .filter((selector) => selector.includes('[data-reveal]'))
+
+    expect(hiddenStates.length).toBeGreaterThan(0)
+    for (const selector of hiddenStates) expect(selector.startsWith('.jc-anim ')).toBe(true)
+    expect(softwareStyles).toContain('.jc-anim .jc-words:not(.is-in) .jc-word__in')
+    expect(softwareStyles).toContain('.jc-anim [data-reveal]:not(.is-in) .jc-odo__reel')
+  })
+
+  it('keeps Software motion on the compositor and optional', () => {
+    // No CSS masks: a mask over the animated canvas or marquee costs a full extra pass per frame.
+    expect(softwareStyles).not.toMatch(/mask-image\s*:/)
+    expect(softwareStyles).toContain('@supports (transition-timing-function: linear(0, 1))')
+    expect(softwareStyles).toMatch(
+      /@media \(prefers-reduced-motion: no-preference\) \{\s*@supports \(animation-timeline: view\(\)\)/,
     )
+    expect(softwareStyles).toContain('@media (prefers-reduced-motion: reduce)')
+    expect(softwareStyles).toContain('@media (forced-colors: active)')
+
+    const keyframes = [...softwareStyles.matchAll(/@keyframes (jc-[\w-]+) \{([\s\S]*?)\n\}/g)]
+    expect(keyframes.length).toBeGreaterThan(5)
+    for (const [, name, body] of keyframes) {
+      const properties = [...body.matchAll(/^\s{4}([a-z-]+):/gm)].map(([, property]) => property)
+      const allowed = name === 'jc-mark-fill' ? ['background-size'] : ['opacity', 'transform']
+      for (const property of properties) {
+        expect(allowed, `${name} animates ${property}`).toContain(property)
+      }
+    }
   })
 
   it('keeps long Software project titles inside their responsive text column', () => {
-    expect(getSoftwareRule('.software-project-chapter__copy')).toContain('min-width: 0')
-    expect(getSoftwareRule('.software-project-chapter__heading > div')).toContain('min-width: 0')
-    expect(getSoftwareRule('.software-project-chapter h3')).toContain('max-width: none')
-    expect(getSoftwareRule('.software-project-chapter h3')).toContain(
-      'font-size: clamp(2.25rem, 3.8vw, 4.75rem)',
+    expect(getSoftwareRule('.jc-feature')).toContain(
+      'grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr)',
     )
-    expect(getSoftwareRule('.software-project-chapter h3')).toContain('overflow-wrap: normal')
+    expect(getSoftwareRule('.jc-row__button')).toContain(
+      'grid-template-columns: 3.25rem minmax(0, 1fr) auto 2.75rem',
+    )
+    expect(getSoftwareRule('.jc-feature h3')).toContain('text-wrap: balance')
+    expect(getSoftwareRule('.jc-foot__mark')).toContain('font-size: 20.2cqi')
   })
 
   it('lets the Fade plugin crossfade outgoing slides instead of hiding them immediately', () => {
