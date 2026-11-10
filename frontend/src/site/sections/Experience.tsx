@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import type { ExperienceStory } from '../../data/types'
+import { RoleSketch } from '../fx/RoleSketch'
 import { SectionLabel } from './SectionLabel'
 
 const isCurrent = (period: string) => /present/i.test(period)
@@ -176,9 +177,6 @@ export function Experience({ items }: { items: ExperienceStory[] }) {
                 key={item.id}
               >
                 <div className="jc-xp__when">
-                  <span aria-hidden="true" className="jc-xp__index">
-                    {String(index + 1).padStart(2, '0')}
-                  </span>
                   <p className="jc-xp__period">
                     {current ? <span aria-hidden="true" className="jc-pulse" /> : null}
                     {item.period}
@@ -186,6 +184,7 @@ export function Experience({ items }: { items: ExperienceStory[] }) {
                   {span && !span.approximate ? (
                     <p className="jc-xp__tenure">{formatTenure(span.end - span.start + 1)}</p>
                   ) : null}
+                  <RoleSketch id={item.id} />
                 </div>
                 <div className="jc-xp__role">
                   <h3>{item.title}</h3>

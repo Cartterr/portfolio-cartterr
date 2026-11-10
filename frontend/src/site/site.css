@@ -1893,21 +1893,6 @@
   gap: 0.55rem;
 }
 
-.jc-xp__index {
-  color: var(--fg-mute);
-  font-family: var(--jc-mono);
-  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
-  font-weight: 400;
-  letter-spacing: -0.04em;
-  line-height: 1;
-  opacity: 0.55;
-}
-
-.jc-xp__row[data-current] .jc-xp__index {
-  color: var(--accent-text);
-  opacity: 1;
-}
-
 .jc-xp__tenure {
   color: var(--fg-mute);
   font-family: var(--jc-mono);
@@ -1915,6 +1900,39 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   opacity: 0.75;
+}
+
+.jc-sketch {
+  display: block;
+  width: min(100%, 10rem);
+  height: auto;
+  margin-top: 0.9rem;
+  overflow: visible;
+  color: var(--fg-mute);
+}
+
+.jc-sketch__ground {
+  stroke: var(--hair);
+}
+
+.jc-sketch__accent {
+  color: var(--jc-signal);
+  transition: transform 0.6s var(--spring);
+}
+
+.jc-sketch__accent :is(rect, circle, ellipse) {
+  fill: var(--jc-signal);
+  fill-opacity: 0.14;
+}
+
+.jc-xp__row[data-current] .jc-sketch__body {
+  color: var(--fg-2);
+}
+
+@media (hover: hover) {
+  .jc-xp__row:hover .jc-sketch__accent {
+    transform: translate3d(0, -3px, 0);
+  }
 }
 
 .jc-figure {
@@ -2517,8 +2535,8 @@
     gap: 0.4rem 0.9rem;
   }
 
-  .jc-xp__index {
-    font-size: 1.15rem;
+  .jc-sketch {
+    display: none;
   }
 
   .jc-span {
