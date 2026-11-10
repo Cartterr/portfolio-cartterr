@@ -58,30 +58,47 @@ const sketches: Record<string, { label: string; body: ReactNode; accent: ReactNo
     ),
   },
   dily: {
-    label: 'A payment card and a stack of coins',
+    label: 'A car with a loan tag',
     body: (
       <>
-        <rect height="40" rx="6" width="62" x="32" y="44" />
-        <path d="M32 56 h62" />
-        <rect height="9" rx="2" width="12" x="40" y="64" />
-        <path d="M104 96 v-8 M132 96 v-8 M104 88 v-8 M132 88 v-8" />
-        <ellipse cx="118" cy="96" rx="14" ry="4" />
-        <ellipse cx="118" cy="88" rx="14" ry="4" />
+        <path d="M40 90 H32 Q30 90 30 88 V78 Q30 72 36 71 L58 67 L71 54 Q74 51 79 51 H104 Q109 51 112 55 L122 67 L128 69 Q132 70 132 75 V88 Q132 90 130 90 H122 M102 90 H60" />
+        <path d="M40 90 a10 10 0 0 1 20 0 M102 90 a10 10 0 0 1 20 0" />
+        <circle cx="50" cy="92" r="7.5" />
+        <circle cx="112" cy="92" r="7.5" />
+        <circle cx="50" cy="92" r="2" />
+        <circle cx="112" cy="92" r="2" />
+        <path d="M64 67 L74 56 H89 V67 Z M93 56 H104 Q106 56 108 58 L115 67 H93 Z" />
+        <path d="M91 70 V86 M84 74 h4 M128 74 h3" />
       </>
     ),
-    accent: <ellipse cx="118" cy="80" rx="14" ry="4" />,
+    accent: (
+      <>
+        <path d="M104 51 Q 110 40 118 33" strokeDasharray="1.5 3.5" />
+        <path d="M121 24 H142 V42 H121 L115 33 Z" />
+        <path d="M126 38 L137 28" />
+        <circle cx="127.5" cy="29.5" r="1.6" />
+        <circle cx="135.5" cy="36.5" r="1.6" />
+      </>
+    ),
   },
   flair: {
-    label: 'A building beside a thermostat dial',
+    label: 'A building with rooftop HVAC and an outdoor condenser',
     body: (
       <>
-        <path d="M36 100 V46 L72 32 V100" />
-        <path d="M46 56 h6 M58 52 h6 M46 68 h6 M58 66 h6 M46 80 h6 M58 80 h6" />
-        <circle cx="110" cy="64" r="20" />
-        <path d="M96 76 a17 17 0 1 1 28 0" />
+        <path d="M28 100 V48 H84 V100" />
+        <path d="M38 60 h8 M52 60 h8 M66 60 h8 M38 72 h8 M52 72 h8 M66 72 h8 M38 84 h8 M52 84 h8 M66 84 h8" />
+        <rect height="16" rx="2" width="28" x="36" y="32" />
+        <circle cx="50" cy="40" r="5" />
+        <path d="M50 36 v8 M46 40 h8" />
+        <path d="M84 78 H100 M84 82 H100" />
+        <rect height="28" rx="2.5" width="36" x="100" y="72" />
+        <circle cx="118" cy="86" r="9" />
+        <path d="M118 79 v14 M111 86 h14 M113 81 l10 10 M123 81 l-10 10" />
       </>
     ),
-    accent: <path d="M110 64 L120 52" />,
+    accent: (
+      <path d="M43 26 q3 -4 0 -8 q-3 -4 0 -8 M50 26 q3 -4 0 -8 q-3 -4 0 -8 M57 26 q3 -4 0 -8 q-3 -4 0 -8 M140 80 q2 3 5 0 M140 88 q2 3 5 0" />
+    ),
   },
   notreDame: {
     label: 'A drone flying a route to a target',
