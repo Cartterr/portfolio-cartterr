@@ -1,5 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react'
 import type { ExperienceStory } from '../../data/types'
+import { OrgText } from '../fx/OrgText'
 import { RoleSketch } from '../fx/RoleSketch'
 import { SectionLabel } from './SectionLabel'
 
@@ -188,7 +189,9 @@ export function Experience({ items }: { items: ExperienceStory[] }) {
                 </div>
                 <div className="jc-xp__role">
                   <h3>{item.title}</h3>
-                  <p>{item.company}</p>
+                  <p>
+                    <OrgText text={item.company} />
+                  </p>
                 </div>
                 <div className="jc-xp__detail">
                   <p>{item.summary}</p>

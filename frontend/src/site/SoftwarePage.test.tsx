@@ -81,12 +81,12 @@ describe('SoftwarePage', () => {
     const profileMedia = legacyMedia.filter(({ storyId }) => storyId === 'profile')
     expect(profileMedia).toHaveLength(13)
     const photos = [...about.querySelectorAll('img[data-about-photo]')]
-    expect(photos).toHaveLength(profileMedia.length + 6)
+    expect(photos).toHaveLength(profileMedia.length + 4)
     expect(photos.slice(4, 8).map((img) => img.getAttribute('alt'))).toEqual([
       getMedia('siggraph-sign').alt,
       getMedia('treyarch-portrait').alt,
       getMedia('dily1').alt,
-      getMedia('dily3').alt,
+      getMedia('treyarch-group').alt,
     ])
     expect(
       within(about).getByRole('heading', { level: 2, name: softwarePortfolio.about.heading }),
@@ -102,10 +102,11 @@ describe('SoftwarePage', () => {
     const experience = document.getElementById('software-experience')!
     const stories = within(experience).getAllByTestId('experience-story')
     expect(stories).toHaveLength(10)
-    expect(experience.querySelectorAll('img')).toHaveLength(0)
+    // Organization logos are allowed; photo galleries are not.
+    expect(experience.querySelectorAll('img:not(.jc-org-mark)')).toHaveLength(0)
     softwarePortfolio.experience.forEach((story, index) => {
       expect(within(stories[index]).getByRole('heading', { level: 3, name: story.title })).toBeInTheDocument()
-      expect(within(stories[index]).getByText(story.company)).toBeInTheDocument()
+      expect(stories[index].querySelector('.jc-xp__role p')).toHaveTextContent(story.company)
       expect(stories[index].querySelector('.jc-xp__outcome')).toHaveTextContent(story.outcome)
     })
     expect(within(experience).getAllByRole('link', { name: /,/ }).length).toBeGreaterThanOrEqual(9)

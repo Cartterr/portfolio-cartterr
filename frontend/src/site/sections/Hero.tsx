@@ -2,6 +2,7 @@ import { type CSSProperties, Fragment, useEffect, useRef, useState } from 'react
 import heroPortrait from '../../assets/images/optimized/profile1-hero.webp'
 import { getMedia } from '../../data/media'
 import type { ExperienceStory, PortfolioImageMedia, PortfolioPage } from '../../data/types'
+import { OrgText } from '../fx/OrgText'
 import { WaveField } from '../fx/WaveField'
 import { canAnimate, hasFinePointer } from '../lib/env'
 import { useMagnetic, useRefreshRate, useSantiagoTime } from '../lib/hooks'
@@ -126,7 +127,10 @@ function HeroDeck() {
           {String(deck.length).padStart(2, '0')}
         </span>
         <span className="jc-deck__text" key={current.id}>
-          <b>{current.place}</b> {current.label}
+          <b>
+            <OrgText text={current.place} />
+          </b>{' '}
+          {current.label}
         </span>
         <span aria-hidden="true" className="jc-deck__timer">
           <span
@@ -212,7 +216,9 @@ export function Hero({ content, current }: HeroProps) {
             <dt className="jc-meta">Now</dt>
             {current.map((role) => (
               <dd key={role.id}>
-                <b>{role.company.split(',')[0]}</b>
+                <b>
+                  <OrgText text={role.company.split(',')[0]} />
+                </b>
                 <span>{role.title}</span>
               </dd>
             ))}

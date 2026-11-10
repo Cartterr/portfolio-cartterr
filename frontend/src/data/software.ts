@@ -371,9 +371,7 @@ const aboutMediaIds = [
   'siggraph-sign',
   'treyarch-portrait',
   'dily1',
-  'dily3',
   'treyarch-group',
-  'siggraph-nvidia-lab',
   ...profileMediaIds.slice(4),
 ]
 

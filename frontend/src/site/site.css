@@ -236,13 +236,20 @@
   }
 }
 
+/* The list can sit in a stretched grid cell; the pills keep their own height regardless. */
 .jc-chips {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: flex-start;
+  align-self: start;
   gap: 0.4rem;
 }
 
 .jc-chips li {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
   padding: 0.3rem 0.65rem;
   border: 1px solid var(--hair);
   border-radius: 999px;
@@ -1055,6 +1062,29 @@
   font-weight: 520;
   letter-spacing: -0.035em;
   white-space: nowrap;
+}
+
+/* Organization marks: small, beside the name, never animated. In the band they sit in
+   grey so the moving row reads as one line of type; elsewhere they keep their colours. */
+.jc-org {
+  white-space: nowrap;
+}
+
+.jc-org-mark {
+  display: inline-block;
+  width: auto;
+  height: 1.05em;
+  margin-right: 0.4em;
+  vertical-align: -0.2em;
+  object-fit: contain;
+  border-radius: 0.2em;
+}
+
+.jc-orgs__group .jc-org-mark {
+  height: 0.82em;
+  margin-right: 0.32em;
+  opacity: 0.78;
+  filter: grayscale(1) contrast(1.15);
 }
 
 .jc-orgs__group i {

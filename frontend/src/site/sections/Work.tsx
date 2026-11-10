@@ -3,6 +3,7 @@ import { getMedia } from '../../data/media'
 import type { PortfolioImageMedia, ProjectStory } from '../../data/types'
 import { CursorPreview } from '../fx/CursorPreview'
 import { useLightbox } from '../fx/lightboxContext'
+import { OrgText } from '../fx/OrgText'
 import { SectionLabel } from './SectionLabel'
 
 const FEATURED_COUNT = 2
@@ -132,7 +133,7 @@ function Feature({ index, project }: { index: number; project: ProjectStory }) {
         </p>
         <h3 id={titleId}>{project.title}</h3>
         <p className="jc-feature__role">
-          {project.role} · {project.eyebrow}
+          {project.role} · <OrgText text={project.eyebrow} />
         </p>
         <p className="jc-feature__summary">{project.summary}</p>
         <ProjectFacts project={project} />
@@ -180,7 +181,9 @@ function Row({ index, isOpen, onHover, onToggle, project }: RowProps) {
           </span>
           <span className="jc-row__title">{project.title}</span>
           <span className="jc-row__meta">
-            <span>{project.eyebrow}</span>
+            <span>
+              <OrgText text={project.eyebrow} />
+            </span>
             <span>{project.period}</span>
           </span>
           <span aria-hidden="true" className="jc-row__icon" />

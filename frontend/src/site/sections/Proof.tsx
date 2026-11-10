@@ -1,6 +1,7 @@
 import { type CSSProperties, useEffect, useRef } from 'react'
 import type { PortfolioMetric } from '../../data/types'
 import { Odometer } from '../fx/Odometer'
+import { OrgName } from '../fx/OrgText'
 import { canAnimate, clamp, damp } from '../lib/env'
 
 const organizations = [
@@ -100,7 +101,7 @@ export function Organizations() {
           <div className="jc-orgs__group" key={copy}>
             {organizations.map((name) => (
               <span key={name}>
-                {name}
+                <OrgName name={name} />
                 <i>✳</i>
               </span>
             ))}
