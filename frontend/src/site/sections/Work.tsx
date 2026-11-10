@@ -1,4 +1,4 @@
-import { type CSSProperties, useEffect, useMemo, useState } from 'react'
+import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getMedia } from '../../data/media'
 import type { PortfolioImageMedia, ProjectStory } from '../../data/types'
 import { CursorPreview } from '../fx/CursorPreview'
@@ -145,7 +145,7 @@ function Feature({ index, project }: { index: number; project: ProjectStory }) {
 type RowProps = {
   index: number
   isOpen: boolean
-  onHover: (id: string | null) => void
+  onHover: (id: string | null, anchor?: HTMLElement) => void
   onToggle: () => void
   project: ProjectStory
 }
@@ -171,7 +171,7 @@ function Row({ index, isOpen, onHover, onToggle, project }: RowProps) {
           aria-expanded={isOpen}
           className="jc-row__button"
           onClick={onToggle}
-          onPointerEnter={() => onHover(isOpen ? null : project.id)}
+          onPointerEnter={(event) => onHover(isOpen ? null : project.id, event.currentTarget)}
           onPointerLeave={() => onHover(null)}
           type="button"
         >
@@ -243,6 +243,11 @@ export function Work({ projects }: WorkProps) {
   const archive = useMemo(() => projects.slice(FEATURED_COUNT), [projects])
   const [openId, setOpenId] = useState<string | null>(null)
   const [hoverId, setHoverId] = useState<string | null>(null)
+  const anchorRef = useRef<HTMLElement | null>(null)
+  const hover = useCallback((id: string | null, anchor?: HTMLElement) => {
+    if (anchor) anchorRef.current = anchor
+    setHoverId(id)
+  }, [])
 
   const previews = useMemo(
     () =>
@@ -304,7 +309,7 @@ export function Work({ projects }: WorkProps) {
               index={index + FEATURED_COUNT}
               isOpen={openId === project.id}
               key={project.id}
-              onHover={setHoverId}
+              onHover={hover}
               onToggle={() => {
                 setHoverId(null)
                 setOpenId((current) => (current === project.id ? null : project.id))
@@ -314,7 +319,7 @@ export function Work({ projects }: WorkProps) {
           ))}
         </ol>
       </div>
-      <CursorPreview activeId={hoverId} items={previews} />
+      <CursorPreview activeId={hoverId} anchorRef={anchorRef} items={previews} />
     </section>
   )
 }
