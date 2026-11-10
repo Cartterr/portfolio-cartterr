@@ -14,6 +14,8 @@ const sectionIds = [
 ]
 
 const projectGalleryCounts = {
+  'tek-physical-ai': 4,
+  'dictuc-xr-ar-research': 5,
   'gridworks-alerting-platform': 4,
   'notre-dame-drone-response': 9,
   'politiktok-research-infrastructure': 12,
@@ -118,12 +120,12 @@ describe('SoftwarePortfolio', () => {
     expect(softwarePortfolio.experience[0].id).toBe('tek')
   })
 
-  it('renders six detailed projects with legacy galleries and four capability systems with related work', () => {
+  it('renders eight detailed projects with legacy galleries and four capability systems with related work', () => {
     render(<SoftwarePortfolio />)
 
     const work = document.getElementById('software-work')!
     const projects = within(work).getAllByTestId('project-chapter')
-    expect(projects).toHaveLength(6)
+    expect(projects).toHaveLength(8)
     softwarePortfolio.projects.forEach((project) => {
       const chapter = within(work).getByTestId(`project-${project.id}`)
       expect(within(chapter).getByText(project.problem)).toBeInTheDocument()

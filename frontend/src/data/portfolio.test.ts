@@ -23,7 +23,7 @@ describe('dual portfolio content', () => {
     }
 
     expect(softwarePortfolio.experience).toHaveLength(9)
-    expect(softwarePortfolio.projects).toHaveLength(6)
+    expect(softwarePortfolio.projects).toHaveLength(8)
     expect(softwarePortfolio.capabilities).toHaveLength(4)
     expect(visualPortfolio.experience).toHaveLength(9)
     expect(visualPortfolio.projects).toHaveLength(5)

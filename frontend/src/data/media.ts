@@ -834,7 +834,146 @@ export const visualMedia: PortfolioImageMedia[] = visualDefinitions.map((definit
   }
 })
 
-export const portfolioMedia: PortfolioMedia[] = [...legacyMedia, ...visualMedia]
+const experienceMainAssets = import.meta.glob<string>('../assets/experience/*.jpg', {
+  eager: true,
+  import: 'default',
+  query: { format: 'webp', w: '1400', withoutEnlargement: 'true' },
+})
+
+const experienceThumbnailAssets = import.meta.glob<string>('../assets/experience/*.jpg', {
+  eager: true,
+  import: 'default',
+  query: { format: 'webp', w: '240', withoutEnlargement: 'true' },
+})
+
+type ExperienceMediaDefinition = {
+  id: string
+  storyId: 'tek' | 'dictuc'
+  width: number
+  height: number
+  alt: string
+  caption: string
+  source: string
+  fit?: MediaFit
+  objectPosition?: string
+}
+
+const experienceDefinitions: readonly ExperienceMediaDefinition[] = [
+  {
+    id: 'tek-roll-gripper',
+    storyId: 'tek',
+    width: 900,
+    height: 1600,
+    alt: 'Dobot CR5S robot arm lifting a row of paper rolls with a perforated gripper above a conveyor',
+    caption: 'Testing the CR5S packing cell: the gripper picks a full row of rolls off the conveyor.',
+    source: 'Personal photo from Google Photos, 2026-09-10',
+    objectPosition: '50% 40%',
+  },
+  {
+    id: 'tek-isaac-workcell',
+    storyId: 'tek',
+    width: 1280,
+    height: 800,
+    alt: 'Isaac Sim render of a robot arm workcell with two cartons and rows of paper rolls',
+    caption: 'Isaac Sim workcell for the CR5S: cartons, rolls and grip cycles rehearsed in simulation.',
+    source: 'Render from isaac-cr5s-workcell',
+    fit: 'contain',
+  },
+  {
+    id: 'tek-rover-vision',
+    storyId: 'tek',
+    width: 1500,
+    height: 940,
+    alt: 'Browser controller showing a robot camera feed with labelled object detections and a stop button',
+    caption: 'Rover X1 controller: live YOLO detections on the robot camera, with server-side safety and a 0.48 s stop.',
+    source: 'Screenshot from rover-x1-vision',
+    fit: 'contain',
+  },
+  {
+    id: 'tek-rover-mixed-reality',
+    storyId: 'tek',
+    width: 1024,
+    height: 1024,
+    alt: 'Mixed-reality view of a hand panel and a green virtual twin overlaid on a quadruped rover',
+    caption: 'Mixed-reality prototype on Quest 3: a hand panel and a virtual twin to drive the Rover X1.',
+    source: 'Headset capture from Google Photos, 2026-10-05',
+  },
+  {
+    id: 'dictuc-headsets-jenga',
+    storyId: 'dictuc',
+    width: 1200,
+    height: 1600,
+    alt: 'Three VIVE Focus Vision headsets around a Jenga tower on an orange table',
+    caption: 'One study station: three VIVE Focus Vision headsets around the shared Jenga task.',
+    source: 'Personal photo from Google Photos, 2026-10-01',
+    objectPosition: '50% 55%',
+  },
+  {
+    id: 'dictuc-lab-station',
+    storyId: 'dictuc',
+    width: 1200,
+    height: 1600,
+    alt: 'Empty XR lab room with chairs around a table holding headsets and laptops behind',
+    caption: 'The XR lab before a session: headsets on the task table, control laptops behind.',
+    source: 'Personal photo from Google Photos, 2026-10-01',
+    objectPosition: '50% 45%',
+  },
+  {
+    id: 'dictuc-mindware',
+    storyId: 'dictuc',
+    width: 1200,
+    height: 1600,
+    alt: 'Three MindWare physiological recording units side by side',
+    caption: 'MindWare units recording physiology; headset events share their clock to within milliseconds.',
+    source: 'Lab photo from DICTUC session notes, 2026-10-08',
+    objectPosition: '50% 50%',
+  },
+  {
+    id: 'dictuc-waves-ar',
+    storyId: 'dictuc',
+    width: 832,
+    height: 1600,
+    alt: 'iPhone AR view of a simulated ocean rendered over real coastal video with tuning sliders',
+    caption: 'Waves AR on iPhone: a Metal FFT ocean drawn over real coastal footage at 60 fps.',
+    source: 'In-app capture from DICTUC Waves AR, 2026-11-03',
+    fit: 'contain',
+  },
+  {
+    id: 'dictuc-waves-module',
+    storyId: 'dictuc',
+    width: 764,
+    height: 1100,
+    alt: 'iPad learning module screen where students time wave crests against a virtual ruler',
+    caption: 'An iPad learning module: students time wave crests and read wave height off a virtual ruler.',
+    source: 'In-app capture from DICTUC Waves AR, 2026-11-09',
+    fit: 'contain',
+  },
+]
+
+export const experienceMedia: PortfolioImageMedia[] = experienceDefinitions.map((definition) => {
+  const path = `../assets/experience/${definition.id}.jpg`
+  return {
+    id: definition.id,
+    kind: 'image',
+    src: readAsset(experienceMainAssets, path),
+    thumbnail: readAsset(experienceThumbnailAssets, path),
+    width: definition.width,
+    height: definition.height,
+    alt: definition.alt,
+    caption: definition.caption,
+    fit: definition.fit ?? 'cover',
+    objectPosition: definition.objectPosition ?? '50% 50%',
+    rights: {
+      owner: 'José Ernesto Carter Arriagada',
+      source: definition.source,
+      clearance: 'cleared-project-capture',
+    },
+    publication: 'approved',
+    storyId: definition.storyId,
+  }
+})
+
+export const portfolioMedia: PortfolioMedia[] = [...legacyMedia, ...experienceMedia, ...visualMedia]
 
 const mediaById = new Map(portfolioMedia.map((media) => [media.id, media]))
 

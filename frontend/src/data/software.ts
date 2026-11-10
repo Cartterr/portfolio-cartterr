@@ -24,13 +24,22 @@ const softwareExperience = [
     title: 'Physical AI & Robotics Software Engineering Intern',
     company: 'TEK Chile',
     summary:
-      'Build perception and robot-control software for conveyor-based industrial automation cells.',
+      'Build perception, control, and simulation software for a Dobot CR5S roll-packing cell and a Dobot Rover X1 inspection robot.',
     contribution:
-      'Develop real-time object detection and tracking, and program pick-and-place, motion planning, and collision avoidance on industrial robot arms.',
+      'Built the cell control app (Raspberry Pi, tablet UI, TCP/IP and Modbus) where one plan drives both the 3D preview and the arm, an Isaac Sim twin of the workcell, YOLO26 roll counting and box-corner vision, and a browser controller and mixed-reality prototype for the rover.',
     outcome:
-      'Perception, robotics, and automation software integrated and tested on real manufacturing hardware.',
-    technologies: ['Python', 'Computer Vision', 'Robot Arms', 'Motion Planning', 'Simulation'],
-    mediaIds: [],
+      'The rover patrols the office on its own, reading status lamps and raising alarms: 18 real runs with no contact, video raised from 5 to about 20 fps, and a 0.48 s emergency stop.',
+    technologies: [
+      'Python',
+      'TypeScript',
+      'YOLO26',
+      'Isaac Sim',
+      'Robot Arms',
+      'Modbus',
+      'Raspberry Pi',
+      'Mixed Reality',
+    ],
+    mediaIds: mediaIdsFor('tek'),
   },
   {
     id: 'dictuc',
@@ -38,13 +47,22 @@ const softwareExperience = [
     title: 'Multiplatform Full Stack Software Engineer, XR Lab',
     company: 'DICTUC, Pontificia Universidad Católica de Chile',
     summary:
-      'Build the Unity XR research tool for ANID project 13250116, Enhancing Collaboration in Extended Reality, with Prof. Leonel Merino.',
+      'Build XR and AR research software with Prof. Leonel Merino: the Unity tool for ANID project 13250116, Enhancing Collaboration in Extended Reality, and Waves AR, an iPhone and iPad app that teaches ocean waves.',
     contribution:
-      'Three participants in HTC Vive Focus Vision headsets solve a shared Jenga task while the tool records gaze, full-body motion from VIVE trackers, and task events.',
+      'Three participants in HTC Vive Focus Vision headsets solve a shared Jenga task while a native headset app (89.5 fps, passthrough, hand and eye tracking) records gaze, motion, and task events; a web panel runs all headsets from a PC or phone. For Waves AR I wrote a Metal FFT ocean that runs over real coastal video at 60 fps on iPhone.',
     outcome:
-      'Behavioral data kept in sync with MindWare physiological recordings, so researchers can study emotion and collaboration in XR.',
-    technologies: ['Unity', 'OpenXR', 'Eye Tracking', 'Motion Capture', 'Physiological Sensing'],
-    mediaIds: [],
+      'Headset data kept on MindWare BioLab time within a few milliseconds, with no turns lost when Wi-Fi drops, so researchers can study emotion and collaboration in XR. A wireless dev loop cut an AR tweak from about 8 minutes to seconds.',
+    technologies: [
+      'Unity',
+      'OpenXR',
+      'Eye Tracking',
+      'Physiological Sensing',
+      'Swift',
+      'ARKit',
+      'RealityKit',
+      'Metal',
+    ],
+    mediaIds: mediaIdsFor('dictuc'),
   },
   {
     id: 'gridworks',
@@ -148,6 +166,48 @@ const softwareExperience = [
 ] satisfies ExperienceStory[]
 
 const softwareProjects = [
+  mediaBackedProject({
+    id: 'tek-physical-ai',
+    slug: 'tek-physical-ai-robotics',
+    title: 'Physical AI for a packing cell and an inspection rover',
+    eyebrow: 'TEK Chile',
+    role: 'Physical AI & Robotics Software Engineering Intern',
+    period: 'Sep 2026 - Present',
+    status: 'Ongoing',
+    summary:
+      'Perception, control, and simulation software for a Dobot CR5S roll-packing cell and a Dobot Rover X1 that patrols and inspects the office.',
+    problem:
+      'A packing cell needed an operator-safe way to plan and run grip cycles, and a mobile robot needed to find status panels, read them, and raise alarms without hitting anything.',
+    technicalChallenge:
+      'Keeping what the operator previews identical to what the arm executes, and running vision and autonomy on a Raspberry Pi with tight memory and latency budgets.',
+    contribution:
+      'I built the cell control app (Raspberry Pi, tablet UI, TCP/IP and Modbus) where one plan drives both the 3D preview and the arm, an Isaac Sim twin of the workcell, YOLO26 roll counting and box-corner vision, a browser rover controller with server-side safety, and a Quest 3 mixed-reality prototype.',
+    outcome:
+      'The rover completed 18 real patrol runs with no contact, returning within 3 to 36 cm of its start; video rose from 5 to about 20 fps, Pi latency fell from 125 to about 25 ms, and the emergency stop acts in 0.48 s.',
+    technologies: ['Python', 'TypeScript', 'YOLO26', 'Isaac Sim', 'Modbus', 'Raspberry Pi', 'Godot', 'Quest 3'],
+    mediaIds: mediaIdsFor('tek'),
+  }),
+  mediaBackedProject({
+    id: 'dictuc-xr-ar-research',
+    slug: 'dictuc-xr-ar-research',
+    title: 'XR collaboration study and Waves AR',
+    eyebrow: 'DICTUC · Pontificia Universidad Católica de Chile',
+    role: 'Multiplatform Full Stack Software Engineer, XR Lab',
+    period: 'Sep 2026 - Present',
+    status: 'Ongoing research',
+    summary:
+      'A three-headset mixed-reality study tool for ANID project 13250116, and Waves AR, an iPhone and iPad app that teaches ocean waves on the coast.',
+    problem:
+      'Researchers studying emotion and collaboration need gaze, motion, and task events from three headsets on the same clock as MindWare physiological recordings, with nothing lost mid-session.',
+    technicalChallenge:
+      'Millisecond clock agreement across four PCs and three headsets on Wi-Fi, and a real-time ocean on a phone that holds 60 fps over real video.',
+    contribution:
+      'I moved the study app to a native VIVE Focus Vision build (89.5 fps, passthrough, hand and eye tracking), built a web panel that runs every headset from a PC or phone, and wrote the Metal FFT ocean, learning modules, and wireless dev loop for Waves AR.',
+    outcome:
+      'Headset events land on BioLab time within a few milliseconds with no turns lost on Wi-Fi drops, and an AR tweak went from about 8 minutes of build and install to 4 to 7 seconds.',
+    technologies: ['Unity', 'OpenXR', 'Eye Tracking', 'MindWare BioLab', 'Swift', 'ARKit', 'RealityKit', 'Metal'],
+    mediaIds: mediaIdsFor('dictuc'),
+  }),
   mediaBackedProject({
     id: 'dily-fintech-systems',
     slug: 'dily-fintech-systems',
