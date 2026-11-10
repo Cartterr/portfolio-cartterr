@@ -1,12 +1,14 @@
 import type { PortfolioLink, PortfolioMode } from '../../data/portfolio'
+import { ModeLink } from './ModeLink'
 
 type SiteFooterProps = {
   links: PortfolioLink[]
   mode: PortfolioMode
   name: string
+  navigateMode: (mode: PortfolioMode) => void
 }
 
-export function SiteFooter({ links, mode, name }: SiteFooterProps) {
+export function SiteFooter({ links, mode, name, navigateMode }: SiteFooterProps) {
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
@@ -27,7 +29,14 @@ export function SiteFooter({ links, mode, name }: SiteFooterProps) {
             </li>
           ))}
         </ul>
-        <p>{mode === 'software' ? 'Software portfolio' : 'Visual / 3D portfolio'}</p>
+        <nav aria-label="Portfolio mode" className="site-footer__modes">
+          <ModeLink currentMode={mode} mode="software" navigateMode={navigateMode}>
+            Software
+          </ModeLink>
+          <ModeLink currentMode={mode} mode="visual" navigateMode={navigateMode}>
+            Visual
+          </ModeLink>
+        </nav>
       </div>
     </footer>
   )

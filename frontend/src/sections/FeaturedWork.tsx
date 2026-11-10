@@ -21,8 +21,8 @@ export function FeaturedWork({ caseStudies, id = 'work' }: FeaturedWorkProps) {
         <p className="software-kicker">Selected work · 03</p>
         <h2 id={`${id}-title`}>Selected engineering projects</h2>
         <p>
-          Six case studies covering the project context, implementation, and operational or
-          measurable outcome.
+          Case studies from robotics, XR, and production software, each with its context,
+          implementation, and measured outcome.
         </p>
       </header>
 

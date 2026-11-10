@@ -20,7 +20,6 @@ function PortfolioShell() {
       </a>
       <SiteHeader
         mode={mode}
-        navigateMode={navigateMode}
         navigation={page.navigation}
         roleLabel={page.hero.eyebrow}
       />
@@ -43,7 +42,12 @@ function PortfolioShell() {
           </m.div>
         </AnimatePresence>
       </main>
-      <SiteFooter links={page.contact.links} mode={mode} name={page.hero.name} />
+      <SiteFooter
+        links={page.contact.links}
+        mode={mode}
+        name={page.hero.name}
+        navigateMode={navigateMode}
+      />
       <p aria-atomic="true" aria-live="polite" className="sr-only" data-route-announcement>
         {announcement}
       </p>

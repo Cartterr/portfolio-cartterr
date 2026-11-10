@@ -867,7 +867,7 @@ const experienceDefinitions: readonly ExperienceMediaDefinition[] = [
     alt: 'Dobot CR5S robot arm lifting a row of paper rolls with a perforated gripper above a conveyor',
     caption: 'Testing the CR5S packing cell: the gripper picks a full row of rolls off the conveyor.',
     source: 'Personal photo from Google Photos, 2026-09-10',
-    objectPosition: '50% 40%',
+    objectPosition: '50% 12%',
   },
   {
     id: 'tek-isaac-workcell',

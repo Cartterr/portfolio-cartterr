@@ -51,8 +51,8 @@ video.portfolio-carousel__media {
   padding: clamp(2.5rem, 9vw, 6rem) clamp(0.9rem, 2.5vw, 1.5rem) 1rem;
   background: linear-gradient(transparent, rgba(11, 16, 24, 0.88));
   color: rgba(255, 253, 248, 0.82);
-  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-  font-size: 0.72rem;
+  font-family: 'Manrope Variable', system-ui, sans-serif;
+  font-size: 0.82rem;
   line-height: 1.55;
 }
 

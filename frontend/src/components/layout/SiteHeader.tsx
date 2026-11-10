@@ -3,16 +3,14 @@ import { useMemo } from 'react'
 import type { PortfolioMode, PortfolioPage } from '../../data/portfolio'
 import { useScrollSpy } from '../../hooks/useScrollSpy'
 import { MobileNavigation } from './MobileNavigation'
-import { ModeLink } from './ModeLink'
 
 type SiteHeaderProps = {
   mode: PortfolioMode
-  navigateMode: (mode: PortfolioMode) => void
   navigation: PortfolioPage['navigation']
   roleLabel: string
 }
 
-export function SiteHeader({ mode, navigateMode, navigation, roleLabel }: SiteHeaderProps) {
+export function SiteHeader({ mode, navigation, roleLabel }: SiteHeaderProps) {
   const hrefs = useMemo(() => navigation.map(({ href }) => href), [navigation])
   const { activeHref, progress } = useScrollSpy(hrefs, mode)
 
@@ -43,14 +41,6 @@ export function SiteHeader({ mode, navigateMode, navigation, roleLabel }: SiteHe
         </nav>
 
         <div className="site-header__controls">
-          <nav aria-label="Portfolio mode" className="mode-switch">
-            <ModeLink currentMode={mode} mode="software" navigateMode={navigateMode}>
-              Software
-            </ModeLink>
-            <ModeLink currentMode={mode} mode="visual" navigateMode={navigateMode}>
-              Visual
-            </ModeLink>
-          </nav>
           <MobileNavigation activeHref={activeHref} items={navigation} routeKey={mode} />
         </div>
 

@@ -324,8 +324,8 @@ main {
 .site-role {
   overflow: hidden;
   color: var(--shell-muted);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.66rem;
+  font-family: 'Manrope Variable', system-ui, sans-serif;
+  font-size: 0.72rem;
   line-height: 1.35;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -346,12 +346,10 @@ main {
   align-items: center;
   border-radius: 0.9rem;
   color: var(--shell-muted);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.65rem;
+  font-family: 'Manrope Variable', system-ui, sans-serif;
+  font-size: 0.86rem;
   font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  transition: background-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
+    transition: background-color 180ms ease, box-shadow 180ms ease, color 180ms ease;
 }
 
 .site-nav a:hover {
@@ -475,10 +473,8 @@ main {
   justify-content: space-between;
   border-radius: 0.8rem;
   color: var(--shell-muted);
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-family: 'Manrope Variable', system-ui, sans-serif;
+  font-size: 0.95rem;
 }
 
 .mobile-navigation a:hover,
@@ -1096,6 +1092,22 @@ main {
   text-align: right;
 }
 
+.site-footer__modes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+
+.site-footer__modes .mode-switch__link {
+  min-height: 44px;
+  padding-inline: 0.9rem;
+  border-radius: 999px;
+  font-family: 'Manrope Variable', system-ui, sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .site-footer ul {
   display: flex;
   flex-wrap: wrap;
@@ -1181,6 +1193,10 @@ main {
 
   .site-footer__inner > p:last-child {
     text-align: center;
+  }
+
+  .site-footer__modes {
+    justify-content: center;
   }
 }
 
