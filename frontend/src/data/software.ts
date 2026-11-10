@@ -381,7 +381,7 @@ export const softwarePortfolio = {
     eyebrow: 'Software Engineering · AI · Data · Autonomy',
     title: 'Building reliable AI, data, and autonomous systems.',
     summary:
-      'I build production software across AI systems, data infrastructure, scientific computing, and autonomous planning.',
+      'I build production software across physical AI and robotics, XR, data infrastructure, and scientific computing.',
     location: portfolioOwner.location,
     primaryCta: { label: 'View Work', href: '#software-work' },
     secondaryCta: sharedLinks.cv,
@@ -391,7 +391,7 @@ export const softwarePortfolio = {
     heading: 'Engineering across production and research',
     paragraphs: [
       'I am a software engineer based in Santiago, Chile. My work spans physical AI and robotics, XR systems, production backend and frontend systems, GPU-backed research infrastructure, scientific simulation, and autonomous mission planning.',
-      'Today I work on robotic perception and manipulation at TEK Chile and on XR research systems at DICTUC. Before that, across Dily, GridWorks, Flair, Notre Dame, Politiktok, and PUC, I worked on fintech, industrial alerting, energy optimization, political-media research, drone coordination, and geoscience simulation.',
+      'Today I build robotic perception, control, and simulation at TEK Chile, and XR and AR research software at DICTUC. Before that, across Dily, GridWorks, Flair, Notre Dame, Politiktok, and PUC, I worked on fintech, industrial alerting, energy optimization, political-media research, drone coordination, and geoscience simulation.',
       'I am especially interested in applying AI to satellite data, simulation, and aerospace problems.',
     ],
     mediaIds: aboutMediaIds,

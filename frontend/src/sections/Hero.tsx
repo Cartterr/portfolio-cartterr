@@ -3,9 +3,9 @@ import { getMedia } from '../data/media'
 import type { PortfolioImageMedia, PortfolioPage } from '../data/types'
 
 const heroMediaSlides = [
+  { id: 'tek-isaac-workcell', project: 'TEK Chile', label: 'Physical AI' },
+  { id: 'dictuc-headsets-jenga', project: 'DICTUC', label: 'XR research' },
   { id: 'nd1', project: 'Drone Response', label: 'Autonomous fieldwork' },
-  { id: 'geoscience7', project: 'CUDA geoscience', label: 'Scientific simulation' },
-  { id: 'gridworks-dashboard-operations', project: 'GridWorks', label: 'Production monitoring' },
 ].map((definition) => {
   const media = getMedia(definition.id)
   if (media.kind !== 'image') throw new Error(`Hero media must be an image: ${definition.id}`)

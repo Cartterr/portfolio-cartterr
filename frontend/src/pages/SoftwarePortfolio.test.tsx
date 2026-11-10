@@ -68,7 +68,7 @@ describe('SoftwarePortfolio', () => {
     expect(mediaSlides).toHaveLength(3)
     expect(mediaSlides[0]).toHaveClass('is-active')
     expect(within(hero).queryByText('Current direction')).not.toBeInTheDocument()
-    expect(within(hero).getByText('Drone Response · Autonomous fieldwork')).toBeInTheDocument()
+    expect(within(hero).getByText('TEK Chile · Physical AI')).toBeInTheDocument()
     expect(within(hero).getByRole('heading', { level: 1 })).toHaveTextContent(
       'Building reliable AI, data, and autonomous systems.',
     )
