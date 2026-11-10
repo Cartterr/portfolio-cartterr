@@ -1,5 +1,6 @@
 import { type CSSProperties, type PointerEvent } from 'react'
 import type { CapabilityStory, ProjectStory } from '../../data/types'
+import { CapabilitySymbol } from '../fx/CapabilitySymbol'
 import { SectionLabel } from './SectionLabel'
 
 type CapabilitiesProps = {
@@ -47,9 +48,7 @@ export function Capabilities({ groups, projects }: CapabilitiesProps) {
               onPointerMove={trackPointer}
               style={{ '--rd': `${index * 80}ms` } as CSSProperties}
             >
-              <p aria-hidden="true" className="jc-cap__index">
-                C{index + 1}
-              </p>
+              <CapabilitySymbol id={group.id} />
               <h3>{group.title}</h3>
               <p className="jc-cap__summary">{group.summary}</p>
               <ul aria-label={`${group.title} skills`} className="jc-chips">

@@ -1929,7 +1929,14 @@
   color: var(--fg-2);
 }
 
+.jc-sketch--cap {
+  width: clamp(5.5rem, 8vw, 7rem);
+  margin: 0 0 0.25rem;
+  color: var(--fg-2);
+}
+
 @media (hover: hover) {
+  .jc-cap:hover .jc-sketch__accent,
   .jc-xp__row:hover .jc-sketch__accent {
     transform: translate3d(0, -3px, 0);
   }
@@ -1989,13 +1996,6 @@
 
 .jc-cap > * {
   position: relative;
-}
-
-.jc-cap__index {
-  color: var(--accent-text);
-  font-family: var(--jc-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
 }
 
 .jc-cap h3 {
@@ -2535,7 +2535,7 @@
     gap: 0.4rem 0.9rem;
   }
 
-  .jc-sketch {
+  .jc-xp .jc-sketch {
     display: none;
   }
 
