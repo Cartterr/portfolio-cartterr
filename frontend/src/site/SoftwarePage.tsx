@@ -1,4 +1,5 @@
-import { legacyMedia } from '../data/media'
+import { getMedia } from '../data/media'
+import type { PortfolioImageMedia } from '../data/types'
 import { softwarePortfolio } from '../data/software'
 import { LightboxProvider } from './fx/Lightbox'
 import { useReveal } from './lib/hooks'
@@ -11,7 +12,10 @@ import { Organizations, Outcomes } from './sections/Proof'
 import { Work } from './sections/Work'
 import './site.css'
 
-const profileMedia = legacyMedia.filter(({ storyId }) => storyId === 'profile')
+// People and places, in the order software.ts sets (milestones, the Dily team, then the rest).
+const aboutMedia = softwarePortfolio.about.mediaIds
+  .map((id) => getMedia(id))
+  .filter((media): media is PortfolioImageMedia => media.kind === 'image')
 const currentRoles = softwarePortfolio.experience
   .filter(({ id }) => id === 'tek' || id === 'dictuc')
 
@@ -26,7 +30,7 @@ export function SoftwarePage() {
         <Hero content={page.hero} current={currentRoles} />
         <Outcomes metrics={page.metrics} />
         <Organizations />
-        <About content={page.about} media={profileMedia} />
+        <About content={page.about} media={aboutMedia} />
         <Work projects={page.projects} />
         <Experience items={page.experience} />
         <Capabilities groups={page.capabilities} projects={page.projects} />

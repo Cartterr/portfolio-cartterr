@@ -350,7 +350,14 @@ const softwareCapabilities = [
   },
 ] satisfies CapabilityStory[]
 
-const aboutMediaIds = mediaIdsFor('profile')
+// People and places: the four milestone photos first, then the Dily team, then the rest.
+const profileMediaIds = mediaIdsFor('profile')
+const aboutMediaIds = [
+  ...profileMediaIds.slice(0, 4),
+  'dily1',
+  'dily3',
+  ...profileMediaIds.slice(4),
+]
 
 // In the order the Software page presents its sections, so the active link follows the scroll.
 const softwareNavigationOrder = ['About', 'Work', 'Experience', 'Capabilities', 'Contact']

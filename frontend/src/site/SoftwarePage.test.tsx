@@ -1,7 +1,7 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { legacyMedia } from '../data/media'
+import { getMedia, legacyMedia } from '../data/media'
 import { softwarePortfolio } from '../data/software'
 import { SoftwarePage } from './SoftwarePage'
 
@@ -74,13 +74,18 @@ describe('SoftwarePage', () => {
     })
   })
 
-  it('tells the About story with every profile photo', () => {
+  it('tells the About story with every profile photo plus the Dily team', () => {
     render(<SoftwarePage />)
 
     const about = document.getElementById('software-about')!
     const profileMedia = legacyMedia.filter(({ storyId }) => storyId === 'profile')
     expect(profileMedia).toHaveLength(13)
-    expect(about.querySelectorAll('[data-about-photo]')).toHaveLength(profileMedia.length)
+    const photos = [...about.querySelectorAll('img[data-about-photo]')]
+    expect(photos).toHaveLength(profileMedia.length + 2)
+    expect(photos.slice(4, 6).map((img) => img.getAttribute('alt'))).toEqual([
+      getMedia('dily1').alt,
+      getMedia('dily3').alt,
+    ])
     expect(
       within(about).getByRole('heading', { level: 2, name: softwarePortfolio.about.heading }),
     ).toBeInTheDocument()
