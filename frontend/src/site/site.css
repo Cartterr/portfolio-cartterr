@@ -61,6 +61,12 @@
   }
 }
 
+/* The page ends on the dark footer: paint the canvas dark so no sliver of paper
+   shows below it (sub-pixel footer height, overscroll). Body keeps the paper. */
+:root[data-portfolio-mode='software'] {
+  background: var(--jc-ink);
+}
+
 :root[data-portfolio-mode='software'] body {
   background: var(--jc-paper);
   color: var(--jc-ink);
@@ -2351,13 +2357,6 @@
   color: var(--jc-paper);
 }
 
-.jc-foot__colophon {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem 2rem;
-  justify-content: space-between;
-  margin-top: 1.5rem;
-}
 
 /* ---------- Image viewer ---------- */
 

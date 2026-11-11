@@ -1,18 +1,13 @@
 import { ModeLink } from '../components/layout/ModeLink'
 import type { PortfolioLink, PortfolioMode } from '../data/portfolio'
-import { useRefreshRate, useSantiagoTime } from './lib/hooks'
 
 type SiteFootProps = {
   links: PortfolioLink[]
-  location: string
   name: string
   navigateMode: (mode: PortfolioMode) => void
 }
 
-export function SiteFoot({ links, location, name, navigateMode }: SiteFootProps) {
-  const time = useSantiagoTime()
-  const refreshRate = useRefreshRate()
-
+export function SiteFoot({ links, name, navigateMode }: SiteFootProps) {
   return (
     <footer className="jc-foot jc-ink">
       <div className="jc-wrap">
@@ -53,16 +48,6 @@ export function SiteFoot({ links, location, name, navigateMode }: SiteFootProps)
             Back to top <span aria-hidden="true">↑</span>
           </a>
         </div>
-
-        <p className="jc-meta jc-foot__colophon">
-          <span>
-            {location} · <span className="jc-tabular">{time}</span>
-          </span>
-          <span>
-            Hand-built with React, WebGL and CSS
-            {refreshRate ? ` · drawn at ${refreshRate} Hz on this display` : ''}
-          </span>
-        </p>
       </div>
     </footer>
   )

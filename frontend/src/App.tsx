@@ -48,7 +48,6 @@ function PortfolioShell() {
       {isSoftware ? (
         <SiteFoot
           links={page.contact.links}
-          location={page.hero.location}
           name={page.hero.name}
           navigateMode={navigateMode}
         />
