@@ -46,11 +46,7 @@ function PortfolioShell() {
         </AnimatePresence>
       </main>
       {isSoftware ? (
-        <SiteFoot
-          links={page.contact.links}
-          name={page.hero.name}
-          navigateMode={navigateMode}
-        />
+        <SiteFoot links={page.contact.links} name={page.hero.name} />
       ) : (
         <SiteFooter
           links={page.contact.links}

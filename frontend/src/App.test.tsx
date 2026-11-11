@@ -150,78 +150,88 @@ describe('dual portfolio shell', () => {
     )
   })
 
+  it('has no Software/Visual mode switch on the Software page', () => {
+    render(<App />)
+
+    expect(screen.queryByRole('navigation', { name: 'Portfolio mode' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'Visual' })).not.toBeInTheDocument()
+  })
+
+  // The Software page has no mode switch, so mode changes start from the Visual page.
   it('switches mode with History API, resets scroll, updates metadata, focuses h1, and announces', async () => {
+    setPath('/visual')
     const user = userEvent.setup()
     const pushState = vi.spyOn(window.history, 'pushState')
     const replaceState = vi.spyOn(window.history, 'replaceState')
     Object.defineProperty(window, 'scrollY', { configurable: true, value: 640 })
     render(<App />)
 
-    await user.click(screen.getByRole('link', { name: 'Visual' }))
+    await user.click(screen.getByRole('link', { name: 'Software' }))
 
-    const visual = getPortfolio('visual')
+    const software = getPortfolio('software')
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(visual.hero.title)
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(software.hero.title)
       expect(screen.getByRole('heading', { level: 1 })).toHaveFocus()
     })
     expect(replaceState).toHaveBeenCalled()
-    expect(pushState).toHaveBeenCalledWith(expect.any(Object), '', '/visual')
-    expect(window.location.pathname).toBe('/visual')
+    expect(pushState).toHaveBeenCalledWith(expect.any(Object), '', '/')
+    expect(window.location.pathname).toBe('/')
     expect(window.scrollTo).toHaveBeenCalledWith({ behavior: 'auto', left: 0, top: 0 })
-    expect(document.title).toBe(visual.meta.title)
+    expect(document.title).toBe(software.meta.title)
     expect(document.querySelector('meta[name="description"]')).toHaveAttribute(
       'content',
-      visual.meta.description,
+      software.meta.description,
     )
     expect(document.querySelector('link[rel="canonical"]')).toHaveAttribute(
       'href',
-      visual.meta.canonical,
+      software.meta.canonical,
     )
     expect(document.querySelector('meta[name="theme-color"]')).toHaveAttribute(
       'content',
-      visual.meta.themeColor,
+      software.meta.themeColor,
     )
     expect(document.querySelector('meta[property="og:title"]')).toHaveAttribute(
       'content',
-      visual.meta.socialTitle,
+      software.meta.socialTitle,
     )
     expect(document.querySelector('meta[property="og:url"]')).toHaveAttribute(
       'content',
-      visual.meta.canonical,
+      software.meta.canonical,
     )
     expect(document.querySelector('meta[property="og:image"]')).toHaveAttribute(
       'content',
-      visual.meta.socialImage,
+      software.meta.socialImage,
     )
     expect(document.querySelector('meta[property="og:image:alt"]')).toHaveAttribute(
       'content',
-      visual.meta.socialImageAlt,
+      software.meta.socialImageAlt,
     )
     expect(document.querySelector('meta[name="twitter:card"]')).toHaveAttribute(
       'content',
-      visual.meta.twitterCard,
+      software.meta.twitterCard,
     )
     expect(document.querySelector('meta[name="twitter:title"]')).toHaveAttribute(
       'content',
-      visual.meta.socialTitle,
+      software.meta.socialTitle,
     )
     expect(document.querySelector('meta[name="twitter:image"]')).toHaveAttribute(
       'content',
-      visual.meta.socialImage,
+      software.meta.socialImage,
     )
     expect(document.querySelector('meta[name="twitter:image:alt"]')).toHaveAttribute(
       'content',
-      visual.meta.socialImageAlt,
+      software.meta.socialImageAlt,
     )
     const structuredData = JSON.parse(
       document.querySelector<HTMLScriptElement>('script[type="application/ld+json"]')?.textContent ??
         '{}',
     )
-    expect(structuredData['@graph'][0].url).toBe(visual.meta.canonical)
-    expect(screen.getByText('Visual portfolio loaded')).toHaveAttribute('aria-live', 'polite')
+    expect(structuredData['@graph'][0].url).toBe(software.meta.canonical)
+    expect(screen.getByText('Software portfolio loaded')).toHaveAttribute('aria-live', 'polite')
   })
 
   it('updates active navigation from the reading line while scrolling in both modes', async () => {
+    setPath('/visual')
     const user = userEvent.setup()
     render(<App />)
 
@@ -246,20 +256,8 @@ describe('dual portfolio shell', () => {
       })
     }
 
-    positionSections('software', 1)
-    window.dispatchEvent(new Event('scroll'))
-
     // Each mode has its own header, so the landmark is looked up again after the switch.
     const primaryNavigation = () => screen.getByRole('navigation', { name: 'Primary navigation' })
-    await waitFor(() =>
-      expect(within(primaryNavigation()).getByRole('link', { name: 'Work' })).toHaveAttribute(
-        'aria-current',
-        'location',
-      ),
-    )
-
-    await user.click(screen.getByRole('link', { name: 'Visual' }))
-    await screen.findByText('Visual portfolio loaded')
 
     positionSections('visual', 3)
     window.dispatchEvent(new Event('scroll'))
@@ -270,41 +268,56 @@ describe('dual portfolio shell', () => {
         'location',
       ),
     )
+
+    await user.click(screen.getByRole('link', { name: 'Software' }))
+    await screen.findByText('Software portfolio loaded')
+
+    positionSections('software', 1)
+    window.dispatchEvent(new Event('scroll'))
+
+    await waitFor(() =>
+      expect(within(primaryNavigation()).getByRole('link', { name: 'Work' })).toHaveAttribute(
+        'aria-current',
+        'location',
+      ),
+    )
   })
 
   it('lets modified mode-link clicks retain normal browser-link behavior', () => {
+    setPath('/visual')
     const pushState = vi.spyOn(window.history, 'pushState')
     render(<App />)
     const preventDocumentNavigation = (event: MouseEvent) => event.preventDefault()
     document.addEventListener('click', preventDocumentNavigation)
 
-    fireEvent.click(screen.getByRole('link', { name: 'Visual' }), { ctrlKey: true })
+    fireEvent.click(screen.getByRole('link', { name: 'Software' }), { ctrlKey: true })
     document.removeEventListener('click', preventDocumentNavigation)
 
     expect(pushState).not.toHaveBeenCalled()
-    expect(window.location.pathname).toBe('/')
+    expect(window.location.pathname).toBe('/visual')
   })
 
   it('restores stored scroll and active navigation on browser Back/Forward', async () => {
+    setPath('/visual')
     const user = userEvent.setup()
     render(<App />)
     Object.defineProperty(window, 'scrollY', { configurable: true, value: 480 })
 
-    await user.click(screen.getByRole('link', { name: 'Visual' }))
-    await screen.findByText('Visual portfolio loaded')
+    await user.click(screen.getByRole('link', { name: 'Software' }))
+    await screen.findByText('Software portfolio loaded')
     vi.mocked(window.scrollTo).mockClear()
 
-    const state = { portfolioRoute: { mode: 'software', scrollY: 480 } }
-    setPath('/', state)
+    const state = { portfolioRoute: { mode: 'visual', scrollY: 480 } }
+    setPath('/visual', state)
     window.dispatchEvent(new PopStateEvent('popstate', { state }))
 
-    const software = getPortfolio('software')
+    const visual = getPortfolio('visual')
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(software.hero.title)
+      expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(visual.hero.title)
       expect(window.scrollTo).toHaveBeenCalledWith({ behavior: 'auto', left: 0, top: 480 })
     })
-    expect(screen.getByRole('link', { name: 'Software' })).toHaveAttribute('aria-current', 'page')
-    expect(screen.getByText('Software portfolio restored')).toHaveAttribute('aria-live', 'polite')
+    expect(screen.getByRole('link', { name: 'Visual' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByText('Visual portfolio restored')).toHaveAttribute('aria-live', 'polite')
   })
 
   it('opens and closes the mobile navigation disclosure accessibly', async () => {

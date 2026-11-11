@@ -1,13 +1,11 @@
-import { ModeLink } from '../components/layout/ModeLink'
-import type { PortfolioLink, PortfolioMode } from '../data/portfolio'
+import type { PortfolioLink } from '../data/portfolio'
 
 type SiteFootProps = {
   links: PortfolioLink[]
   name: string
-  navigateMode: (mode: PortfolioMode) => void
 }
 
-export function SiteFoot({ links, name, navigateMode }: SiteFootProps) {
+export function SiteFoot({ links, name }: SiteFootProps) {
   return (
     <footer className="jc-foot jc-ink">
       <div className="jc-wrap">
@@ -34,15 +32,6 @@ export function SiteFoot({ links, name, navigateMode }: SiteFootProps) {
               </li>
             ))}
           </ul>
-
-          <nav aria-label="Portfolio mode" className="jc-foot__modes">
-            <ModeLink currentMode="software" mode="software" navigateMode={navigateMode}>
-              Software
-            </ModeLink>
-            <ModeLink currentMode="software" mode="visual" navigateMode={navigateMode}>
-              Visual
-            </ModeLink>
-          </nav>
 
           <a className="jc-foot__top" href="#main">
             Back to top <span aria-hidden="true">↑</span>
