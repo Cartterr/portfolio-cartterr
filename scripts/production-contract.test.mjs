@@ -217,6 +217,20 @@ test('stable resume route and legacy links all serve the current WDAS resume', (
   }
 })
 
+test('industry and academic resume routes serve their own PDFs', () => {
+  for (const [route, pdf] of [
+    ['industry', 'Jose_Carter_Resume_Industry_2026.pdf'],
+    ['academic', 'Jose_Carter_CV_Academic_2026.pdf'],
+  ]) {
+    const fallback = readText('frontend', 'public', 'resume', route, 'index.html')
+    const escaped = pdf.replace(/\./g, '\\.')
+
+    assert.equal(existsSync(fromRoot('frontend', 'public', pdf)), true)
+    assert.match(fallback, new RegExp(`url=/${escaped}`, 'i'))
+    assert.match(fallback, new RegExp(`location\\.replace\\(['"]/${escaped}['"]\\)`, 'i'))
+  }
+})
+
 test('frontend build externalizes fonts and does not publish source maps', () => {
   const buildCommand =
     process.platform === 'win32'

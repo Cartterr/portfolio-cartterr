@@ -181,10 +181,17 @@ export function createApp(options: CreateAppOptions = {}) {
 
     app.get('/index.html', redirectPortfolioEntry('/'))
     app.get('/visual/index.html', redirectPortfolioEntry('/visual'))
-    app.get('/resume', (request, response) => {
-      const query = new URL(request.originalUrl, 'http://localhost').search
-      response.redirect(307, `/Jose_Carter_WDAS_Resume_2026.pdf${query}`)
-    })
+    const resumeRoutes: Record<string, string> = {
+      '/resume': '/Jose_Carter_WDAS_Resume_2026.pdf',
+      '/resume/industry': '/Jose_Carter_Resume_Industry_2026.pdf',
+      '/resume/academic': '/Jose_Carter_CV_Academic_2026.pdf',
+    }
+    for (const [route, pdfPath] of Object.entries(resumeRoutes)) {
+      app.get([route, `${route}/`], (request, response) => {
+        const query = new URL(request.originalUrl, 'http://localhost').search
+        response.redirect(307, `${pdfPath}${query}`)
+      })
+    }
     app.use((request, response, next) => {
       if (request.path !== '/visual/') {
         next()

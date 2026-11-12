@@ -1,0 +1,93 @@
+% Academic CV (2 pages). Build: pdflatex Jose_Carter_CV_Academic_2026.tex
+\documentclass[letterpaper,10pt]{article}
+\input{cv-style}
+\hypersetup{pdftitle={José Carter Arriagada - Academic CV 2026}}
+
+\begin{document}
+\cvheader{Research Software Engineer \textbar{} GPU Computing, Real-Time XR \& HPC}{}
+
+\section{Research Interests}
+{\small GPU and parallel computing for real-time and scientific workloads; real-time rendering and XR systems, including Gaussian splatting and neural rendering on consumer GPUs; performance engineering for simulation and physical AI; high-performance computing infrastructure for research.\par}
+
+\section{Education}
+\role{Pontificia Universidad Católica de Chile}{Mar 2020 -- Jul 2025}{B.S. in Computer Science Engineering; Major in Software Engineering; Minor in Data Science}{Santiago, Chile}
+\begin{points}
+  \item Graduated with Distinction. Coursework and teaching in Operating Systems, High-Performance Computing, Networks, and Extended Reality.
+\end{points}
+
+\section{Research Experience}
+\role{Multiplatform Full Stack Software Engineer, XR Lab}{Sep 2026 -- Present}{DICTUC - Pontificia Universidad Católica de Chile, with Prof. Leonel Merino (full time)}{Santiago, Chile}
+\begin{points}
+  \item Lead software for \textbf{ANID project 13250116}, \emph{Enhancing Collaboration in Extended Reality}: a three-headset mixed-reality study tool for research on emotion and collaboration.
+  \item Moved the study app to a native \textbf{VIVE Focus Vision} build (\textbf{89.5 fps}, passthrough, hand and eye tracking) and built a web panel that runs every headset from a PC or phone.
+  \item Synchronized gaze, motion, and task events with \textbf{MindWare BioLab} physiological recordings to within a few milliseconds, with no turns lost on Wi-Fi drops, so sessions are usable for analysis.
+  \item Built \textbf{Waves AR}, an iPhone and iPad app that teaches ocean waves on the coast (Swift, Metal FFT ocean, ARKit/RealityKit), and a wireless dev loop that cut an AR iteration from about 8 minutes to 4--7 seconds.
+\end{points}
+
+\role{Research Software Engineer}{Jul 2023 -- Jul 2025}{Politiktok (Fondecyt) - Pontificia Universidad Católica de Chile}{Santiago, Chile}
+\begin{points}
+  \item Led the engineering of a GPU-backed \textbf{Python/PostgreSQL} research platform processing \textbf{100,000+ records}, with about \textbf{10x faster} pipelines through parallelization and query optimization.
+  \item Built reproducible ingestion, cleaning, transcription, feature-engineering, NLP, and visualization workflows for social-media research, supporting a peer-reviewed Springer publication.
+\end{points}
+
+\role{Simulation Engineer}{Jan 2023 -- Jul 2024}{Pontificia Universidad Católica de Chile - Geoscience}{Santiago, Chile}
+\begin{points}
+  \item Developed GPU-accelerated scientific software for tectonic-plate modeling and seismic-risk analysis, optimizing \textbf{CUDA} parallel algorithms for a \textbf{15x speedup}.
+  \item Ran large simulations on Linux workstations and university servers, and processed and visualized the resulting data; presented the work at the SSA 2023 Annual Meeting.
+\end{points}
+
+\role{AI Systems Developer, UC Bridge Program}{Jan 2024 -- Mar 2024}{Drone Response - University of Notre Dame}{Notre Dame, IN, USA}
+\begin{points}
+  \item Selected among 200+ candidates for an international research program on NASA- and NSF-funded projects.
+  \item Implemented mission-planning logic for autonomous multi-drone coordination in emergency response: Python route optimization (Hamiltonian and clustering approaches), MQTT event-driven communication, OpenAI API, and Java Spring services.
+\end{points}
+
+\section{Publications \& Presentations}
+\entry{Journal article (2026)}{Co-author. \emph{Political Subjectification on TikTok: A Postdigital Mode of Inquiry for Tracing Affects Among Chilean Youth}. Postdigital Science and Education, Springer. \href{https://doi.org/10.1007/s42438-026-00638-4}{doi:10.1007/s42438-026-00638-4}. Built the technical pipeline for large-scale data mining, transcription, and analysis.}
+\entry{Conference presentation (2023)}{Co-author. \emph{Interactions Between Megathrust and Adjacent Crustal Faults}. Seismological Society of America Annual Meeting, San Juan, Puerto Rico.}
+
+\section{Teaching}
+\role{Senior Teaching Assistant \& Technical Mentor}{Mar 2023 -- Jul 2025}{Department of Computer Science, Pontificia Universidad Católica de Chile}{Santiago, Chile}
+\begin{points}
+  \item 14+ teaching-assistant roles for 100+ students in \textbf{Operating Systems}, \textbf{High-Performance Computing}, Networks, Extended Reality, introductory computing, and software testing; mentored systems programming and optimization.
+  \item Named Senior Teaching Assistant through the department's teaching-assistant career program (2025).
+\end{points}
+\role{Programming Instructor}{Jul 2024 -- Jul 2026}{Escuela Militar de Chile}{Santiago, Chile}
+\begin{points}
+  \item Designed and taught Python and AI-application courses, assessments, and materials; recognized in 2026 for dedication and professionalism.
+\end{points}
+
+\section{Industry \& Applied Experience}
+\role{Freelance Software Engineer, Physical AI \& Robotics}{Sep 2026 -- Present}{TEK Chile (part time)}{Santiago, Chile}
+\begin{points}
+  \item Perception, control, and simulation software for a Dobot CR5S roll-packing cell and a Dobot Rover X1 inspection robot: Isaac Sim digital twin, YOLO26 vision, and Modbus/TCP control.
+  \item Rover: 18 real patrol runs with no contact, video raised from 5 to about 20 fps, Pi latency cut from 125 to about 25 ms, and a 0.48 s emergency stop.
+\end{points}
+\role{Full Stack Developer}{Sep 2025 -- Sep 2026}{Dily - Automotive Fintech Platform}{Santiago, Chile}
+\begin{points}
+  \item End-to-end lending software with TypeScript/Node.js, Angular/Nx, PostgreSQL/MySQL, and AWS, using DDD and hexagonal architecture.
+\end{points}
+\role{Lead Engineer, Alerting Platform Migration}{2026}{GridWorks}{Santiago, Chile}
+\begin{points}
+  \item Led the staged rebuild of an industrial alerting platform (Next.js, Node.js, MQTT, PostgreSQL) without interrupting live workflows.
+\end{points}
+\role{Software Engineer}{Dec 2024 -- Jul 2025}{Flair - Commercial-Building Energy Optimization}{Santiago, Chile}
+\begin{points}
+  \item Python microservices and InfluxDB/DynamoDB time-series workflows on AWS for a platform tied to HVAC energy reductions of up to 50\%.
+\end{points}
+
+\section{Conferences, Programs \& Awards}
+\entry{SC26 Early Career Program}{Selected participant with travel grant covering registration, airfare, and lodging; also matched in the SC26 Mentor-Protégé Program (Chicago, Nov 2026).}
+\entry{ACM SIGGRAPH 2026 Student Volunteer}{Supported conference operations in Los Angeles (Jul 2026); visited Treyarch through the volunteer program.}
+\entry{10th South American Space Generation Workshop}{Space Generation Advisory Council delegate (2026).}
+\entry{KHIPU 2025}{Latin American Meeting in Artificial Intelligence.}
+
+\section{Skills \& Languages}
+{\small
+\textbf{Programming:} Python, C++, CUDA, C\#, Swift, TypeScript/JavaScript, Java, SQL\\
+\textbf{GPU \& Real-Time:} CUDA, Metal, Unity, OpenXR, ARKit/RealityKit, Isaac Sim, eye and hand tracking, profiling\\
+\textbf{Data \& ML:} PyTorch, NLP, PostgreSQL, InfluxDB, data pipelines, scientific visualization\\
+\textbf{Systems:} Linux, Docker, AWS, MQTT, Git, CI/CD\\
+\textbf{Languages:} Spanish (native), English (advanced, TOEIC 905)\par}
+
+\end{document}

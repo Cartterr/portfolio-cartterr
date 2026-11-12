@@ -1,0 +1,44 @@
+% Shared style for José Carter's résumés (matches the 2026 WDAS résumé look).
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage[letterpaper,top=0.45in,bottom=0.45in,left=0.5in,right=0.5in]{geometry}
+\usepackage{titlesec}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage[hidelinks,pdfusetitle]{hyperref}
+\usepackage{microtype}
+
+\definecolor{cvblue}{HTML}{1F3F73}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\tabcolsep}{0in}
+\raggedright
+\urlstyle{same}
+
+\titleformat{\section}{\color{cvblue}\Large\bfseries}{}{0em}{}[\vspace{-2pt}\color{cvblue}\titlerule]
+\titlespacing*{\section}{0pt}{4pt}{3pt}
+
+\newcommand{\cvheader}[2]{%
+  \begin{center}
+    {\color{cvblue}\fontsize{22}{24}\selectfont\bfseries José Carter Arriagada}\\[2pt]
+    {\small\bfseries #1}\\[2pt]
+    {\small Santiago, Chile \textbar{} Chile: +56 9 8655 2408 \textbar{} U.S.: +1 276 221 3064}\\
+    {\small \href{mailto:jose.carterx@gmail.com}{jose.carterx@gmail.com} \textbar{} \href{https://josecarter.dev}{josecarter.dev} #2}\\
+    {\small \href{https://linkedin.com/in/jose-carter-arriagada}{linkedin.com/in/jose-carter-arriagada} \textbar{} \href{https://github.com/Cartterr}{github.com/Cartterr}}
+  \end{center}
+  \vspace{-10pt}
+}
+
+% \role{Title}{Dates}{Organization}{Location}
+\newcommand{\role}[4]{%
+  \vspace{1pt}
+  \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+    \textbf{#1} & \small #2 \\
+    \textit{\small #3} & \textit{\small #4} \\
+  \end{tabular*}\vspace{-1pt}
+}
+\newenvironment{points}{\begin{itemize}[leftmargin=0.18in,topsep=0pt,itemsep=0pt,parsep=0pt,partopsep=0pt,label={\small\textbullet}]\small}{\end{itemize}\vspace{1pt}}
+\newcommand{\entry}[2]{{\small\textbf{#1} --- #2}\par\vspace{1pt}}

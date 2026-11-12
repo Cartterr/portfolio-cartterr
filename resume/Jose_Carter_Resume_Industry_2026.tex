@@ -1,0 +1,70 @@
+% Industry résumé (1 page). Build: pdflatex Jose_Carter_Resume_Industry_2026.tex
+\documentclass[letterpaper,10pt]{article}
+\input{cv-style}
+\hypersetup{pdftitle={José Carter Arriagada - Industry Resume 2026}}
+
+\begin{document}
+\cvheader{Software Engineer \textbar{} Real-Time XR, Physical AI \& GPU Computing}{}
+
+\section{Profile}
+{\small Software engineer (PUC Chile, 2025) building performance-critical software: real-time XR and AR research systems at DICTUC (full time) and physical-AI robotics software at TEK Chile (part-time freelance). Track record of measured speedups on GPUs and parallel systems: 15x in CUDA simulation and 10x in data pipelines.\par}
+
+\section{Technical Skills}
+{\small
+\textbf{Languages:} Python, TypeScript/JavaScript, C++, C\#, Swift, Java, SQL \quad \textbf{English:} Advanced (TOEIC 905)\\
+\textbf{GPU \& Real-Time:} CUDA, Metal, Unity, OpenXR, ARKit/RealityKit, eye and hand tracking, Isaac Sim, performance profiling\\
+\textbf{Robotics \& Vision:} YOLO, PyTorch, robot-arm and mobile-robot control, Modbus, TCP/IP, Raspberry Pi\\
+\textbf{Platforms:} Node.js, React, Angular/Nx, Vue, Next.js, PostgreSQL, InfluxDB, MQTT, AWS, Docker, Railway, Linux, CI/CD\par}
+
+\section{Experience}
+\role{Multiplatform Full Stack Software Engineer, XR Lab}{Sep 2026 -- Present}{DICTUC - Pontificia Universidad Católica de Chile (full time)}{Santiago, Chile}
+\begin{points}
+  \item Moved a three-headset mixed-reality study app to a native \textbf{VIVE Focus Vision} build (\textbf{89.5 fps}, passthrough, hand and eye tracking) for ANID project 13250116 on emotion and collaboration in XR.
+  \item Synchronized gaze, motion, and task events with \textbf{MindWare BioLab} physiological recordings to within a few milliseconds, with no turns lost on Wi-Fi drops; built a web panel that runs every headset from a PC or phone.
+  \item Built Waves AR (Swift, \textbf{Metal FFT ocean}, ARKit) and a wireless dev loop that cut an AR iteration from \textbf{about 8 min to 4--7 s}.
+\end{points}
+
+\role{Freelance Software Engineer, Physical AI \& Robotics}{Sep 2026 -- Present}{TEK Chile (part time)}{Santiago, Chile}
+\begin{points}
+  \item Built the control app for a \textbf{Dobot CR5S} roll-packing cell (Raspberry Pi, tablet UI, TCP/IP and Modbus) where one plan drives both the 3D preview and the arm, plus an \textbf{Isaac Sim} digital twin and YOLO26 roll counting and box-corner vision.
+  \item Built a browser controller with server-side safety for a \textbf{Dobot Rover X1} inspection robot: 18 real patrol runs with no contact, video raised from 5 to about 20 fps, Pi latency cut from \textbf{125 to about 25 ms}, and a 0.48 s emergency stop.
+\end{points}
+
+\role{Full Stack Developer}{Sep 2025 -- Sep 2026}{Dily - Automotive Fintech Platform}{Santiago, Chile}
+\begin{points}
+  \item Built lending workflows (\textbf{TypeScript/Node.js}, Angular/Nx, PostgreSQL, AWS) with DDD, hexagonal architecture, and tests.
+\end{points}
+
+\role{Lead Engineer, Alerting Platform Migration}{2026}{GridWorks}{Santiago, Chile}
+\begin{points}
+  \item Led the staged rebuild of an industrial alerting platform (Next.js, Node.js, MQTT, PostgreSQL) without interrupting live workflows.
+\end{points}
+
+\role{Software Engineer}{Dec 2024 -- Jul 2025}{Flair - Commercial-Building Energy Optimization}{Santiago, Chile}
+\begin{points}
+  \item Python microservices, Vue.js UI, and InfluxDB time-series workflows on AWS, tied to \textbf{HVAC energy reductions of up to 50\%}.
+\end{points}
+
+\role{Research Software Engineer}{Jul 2023 -- Jul 2025}{Politiktok (Fondecyt) - Pontificia Universidad Católica de Chile}{Santiago, Chile}
+\begin{points}
+  \item GPU-backed Python/PostgreSQL pipelines for \textbf{100,000+ records}, about \textbf{10x faster} through parallelization; Springer co-author.
+\end{points}
+
+\role{Simulation Engineer}{Jan 2023 -- Jul 2024}{Pontificia Universidad Católica de Chile - Geoscience}{Santiago, Chile}
+\begin{points}
+  \item Optimized \textbf{CUDA} parallel algorithms for tectonic-plate modeling and seismic-risk analysis, reaching a \textbf{15x speedup}.
+\end{points}
+
+\role{AI Systems Developer}{Jan 2024 -- Mar 2024}{Drone Response - University of Notre Dame}{Notre Dame, IN, USA}
+\begin{points}
+  \item Mission planning for autonomous multi-drone coordination (Python, MQTT, OpenAI API, Java Spring); NASA/NSF-backed.
+\end{points}
+
+\section{Teaching \& Recognition}
+\entry{Teaching}{Senior TA at PUC, 14+ roles in OS, HPC, Networks, XR (2023--2025); Python instructor, Escuela Militar (2024--2026).}
+\entry{Conferences}{SC26 Early Career Program with travel grant (Chicago, 2026); ACM SIGGRAPH 2026 Student Volunteer.}
+
+\section{Education}
+\role{Pontificia Universidad Católica de Chile}{Mar 2020 -- Jul 2025}{B.S. Computer Science Engineering, Major in Software Engineering, Minor in Data Science; with Distinction}{Santiago, Chile}
+
+\end{document}

@@ -498,6 +498,24 @@ describe('portfolio API', () => {
     })
   })
 
+  it('redirects the industry and academic resume routes to their PDFs', async () => {
+    await withTemporaryFrontendDist(async (frontendDist) => {
+      await withNodeEnvironment('production', async () => {
+        const app = createApp({ frontendDist })
+        for (const [route, pdf] of [
+          ['/resume/industry', '/Jose_Carter_Resume_Industry_2026.pdf'],
+          ['/resume/academic', '/Jose_Carter_CV_Academic_2026.pdf'],
+          ['/resume/academic/', '/Jose_Carter_CV_Academic_2026.pdf'],
+        ]) {
+          const response = await request(app).get(`${route}?source=portfolio`).redirects(0)
+
+          expect(response.status).toBe(307)
+          expect(response.headers.location).toBe(`${pdf}?source=portfolio`)
+        }
+      })
+    })
+  })
+
   it('gives the CV and both social images one-day revalidation caching', async () => {
     await withTemporaryFrontendDist(async (frontendDist) => {
       fs.writeFileSync(path.join(frontendDist, 'Jose_Carter_CV_Eng.pdf'), 'test CV')

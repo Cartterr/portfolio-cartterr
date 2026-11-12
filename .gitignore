@@ -138,3 +138,10 @@ frontend/src/assets/images/optimized/flair4-main.webp
 frontend/src/assets/images/optimized/flair4-thumb.webp
 frontend/src/assets/images/optimized/gridworks2-main.webp
 frontend/src/assets/images/optimized/gridworks2-thumb.webp
+
+# LaTeX build output for resume sources
+resume/*.aux
+resume/*.log
+resume/*.out
+resume/*.pdf
+resume/build/
