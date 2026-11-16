@@ -1,5 +1,6 @@
 import { getMedia } from '../data/media'
 import type { PortfolioImageMedia } from '../data/types'
+import { researchOutputs } from '../data/research'
 import { softwarePortfolio } from '../data/software'
 import { LightboxProvider } from './fx/Lightbox'
 import { useReveal } from './lib/hooks'
@@ -9,6 +10,7 @@ import { Contact } from './sections/Contact'
 import { Experience } from './sections/Experience'
 import { Hero } from './sections/Hero'
 import { Organizations, Outcomes } from './sections/Proof'
+import { Research } from './sections/Research'
 import { Work } from './sections/Work'
 import './site.css'
 
@@ -32,6 +34,7 @@ export function SoftwarePage() {
         <Organizations />
         <About content={page.about} media={aboutMedia} />
         <Work projects={page.projects} />
+        <Research items={researchOutputs} projects={page.projects} />
         <Experience items={page.experience} />
         <Capabilities groups={page.capabilities} projects={page.projects} />
         <Contact content={page.contact} resume={page.hero.secondaryCta} />

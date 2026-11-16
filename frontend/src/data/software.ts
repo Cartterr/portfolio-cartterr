@@ -376,9 +376,11 @@ const aboutMediaIds = [
 ]
 
 // In the order the Software page presents its sections, so the active link follows the scroll.
-const softwareNavigationOrder = ['About', 'Work', 'Experience', 'Capabilities', 'Contact']
+const softwareNavigationOrder = ['About', 'Work', 'Research', 'Experience', 'Capabilities', 'Contact']
 
+// Research keeps the short #research anchor; the other sections are prefixed.
 const softwareNavigation = softwareNavigationOrder.flatMap((label) => {
+  if (label === 'Research') return [{ label, href: '#research' }]
   const item = sharedNavigation.find((candidate) => candidate.label === label)
   return item ? [{ ...item, href: `#software-${item.href.slice(1)}` }] : []
 })

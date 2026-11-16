@@ -23,13 +23,13 @@ export function Capabilities({ groups, projects }: CapabilitiesProps) {
     <section
       aria-labelledby="software-capabilities-title"
       className="jc-capabilities"
-      data-section-index="04"
+      data-section-index="05"
       data-testid="software-section"
       id="software-capabilities"
     >
       <div className="jc-wrap">
         <header className="jc-head">
-          <SectionLabel index="04" label="Capabilities" />
+          <SectionLabel index="05" label="Capabilities" />
           <h2 className="jc-title" data-reveal id="software-capabilities-title">
             Capabilities
           </h2>

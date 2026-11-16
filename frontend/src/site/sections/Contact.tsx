@@ -98,14 +98,14 @@ export function Contact({ content, resume }: ContactProps) {
     <section
       aria-labelledby="software-contact-title"
       className="jc-contact jc-ink"
-      data-section-index="05"
+      data-section-index="06"
       data-testid="software-section"
       id="software-contact"
     >
       <WaveField className="jc-contact__field" ink={[0.95, 0.94, 0.92]} />
       <div className="jc-wrap jc-contact__grid">
         <div className="jc-contact__intro">
-          <SectionLabel index="05" label="Contact" />
+          <SectionLabel index="06" label="Contact" />
           <h2 className="jc-display jc-contact__title" data-reveal id="software-contact-title">
             {content.heading}
           </h2>
