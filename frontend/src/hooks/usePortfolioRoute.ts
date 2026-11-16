@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { getPortfolio, type PortfolioMode } from '../data/portfolio'
+import { researchOutputs } from '../data/research'
 import { forceScrollTo } from './forceScroll'
 
 type PortfolioRouteHistory = {
@@ -125,6 +126,26 @@ const portfolioStructuredData = (mode: PortfolioMode) => {
           'https://linkedin.com/in/jose-carter-arriagada',
         ],
       },
+      ...researchOutputs.flatMap((item) =>
+        item.url
+          ? [
+              {
+                '@type': item.doi ? 'ScholarlyArticle' : 'CreativeWork',
+                '@id': `https://josecarter.dev/#research-${item.id}`,
+                name: item.title,
+                url: item.url,
+                ...(item.doi ? { sameAs: `https://doi.org/${item.doi}` } : {}),
+                datePublished: item.date,
+                genre: item.type,
+                author: item.authors.map((author) =>
+                  author.self
+                    ? { '@id': 'https://josecarter.dev/#person' }
+                    : { '@type': 'Person', name: author.name },
+                ),
+              },
+            ]
+          : [],
+      ),
     ],
   }
 }

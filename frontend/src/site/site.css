@@ -1227,6 +1227,7 @@
 /* ---------- Work ---------- */
 
 .jc-work,
+.jc-research,
 .jc-experience,
 .jc-capabilities {
   padding-top: clamp(5rem, 11vw, 10rem);
@@ -1658,6 +1659,184 @@
 
 .jc-preview__card img[data-active='true'] {
   opacity: 1;
+}
+
+/* ---------- Research ---------- */
+
+.jc-pubs {
+  display: grid;
+  gap: clamp(0.75rem, 1.4vw, 1.25rem);
+}
+
+.jc-pub {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(1.25rem, 3vw, 3rem);
+  align-items: center;
+}
+
+.jc-cap.jc-pub h3 {
+  max-width: 30ch;
+}
+
+.jc-pub__copy {
+  display: grid;
+  gap: 0.8rem;
+  justify-items: start;
+}
+
+.jc-pub__type {
+  color: var(--accent-text);
+}
+
+.jc-pub__subtitle {
+  color: var(--fg-2);
+  font-family: var(--jc-serif);
+  font-size: 1.15rem;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+.jc-pub__venue,
+.jc-pub__authors {
+  color: var(--fg-mute);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.jc-pub__authors strong {
+  color: var(--fg);
+  font-weight: 560;
+}
+
+.jc-pub__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  align-items: baseline;
+  margin-top: 0.4rem;
+}
+
+.jc-pub__related {
+  color: var(--fg-2);
+  font-size: 0.9rem;
+}
+
+.jc-pub__related:hover {
+  color: var(--accent-text);
+}
+
+.jc-pub__figure {
+  padding: clamp(0.75rem, 2vw, 1.5rem);
+  border: 1px solid var(--hair);
+  border-radius: var(--jc-radius);
+  background: var(--chip);
+}
+
+/* The schematics: one stroke weight, mono labels, the signal colour as the only accent. */
+.jc-dia {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--fg-2);
+  font-family: var(--jc-mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+
+.jc-dia line,
+.jc-dia rect,
+.jc-dia circle,
+.jc-dia polygon {
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.jc-dia text {
+  fill: var(--fg-2);
+  stroke: none;
+}
+
+.jc-dia .jc-dia__thin {
+  stroke-width: 1;
+  opacity: 0.7;
+}
+
+.jc-dia .jc-dia__node {
+  fill: var(--surface);
+}
+
+.jc-dia .jc-dia__chip {
+  fill: var(--chip);
+  stroke: var(--hair);
+}
+
+.jc-dia .jc-dia__accent {
+  stroke: var(--jc-signal);
+}
+
+.jc-dia .jc-dia__thick {
+  stroke-width: 4;
+}
+
+.jc-dia .jc-dia__dash {
+  stroke-dasharray: 4 5;
+}
+
+.jc-dia .jc-dia__accent-fill {
+  fill: var(--jc-signal);
+  stroke: none;
+}
+
+.jc-dia .jc-dia__accent-text {
+  fill: var(--accent-text);
+}
+
+.jc-dia .jc-dia__strong {
+  fill: var(--fg);
+}
+
+.jc-dia .jc-dia__mute {
+  fill: var(--fg-mute);
+}
+
+.jc-dia .jc-dia__value {
+  fill: var(--fg);
+  font-family: var(--jc-sans);
+  font-size: 24px;
+  font-weight: 560;
+  letter-spacing: -0.03em;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .jc-dia__pulse {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: jc-dia-pulse 2.8s var(--ease-out) infinite;
+  }
+}
+
+@keyframes jc-dia-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.6);
+  }
+}
+
+@media (max-width: 860px) {
+  .jc-pub {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .jc-pub__figure {
+    padding: 0.5rem;
+  }
 }
 
 /* ---------- Experience ---------- */

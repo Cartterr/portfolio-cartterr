@@ -85,14 +85,14 @@ export function Experience({ items }: { items: ExperienceStory[] }) {
     <section
       aria-labelledby="software-experience-title"
       className="jc-experience"
-      data-section-index="03"
+      data-section-index="04"
       data-testid="software-section"
       id="software-experience"
     >
       <div className="jc-wrap">
         <header className="jc-head">
           <SectionLabel
-            index="03"
+            index="04"
             label="Experience"
             note={`${String(items.length).padStart(2, '0')} roles`}
           />

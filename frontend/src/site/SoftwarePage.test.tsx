@@ -2,6 +2,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getMedia, legacyMedia } from '../data/media'
+import { researchOutputs } from '../data/research'
 import { softwarePortfolio } from '../data/software'
 import { SoftwarePage } from './SoftwarePage'
 
@@ -9,6 +10,7 @@ const sectionIds = [
   'software-home',
   'software-about',
   'software-work',
+  'research',
   'software-experience',
   'software-capabilities',
   'software-contact',
@@ -262,5 +264,20 @@ describe('SoftwarePage', () => {
     expect(status).toHaveFocus()
     expect(within(form).getByLabelText('Name')).toHaveValue('')
     vi.unstubAllGlobals()
+  })
+  it('lists research newest first, links only public sources, and marks the unpublished poster', () => {
+    render(<SoftwarePage />)
+
+    const outputs = screen.getAllByTestId('research-output')
+    expect(outputs.map((item) => within(item).getByRole('heading', { level: 3 }).textContent)).toEqual(
+      researchOutputs.map(({ title }) => title),
+    )
+    researchOutputs.forEach((item, index) => {
+      const links = within(outputs[index]).queryAllByRole('link', { name: /opens in a new tab/ })
+      expect(links.map((link) => link.getAttribute('href'))).toEqual(item.url ? [item.url] : [])
+      links.forEach((link) => expect(link).toHaveAttribute('rel', 'noopener noreferrer'))
+      expect(within(outputs[index]).getByRole('img')).toBeInTheDocument()
+    })
+    expect(within(outputs[0]).getByText('No public version yet')).toBeInTheDocument()
   })
 })
